@@ -1,0 +1,23 @@
+import 'package:flutter/material.dart';
+import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
+import 'package:saur_customer/utils/router.dart';
+import 'package:saur_customer/utils/theme.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Sudarshan Saur',
+      theme: globalTheme(context),
+      debugShowCheckedModeBanner: false,
+      home: const AppIntroScreen(),
+      onGenerateRoute: NavRoute.generatedRoute,
+    );
+  }
+}
