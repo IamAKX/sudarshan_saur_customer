@@ -17,6 +17,7 @@ ThemeData globalTheme(BuildContext context) {
     colorScheme: ColorScheme.fromSwatch().copyWith(
       background: background, // Your accent color
     ),
+    primarySwatch: Colors.indigo,
     dividerColor: dividerColor,
     secondaryHeaderColor: Colors.grey[700],
     primaryColor: primaryColor,
@@ -40,6 +41,7 @@ ThemeData globalTheme(BuildContext context) {
     inputDecorationTheme: InputDecorationTheme(
       alignLabelWithHint: false,
       filled: true,
+      fillColor: Colors.white,
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(defaultPadding * 3),
         borderSide: const BorderSide(

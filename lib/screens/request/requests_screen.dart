@@ -1,5 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:saur_customer/widgets/alert_popup.dart';
+import '../../main.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
@@ -26,7 +29,7 @@ class _RequestScreenState extends State<RequestScreen> {
           }),
           child: Text(
             'Warranty Request',
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
       ),
@@ -305,7 +308,9 @@ class _RequestScreenState extends State<RequestScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             child: Text(
               'Cancel',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -314,7 +319,11 @@ class _RequestScreenState extends State<RequestScreen> {
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+              showPopup(context, DialogType.success, 'Done!',
+                  'We have received your request. You will hear from us in 24 hours');
+            },
             child: Text(
               'Proceed',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(

@@ -21,18 +21,6 @@ class InputFieldDark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return TextField(
-    //   enabled: enabled ?? true,
-    //   keyboardType: keyboardType,
-    //   autocorrect: true,
-    //   obscureText: obscure,
-    //   controller: controller,
-    //   decoration: InputDecoration(
-    //     hintText: hint,
-    //     filled: true,
-    //     prefixIcon: Icon(icon),
-    //   ),
-    // );
     return TextField(
       enabled: enabled ?? true,
       keyboardType: keyboardType,

@@ -26,7 +26,7 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
           }),
           child: Text(
             'Warranty Card',
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
       ),

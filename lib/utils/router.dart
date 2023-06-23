@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
+import 'package:saur_customer/screens/profile/change_password.dart';
+import 'package:saur_customer/screens/profile/edit_profile.dart';
 import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
@@ -22,6 +24,10 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const RecoverPasswordScreen());
       case HomeContainer.routePath:
         return MaterialPageRoute(builder: (_) => const HomeContainer());
+      case EditProfile.routePath:
+        return MaterialPageRoute(builder: (_) => const EditProfile());
+      case ChangePassword.routePath:
+        return MaterialPageRoute(builder: (_) => const ChangePassword());
       default:
         return errorRoute();
     }

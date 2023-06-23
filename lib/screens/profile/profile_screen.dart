@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:saur_customer/screens/profile/change_password.dart';
+import 'package:saur_customer/screens/profile/edit_profile.dart';
+import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
+import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,7 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: Text(
           'Profile',
-          style: Theme.of(context).textTheme.headlineMedium,
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
       body: getBody(context),
@@ -69,7 +74,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 title: const Text('Edit Profile'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed(EditProfile.routePath);
+                },
               ),
               const Divider(
                 height: 0,
@@ -84,7 +91,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 title: const Text('Change Password'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, ChangePassword.routePath);
+                },
               ),
               const Divider(
                 height: 0,
@@ -99,7 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 title: const Text('Contact Us'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+                onTap: () async {
+                  launchUrl(Uri.parse('tel://18008800'));
+                },
               ),
               const Divider(
                 height: 0,
@@ -107,15 +118,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 endIndent: defaultPadding,
                 indent: defaultPadding * 3,
               ),
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(
-                  LineAwesomeIcons.list_ul,
-                ),
-                title: const Text('Terms and Conditions'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
+              // ListTile(
+              //   tileColor: Colors.white,
+              //   leading: const Icon(
+              //     LineAwesomeIcons.list_ul,
+              //   ),
+              //   title: const Text('Terms and Conditions'),
+              //   trailing: const Icon(Icons.chevron_right),
+              //   onTap: () {
+              //     Navigator.of(context).pushNamed(AgreementScreen.routePath);
+              //   },
+              // ),
               const Divider(
                 height: 0,
                 color: dividerColor,
@@ -138,7 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Icons.chevron_right,
                   color: Colors.red,
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, LoginScreen.routePath, (route) => false);
+                },
               ),
             ],
           ),

@@ -7,6 +7,8 @@ void main() {
   runApp(const MyApp());
 }
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -17,6 +19,7 @@ class MyApp extends StatelessWidget {
       theme: globalTheme(context),
       debugShowCheckedModeBanner: false,
       home: const AppIntroScreen(),
+      navigatorKey: navigatorKey,
       onGenerateRoute: NavRoute.generatedRoute,
     );
   }
