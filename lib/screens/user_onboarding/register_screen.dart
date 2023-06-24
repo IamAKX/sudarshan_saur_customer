@@ -167,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          print(_otpCodeCtrl.text);
+                          debugPrint(_otpCodeCtrl.text);
                         },
                         label: 'Register',
                         isDisabled: false,

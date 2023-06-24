@@ -2,7 +2,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:saur_customer/widgets/alert_popup.dart';
-import '../../main.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';

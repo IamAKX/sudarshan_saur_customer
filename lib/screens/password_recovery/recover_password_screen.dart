@@ -169,7 +169,7 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          print(_otpCodeCtrl.text);
+                          debugPrint(_otpCodeCtrl.text);
                         },
                         label: 'Change',
                         isDisabled: false,

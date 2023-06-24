@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:saur_customer/screens/profile/change_password.dart';
 import 'package:saur_customer/screens/profile/edit_profile.dart';
-import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/theme.dart';
