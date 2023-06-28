@@ -16,6 +16,7 @@ class RequestScreen extends StatefulWidget {
 
 class _RequestScreenState extends State<RequestScreen> {
   final TextEditingController _serialNoCtrl = TextEditingController();
+  final TextEditingController _dealerNameCtrl = TextEditingController();
   bool isListVisible = false;
 
   @override
@@ -302,6 +303,18 @@ class _RequestScreenState extends State<RequestScreen> {
             TextField(
               controller: _serialNoCtrl,
               decoration: secondaryTextFieldDecoration('Serial Number'),
+            ),
+            verticalGap(defaultPadding),
+            Text(
+              'Enter Dealer Name',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: hintColor,
+                  ),
+            ),
+            verticalGap(10),
+            TextField(
+              controller: _dealerNameCtrl,
+              decoration: secondaryTextFieldDecoration('Dealer Name'),
             ),
           ],
         ),

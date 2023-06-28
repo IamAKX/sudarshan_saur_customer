@@ -46,6 +46,9 @@ flutter:
 flutter_native_splash:
   image: assets/logo/saur_splash.png
   color: "#194387"
+  android_12:
+    image: assets/logo/logo_sq.png
+    color: "#194387"
   web_image_mode: cover
   android_gravity: fill
   ios_content_mode: scaleToFill
