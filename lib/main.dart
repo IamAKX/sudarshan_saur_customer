@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
 import 'package:saur_customer/utils/router.dart';
 import 'package:saur_customer/utils/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+late SharedPreferences prefs;
+Future<void> main() async{
   runApp(const MyApp());
 }
 
