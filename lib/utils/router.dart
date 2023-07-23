@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saur_customer/screens/blocked_user/blocked_users_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
 import 'package:saur_customer/screens/profile/change_password.dart';
@@ -28,6 +29,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const EditProfile());
       case ChangePassword.routePath:
         return MaterialPageRoute(builder: (_) => const ChangePassword());
+      case BlockedUserScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const BlockedUserScreen());
       default:
         return errorRoute();
     }

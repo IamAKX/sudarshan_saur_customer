@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
@@ -9,6 +12,9 @@ import 'package:saur_customer/widgets/gaps.dart';
 import 'package:saur_customer/widgets/input_field_dark.dart';
 import 'package:saur_customer/widgets/input_password_field_dark.dart';
 import 'package:saur_customer/widgets/primary_button.dart';
+
+import '../../services/api_service.dart';
+import '../../services/snakbar_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,8 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
 
+  late ApiProvider _api;
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       body: getBody(context),
     );
@@ -90,15 +100,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 verticalGap(defaultPadding * 2),
                 PrimaryButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      HomeContainer.routePath,
-                      (route) => false,
-                    );
+                    if (_emailCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
+                      SnackBarService.instance.showSnackBarError(
+                          'Email or Password cannot be empty');
+                      return;
+                    }
+                    _api
+                        .login(
+                      _emailCtrl.text,
+                      base64.encode(_passwordCtrl.text.codeUnits),
+                    )
+                        .then((value) {
+                      if (value) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          HomeContainer.routePath,
+                          (route) => false,
+                        );
+                      }
+                    });
                   },
                   label: 'Login',
-                  isDisabled: false,
-                  isLoading: false,
+                  isDisabled: _api.status == ApiStatus.loading,
+                  isLoading: _api.status == ApiStatus.loading,
                 ),
                 verticalGap(defaultPadding),
                 Row(

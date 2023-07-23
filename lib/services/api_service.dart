@@ -8,8 +8,8 @@ import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/utils/api.dart';
 import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/preference_key.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
 import 'snakbar_service.dart';
 
 enum ApiStatus { ideal, loading, success, failed }
@@ -18,7 +18,6 @@ class ApiProvider extends ChangeNotifier {
   ApiStatus? status = ApiStatus.ideal;
   late Dio _dio;
   static ApiProvider instance = ApiProvider();
-  late SharedPreferences prefs;
   ApiProvider() {
     _dio = Dio();
   }
@@ -27,9 +26,25 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     try {
+      Map<String, dynamic> reqBody = {
+        "customerName": user.customerName,
+        "password": user.password,
+        "mobileNo": user.mobileNo,
+        "status": user.status,
+        "email": user.email,
+        "address": {
+          "addressLine1": user.address?.addressLine1,
+          "addressLine2": user.address?.addressLine2,
+          "city": user.address?.city,
+          "state": user.address?.state,
+          "country": "India",
+          "zipCode": user.address?.zipCode
+        },
+        "image": user.image
+      };
       Response response = await _dio.post(
         Api.users,
-        data: json.encode(user.toMap()),
+        data: json.encode(reqBody),
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,
@@ -37,7 +52,7 @@ class ApiProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         UserModel user = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, user.id ?? 0);
+        prefs.setInt(SharedpreferenceKey.userId, user.customerId ?? 0);
         if (user.status == UserStatus.ACTIVE.name) {
           status = ApiStatus.success;
           notifyListeners();
@@ -80,15 +95,16 @@ class ApiProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         UserModel user = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, user.id ?? 0);
+        prefs.setInt(SharedpreferenceKey.userId, user.customerId ?? 0);
         if (user.status == UserStatus.ACTIVE.name) {
           status = ApiStatus.success;
           notifyListeners();
+          return true;
         } else {
           status = ApiStatus.failed;
           notifyListeners();
+          return false;
         }
-        return true;
       }
     } on DioException catch (e) {
       status = ApiStatus.failed;
@@ -108,12 +124,12 @@ class ApiProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> updateUser(Map<String, dynamic> user) async {
+  Future<bool> updateUser(Map<String, dynamic> user, int id) async {
     status = ApiStatus.loading;
     notifyListeners();
     try {
       Response response = await _dio.put(
-        Api.users,
+        '${Api.users}/$id',
         data: json.encode(user),
         options: Options(
           contentType: 'application/json',
@@ -122,7 +138,7 @@ class ApiProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         UserModel user = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, user.id ?? 0);
+        prefs.setInt(SharedpreferenceKey.userId, user.customerId ?? 0);
         status = ApiStatus.success;
         notifyListeners();
         return true;
@@ -181,13 +197,13 @@ class ApiProvider extends ChangeNotifier {
     return userModel;
   }
 
-  Future<CustomerListModel?> getAllCustomer(int id) async {
+  Future<CustomerListModel?> getAllCustomer() async {
     status = ApiStatus.loading;
     notifyListeners();
     CustomerListModel? list;
     try {
       Response response = await _dio.get(
-        '${Api.users}/$id',
+        Api.users,
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,

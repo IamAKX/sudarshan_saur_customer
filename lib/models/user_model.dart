@@ -3,83 +3,95 @@ import 'dart:convert';
 import 'package:saur_customer/models/address_model.dart';
 
 class UserModel {
-  int? id;
+  int? customerId;
   String? customerName;
-  String? password;
   String? mobileNo;
   String? status;
   String? email;
   AddressModel? address;
-  String? image;
+  String? createdOn;
+  String? updatedOn;
   String? lastLogin;
+  String? image;
   String? lastPurchaseDate;
+  String? password;
   UserModel({
-    this.id,
+    this.customerId,
     this.customerName,
-    this.password,
     this.mobileNo,
     this.status,
     this.email,
     this.address,
-    this.image,
+    this.createdOn,
+    this.updatedOn,
     this.lastLogin,
+    this.image,
     this.lastPurchaseDate,
+    this.password,
   });
 
   UserModel copyWith({
-    int? id,
+    int? customerId,
     String? customerName,
-    String? password,
     String? mobileNo,
     String? status,
     String? email,
     AddressModel? address,
-    String? image,
+    String? createdOn,
+    String? updatedOn,
     String? lastLogin,
+    String? image,
     String? lastPurchaseDate,
+    String? password,
   }) {
     return UserModel(
-      id: id ?? this.id,
+      customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
-      password: password ?? this.password,
       mobileNo: mobileNo ?? this.mobileNo,
       status: status ?? this.status,
       email: email ?? this.email,
       address: address ?? this.address,
-      image: image ?? this.image,
+      createdOn: createdOn ?? this.createdOn,
+      updatedOn: updatedOn ?? this.updatedOn,
       lastLogin: lastLogin ?? this.lastLogin,
+      image: image ?? this.image,
       lastPurchaseDate: lastPurchaseDate ?? this.lastPurchaseDate,
+      password: password ?? this.password,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'customerId': customerId,
       'customerName': customerName,
-      'password': password,
       'mobileNo': mobileNo,
       'status': status,
       'email': email,
       'address': address?.toMap(),
-      'image': image,
+      'createdOn': createdOn,
+      'updatedOn': updatedOn,
       'lastLogin': lastLogin,
+      'image': image,
       'lastPurchaseDate': lastPurchaseDate,
+      'password': password,
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id']?.toInt(),
+      customerId: map['customerId']?.toInt(),
       customerName: map['customerName'],
-      password: map['password'],
       mobileNo: map['mobileNo'],
       status: map['status'],
       email: map['email'],
       address:
           map['address'] != null ? AddressModel.fromMap(map['address']) : null,
-      image: map['image'],
+      createdOn: map['createdOn'],
+      updatedOn: map['updatedOn'],
       lastLogin: map['lastLogin'],
+      image: map['image'],
       lastPurchaseDate: map['lastPurchaseDate'],
+      password: map['password'],
     );
   }
 
@@ -90,7 +102,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, customerName: $customerName, password: $password, mobileNo: $mobileNo, status: $status, email: $email, address: $address, image: $image, lastLogin: $lastLogin, lastPurchaseDate: $lastPurchaseDate)';
+    return 'UserModel(customerId: $customerId, customerName: $customerName, mobileNo: $mobileNo, status: $status, email: $email, address: $address, createdOn: $createdOn, updatedOn: $updatedOn, lastLogin: $lastLogin, image: $image, lastPurchaseDate: $lastPurchaseDate, password: $password)';
   }
 
   @override
@@ -98,29 +110,33 @@ class UserModel {
     if (identical(this, other)) return true;
 
     return other is UserModel &&
-        other.id == id &&
+        other.customerId == customerId &&
         other.customerName == customerName &&
-        other.password == password &&
         other.mobileNo == mobileNo &&
         other.status == status &&
         other.email == email &&
         other.address == address &&
-        other.image == image &&
+        other.createdOn == createdOn &&
+        other.updatedOn == updatedOn &&
         other.lastLogin == lastLogin &&
-        other.lastPurchaseDate == lastPurchaseDate;
+        other.image == image &&
+        other.lastPurchaseDate == lastPurchaseDate &&
+        other.password == password;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
+    return customerId.hashCode ^
         customerName.hashCode ^
-        password.hashCode ^
         mobileNo.hashCode ^
         status.hashCode ^
         email.hashCode ^
         address.hashCode ^
-        image.hashCode ^
+        createdOn.hashCode ^
+        updatedOn.hashCode ^
         lastLogin.hashCode ^
-        lastPurchaseDate.hashCode;
+        image.hashCode ^
+        lastPurchaseDate.hashCode ^
+        password.hashCode;
   }
 }
