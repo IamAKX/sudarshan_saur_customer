@@ -11,6 +11,7 @@ import 'package:saur_customer/utils/preference_key.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/input_field_light.dart';
 import 'package:saur_customer/widgets/primary_button_dark.dart';
+// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 
 import '../../models/dealer_model.dart';

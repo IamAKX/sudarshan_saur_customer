@@ -290,7 +290,7 @@ class ApiProvider extends ChangeNotifier {
       }
     } on DioException catch (e) {
       status = ApiStatus.failed;
-      var resBody = e.response?.data ?? {};
+      // var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
       SnackBarService.instance
