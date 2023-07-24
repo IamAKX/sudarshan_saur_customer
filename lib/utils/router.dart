@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/blocked_user/blocked_users_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
 import 'package:saur_customer/screens/profile/change_password.dart';
 import 'package:saur_customer/screens/profile/edit_profile.dart';
+import 'package:saur_customer/screens/request/new_request.dart';
+import 'package:saur_customer/screens/request/request_detail_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
@@ -31,6 +34,14 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const ChangePassword());
       case BlockedUserScreen.routePath:
         return MaterialPageRoute(builder: (_) => const BlockedUserScreen());
+      case NewRequestScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const NewRequestScreen());
+      case RequestDetalScreen.routePath:
+        return MaterialPageRoute(
+          builder: (_) => RequestDetalScreen(
+            warrantyRequest: settings.arguments as WarrantyRequestModel,
+          ),
+        );
       default:
         return errorRoute();
     }

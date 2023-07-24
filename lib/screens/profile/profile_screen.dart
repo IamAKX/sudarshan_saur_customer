@@ -106,7 +106,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: const Text('Edit Profile'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  Navigator.of(context).pushNamed(EditProfile.routePath);
+                  Navigator.of(context)
+                      .pushNamed(EditProfile.routePath)
+                      .then((value) => reloadScreen());
                 },
               ),
               const Divider(

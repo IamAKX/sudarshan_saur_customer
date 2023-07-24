@@ -1,7 +1,15 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:saur_customer/widgets/alert_popup.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:saur_customer/models/list_models/warranty_request_list.dart';
+import 'package:saur_customer/screens/request/new_request.dart';
+import 'package:saur_customer/screens/request/request_detail_screen.dart';
+import 'package:saur_customer/utils/date_time_formatter.dart';
+import 'package:saur_customer/utils/helper_method.dart';
+import 'package:saur_customer/utils/preference_key.dart';
+import '../../services/api_service.dart';
+import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
@@ -15,28 +23,47 @@ class RequestScreen extends StatefulWidget {
 }
 
 class _RequestScreenState extends State<RequestScreen> {
-  final TextEditingController _serialNoCtrl = TextEditingController();
-  final TextEditingController _dealerNameCtrl = TextEditingController();
-  bool isListVisible = false;
+  late ApiProvider _api;
+  String selectedDealer = '';
+  WarrantyRequestList? list;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => reloadScreen(),
+    );
+  }
+
+  reloadScreen() async {
+    await _api
+        .getWarrantyRequestListByCustomerId(SharedpreferenceKey.getUserId())
+        .then((value) {
+      setState(() {
+        list = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: InkWell(
-          onTap: () => setState(() {
-            isListVisible = !isListVisible;
-          }),
-          child: Text(
-            'Warranty Request',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+        title: Text(
+          'Warranty Request',
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
-      body: getBody(context),
+      body: _api.status == ApiStatus.loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : getBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showSerialNoInputPopup(context);
+          Navigator.pushNamed(context, NewRequestScreen.routePath)
+              .then((value) => reloadScreen());
         },
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
@@ -50,202 +77,97 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   getBody(BuildContext context) {
-    return isListVisible
+    return list?.data?.isNotEmpty ?? false
         ? Padding(
             padding: const EdgeInsets.all(defaultPadding),
-            child: ListView(
-              children: [
-                // Pending tile
-                ExpansionTile(
-                  textColor: textColorDark,
-                  collapsedBackgroundColor: Colors.white,
-                  backgroundColor: pendingColor.withOpacity(0.1),
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Serial No ',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: textColorLight,
-                                ),
-                      ),
-                      Text(
-                        '2544845',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: textColorDark,
-                            ),
-                      ),
-                    ],
-                  ),
-                  subtitle: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '5h ago',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: hintColor,
-                            ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: defaultPadding / 2),
-                        width: 3,
-                        height: defaultPadding * 0.75,
-                        color: dividerColor,
-                      ),
-                      Text(
-                        'Request in review',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: pendingColor,
-                            ),
-                      ),
-                    ],
-                  ),
+            child: ListView.builder(
+              itemCount: list?.data?.length ?? 0,
+              itemBuilder: (context, index) =>
+                  // Pending tile
+                  ExpansionTile(
+                textColor: textColorDark,
+                collapsedBackgroundColor: Colors.white,
+                backgroundColor: pendingColor.withOpacity(0.1),
+                title: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      width: double.maxFinite,
-                      color: pendingColor,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: defaultPadding / 2),
-                        color: Colors.white,
-                        child: const Padding(
-                          padding: EdgeInsets.all(defaultPadding / 2),
-                          child: Text(
-                              'Your request is under validation, you will be notified in 24 hours'),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                // Accepted
-                ExpansionTile(
-                  textColor: textColorDark,
-                  collapsedBackgroundColor: Colors.white,
-                  backgroundColor: acceptedColor.withOpacity(0.1),
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Serial No ',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: textColorLight,
-                                ),
-                      ),
-                      Text(
-                        '2544844',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: textColorDark,
-                            ),
-                      ),
-                    ],
-                  ),
-                  subtitle: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '1d ago',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: hintColor,
-                            ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: defaultPadding / 2),
-                        width: 3,
-                        height: defaultPadding * 0.75,
-                        color: dividerColor,
-                      ),
-                      Text(
-                        'Request is approved',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: acceptedColor,
-                            ),
-                      ),
-                    ],
-                  ),
-                  children: [
-                    Container(
-                      width: double.maxFinite,
-                      color: acceptedColor,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: defaultPadding / 2),
-                        color: Colors.white,
-                        child: const Padding(
-                          padding: EdgeInsets.all(defaultPadding / 2),
-                          child: Text(
-                              'Your warranty card is generated. You get download or get it on email or whatsapp.'),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                // Rejected
-                ExpansionTile(
-                  textColor: textColorDark,
-                  collapsedBackgroundColor: Colors.white,
-                  backgroundColor: rejectedColor.withOpacity(0.1),
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Serial No ',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: textColorLight,
-                                ),
-                      ),
-                      Text(
-                        '2544843',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: textColorDark,
-                            ),
-                      ),
-                    ],
-                  ),
-                  subtitle: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '2w ago',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: hintColor,
-                            ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: defaultPadding / 2),
-                        width: 3,
-                        height: defaultPadding * 0.75,
-                        color: dividerColor,
-                      ),
-                      Text(
-                        'Request is rejected',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: rejectedColor,
-                            ),
-                      ),
-                    ],
-                  ),
-                  childrenPadding: EdgeInsets.zero,
-                  children: [
-                    Container(
-                      width: double.maxFinite,
-                      color: rejectedColor,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: defaultPadding / 2),
-                        color: Colors.white,
-                        child: const Padding(
-                          padding: EdgeInsets.all(defaultPadding / 2),
-                          child: Text(
-                              'The serial number in your request is incorrect'),
-                        ),
-                      ),
+                    Text(
+                      'Serial No ',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: textColorLight,
+                          ),
+                    ),
+                    Text(
+                      '${list?.data?.elementAt(index).warrantyDetails?.warrantySerialNo}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: textColorDark,
+                          ),
                     ),
                   ],
                 ),
-              ],
+                subtitle: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      DateTimeFormatter.timesAgo(
+                          list?.data?.elementAt(index).createdOn ?? ''),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: hintColor,
+                          ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: defaultPadding / 2),
+                      width: 3,
+                      height: defaultPadding * 0.75,
+                      color: dividerColor,
+                    ),
+                    Text(
+                      getShortMessageByStatus(
+                          list?.data?.elementAt(index).allocationStatus ?? ''),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: getColorByStatus(
+                                list?.data?.elementAt(index).allocationStatus ??
+                                    ''),
+                          ),
+                    ),
+                  ],
+                ),
+                children: [
+                  Container(
+                    width: double.maxFinite,
+                    color: getColorByStatus(
+                        list?.data?.elementAt(index).allocationStatus ?? ''),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: defaultPadding / 2),
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(defaultPadding / 2),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                getDetailedMessageByStatus(list?.data
+                                        ?.elementAt(index)
+                                        .allocationStatus ??
+                                    ''),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                    context, RequestDetalScreen.routePath,
+                                    arguments: list?.data?.elementAt(index));
+                              },
+                              icon: const Icon(LineAwesomeIcons.info_circle),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           )
         : noRequestWidget(context);
@@ -271,77 +193,6 @@ class _RequestScreenState extends State<RequestScreen> {
                       color: hintColor,
                     ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showSerialNoInputPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text(
-          'Serial number',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: primaryColor,
-              ),
-        ),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Enter device serial number',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: hintColor,
-                  ),
-            ),
-            verticalGap(10),
-            TextField(
-              controller: _serialNoCtrl,
-              decoration: secondaryTextFieldDecoration('Serial Number'),
-            ),
-            verticalGap(defaultPadding),
-            Text(
-              'Enter Dealer Name',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: hintColor,
-                  ),
-            ),
-            verticalGap(10),
-            TextField(
-              controller: _dealerNameCtrl,
-              decoration: secondaryTextFieldDecoration('Dealer Name'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Cancel',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: hintColor,
-                  ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              showPopup(context, DialogType.success, 'Done!',
-                  'We have received your request. You will hear from us in 24 hours');
-            },
-            child: Text(
-              'Proceed',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
             ),
           ),
         ],
