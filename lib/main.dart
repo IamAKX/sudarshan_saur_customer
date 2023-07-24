@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
@@ -8,6 +9,7 @@ import 'package:saur_customer/utils/router.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'firebase_options.dart';
 import 'models/user_model.dart';
 import 'screens/blocked_user/blocked_users_screen.dart';
 import 'screens/user_onboarding/login_screen.dart';
@@ -22,6 +24,9 @@ Future<void> main() async {
     userModel = await ApiProvider()
         .getCustomerById(prefs.getInt(SharedpreferenceKey.userId) ?? 0);
   }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

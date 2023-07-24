@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/profile/change_password.dart';
@@ -14,6 +17,7 @@ import '../../main.dart';
 import '../../models/user_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../services/storage_service.dart';
 import '../../utils/preference_key.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,6 +30,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late ApiProvider _api;
   UserModel? user;
+  bool isImageUploading = false;
 
   @override
   void initState() {
@@ -229,7 +234,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
           bottom: 1,
           right: 1,
           child: InkWell(
-            onTap: () {},
+            onTap: isImageUploading
+                ? null
+                : () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      File imageFile = File(image.path);
+                      setState(() {
+                        isImageUploading = true;
+                      });
+                      StorageService.uploadProfileImage(
+                              imageFile,
+                              '${user?.email}.${image.name.split('.')[1]}',
+                              'customer/profileImage')
+                          .then((value) async {
+                        _api.updateUser({'image': value},
+                            user?.customerId ?? -1).then((value) {
+                          isImageUploading = false;
+                          reloadScreen();
+                        });
+                      });
+                    }
+                  },
             child: Container(
               width: 40,
               height: 40,
