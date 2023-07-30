@@ -1,3 +1,5 @@
+import '../models/address_model.dart';
+
 String getShortMessageByStatus(String status) {
   switch (status) {
     case 'PENDING':
@@ -22,4 +24,8 @@ String getDetailedMessageByStatus(String status) {
     default:
       return 'Request is ${status.toLowerCase()}';
   }
+}
+
+String prepareAddress(AddressModel? address) {
+  return '${address?.addressLine1}, ${address?.addressLine2}, ${address?.city}, ${address?.state} - ${address?.zipCode}';
 }

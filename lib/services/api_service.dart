@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:saur_customer/models/list_models/customer_list_model.dart';
 import 'package:saur_customer/models/list_models/dealer_last_model.dart';
@@ -22,6 +24,10 @@ class ApiProvider extends ChangeNotifier {
   static ApiProvider instance = ApiProvider();
   ApiProvider() {
     _dio = Dio();
+    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () =>
+        HttpClient()
+          ..badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
   }
 
   Future<bool> createUser(UserModel user) async {
@@ -44,6 +50,8 @@ class ApiProvider extends ChangeNotifier {
         },
         "image": user.image
       };
+      debugPrint(json.encode(reqBody));
+      log(Api.users);
       Response response = await _dio.post(
         Api.users,
         data: json.encode(reqBody),
@@ -52,6 +60,7 @@ class ApiProvider extends ChangeNotifier {
           responseType: ResponseType.json,
         ),
       );
+      debugPrint(response.toString());
       if (response.statusCode == 200) {
         UserModel user = UserModel.fromMap(response.data['data']);
         prefs.setInt(SharedpreferenceKey.userId, user.customerId ?? 0);
@@ -82,11 +91,13 @@ class ApiProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<UserModel?> login(String email, String password) async {
     status = ApiStatus.loading;
+    UserModel? userModel;
     notifyListeners();
     try {
       Map<String, dynamic> map = {'email': email, 'password': password};
+      log(json.encode(map));
       Response response = await _dio.post(
         Api.login,
         data: json.encode(map),
@@ -95,18 +106,13 @@ class ApiProvider extends ChangeNotifier {
           responseType: ResponseType.json,
         ),
       );
+
       if (response.statusCode == 200) {
-        UserModel user = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, user.customerId ?? 0);
-        if (user.status == UserStatus.ACTIVE.name) {
-          status = ApiStatus.success;
-          notifyListeners();
-          return true;
-        } else {
-          status = ApiStatus.failed;
-          notifyListeners();
-          return false;
-        }
+        userModel = UserModel.fromMap(response.data['data']);
+        prefs.setInt(SharedpreferenceKey.userId, userModel.customerId ?? 0);
+        status = ApiStatus.success;
+        notifyListeners();
+        return userModel;
       }
     } on DioException catch (e) {
       status = ApiStatus.failed;
@@ -123,7 +129,7 @@ class ApiProvider extends ChangeNotifier {
     }
     status = ApiStatus.failed;
     notifyListeners();
-    return false;
+    return userModel;
   }
 
   Future<bool> updateUser(Map<String, dynamic> user, int id) async {
@@ -186,8 +192,8 @@ class ApiProvider extends ChangeNotifier {
       var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
-      SnackBarService.instance
-          .showSnackBarError('Error : ${resBody['message']}');
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();
@@ -275,6 +281,9 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     try {
+      log(
+        json.encode(reqBody),
+      );
       Response response = await _dio.post(
         Api.requestWarranty,
         data: json.encode(reqBody),
@@ -290,11 +299,10 @@ class ApiProvider extends ChangeNotifier {
       }
     } on DioException catch (e) {
       status = ApiStatus.failed;
-      // var resBody = e.response?.data ?? {};
+      var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
-      SnackBarService.instance
-          .showSnackBarError('Error : Invalid serial number');
+      SnackBarService.instance.showSnackBarError('Error : $resBody');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();
@@ -311,9 +319,10 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     WarrantyRequestList? list;
+    log('${Api.requestWarranty}customer/  $id');
     try {
       Response response = await _dio.get(
-        Api.requestWarranty,
+        '${Api.requestWarranty}customer/$id',
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,

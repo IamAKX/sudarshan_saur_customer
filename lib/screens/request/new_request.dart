@@ -153,9 +153,9 @@ class _NewRequestScreenState extends State<NewRequestScreen> {
             }
             int? customerId = prefs.getInt(SharedpreferenceKey.userId);
             Map<String, dynamic> reqBody = {
-              "warrantyDetails": {"warrantySerialNo": _serialNoCtrl.text},
+              "warrantySerialNo": _serialNoCtrl.text,
               "dealers": {"dealerId": dealer.dealerId},
-              "customers": {"customerId": customerId},
+              "customer": {"customerId": customerId},
               "allocationStatus": "PENDING",
               "initUserType": "CUSTOMER",
               "initiatedBy": "$customerId",

@@ -1,71 +1,123 @@
 import 'dart:convert';
 
+import 'package:saur_customer/models/user_model.dart';
+
+import 'stockist_model.dart';
+
 class WarrantyModel {
   String? warrantySerialNo;
-  String? invoiceNo;
+  String? crmCustomerName;
+  String? crmCustomerMobileNo;
   String? itemDescription;
-  String? model;
   String? installationDate;
-  String? guranteePeriod;
-  String? validTill;
+  String? model;
+  String? guaranteeStatus;
+  String? guaranteePeriod;
+  String? assignedTo;
   String? custBillDate;
-  String? allocationStatus;
   String? billNo;
-  String? subDealer;
-  String? dealers;
+  String? invoiceNo;
+  String? crmDealerName;
+  String? crmStockistName;
+  String? crmStockistMobileNo;
+  String? crmStockistEmail;
   String? state;
   String? description;
+  StockistModel? stockists;
+  UserModel? customer;
+  String? allocationStatus;
+  String? createdOn;
+  String? updatedOn;
+  String? initUserType;
+  String? initiatedBy;
+  String? approvedBy;
   String? lpd;
   WarrantyModel({
     this.warrantySerialNo,
-    this.invoiceNo,
+    this.crmCustomerName,
+    this.crmCustomerMobileNo,
     this.itemDescription,
-    this.model,
     this.installationDate,
-    this.guranteePeriod,
-    this.validTill,
+    this.model,
+    this.guaranteeStatus,
+    this.guaranteePeriod,
+    this.assignedTo,
     this.custBillDate,
-    this.allocationStatus,
     this.billNo,
-    this.subDealer,
-    this.dealers,
+    this.invoiceNo,
+    this.crmDealerName,
+    this.crmStockistName,
+    this.crmStockistMobileNo,
+    this.crmStockistEmail,
     this.state,
     this.description,
+    this.stockists,
+    this.customer,
+    this.allocationStatus,
+    this.createdOn,
+    this.updatedOn,
+    this.initUserType,
+    this.initiatedBy,
+    this.approvedBy,
     this.lpd,
   });
 
   WarrantyModel copyWith({
     String? warrantySerialNo,
-    String? invoiceNo,
+    String? crmCustomerName,
+    String? crmCustomerMobileNo,
     String? itemDescription,
-    String? model,
     String? installationDate,
-    String? guranteePeriod,
-    String? validTill,
+    String? model,
+    String? guaranteeStatus,
+    String? guaranteePeriod,
+    String? assignedTo,
     String? custBillDate,
-    String? allocationStatus,
     String? billNo,
-    String? subDealer,
-    String? dealers,
+    String? invoiceNo,
+    String? crmDealerName,
+    String? crmStockistName,
+    String? crmStockistMobileNo,
+    String? crmStockistEmail,
     String? state,
     String? description,
+    StockistModel? stockists,
+    UserModel? customer,
+    String? allocationStatus,
+    String? createdOn,
+    String? updatedOn,
+    String? initUserType,
+    String? initiatedBy,
+    String? approvedBy,
     String? lpd,
   }) {
     return WarrantyModel(
       warrantySerialNo: warrantySerialNo ?? this.warrantySerialNo,
-      invoiceNo: invoiceNo ?? this.invoiceNo,
+      crmCustomerName: crmCustomerName ?? this.crmCustomerName,
+      crmCustomerMobileNo: crmCustomerMobileNo ?? this.crmCustomerMobileNo,
       itemDescription: itemDescription ?? this.itemDescription,
-      model: model ?? this.model,
       installationDate: installationDate ?? this.installationDate,
-      guranteePeriod: guranteePeriod ?? this.guranteePeriod,
-      validTill: validTill ?? this.validTill,
+      model: model ?? this.model,
+      guaranteeStatus: guaranteeStatus ?? this.guaranteeStatus,
+      guaranteePeriod: guaranteePeriod ?? this.guaranteePeriod,
+      assignedTo: assignedTo ?? this.assignedTo,
       custBillDate: custBillDate ?? this.custBillDate,
-      allocationStatus: allocationStatus ?? this.allocationStatus,
       billNo: billNo ?? this.billNo,
-      subDealer: subDealer ?? this.subDealer,
-      dealers: dealers ?? this.dealers,
+      invoiceNo: invoiceNo ?? this.invoiceNo,
+      crmDealerName: crmDealerName ?? this.crmDealerName,
+      crmStockistName: crmStockistName ?? this.crmStockistName,
+      crmStockistMobileNo: crmStockistMobileNo ?? this.crmStockistMobileNo,
+      crmStockistEmail: crmStockistEmail ?? this.crmStockistEmail,
       state: state ?? this.state,
       description: description ?? this.description,
+      stockists: stockists ?? this.stockists,
+      customer: customer ?? this.customer,
+      allocationStatus: allocationStatus ?? this.allocationStatus,
+      createdOn: createdOn ?? this.createdOn,
+      updatedOn: updatedOn ?? this.updatedOn,
+      initUserType: initUserType ?? this.initUserType,
+      initiatedBy: initiatedBy ?? this.initiatedBy,
+      approvedBy: approvedBy ?? this.approvedBy,
       lpd: lpd ?? this.lpd,
     );
   }
@@ -73,19 +125,31 @@ class WarrantyModel {
   Map<String, dynamic> toMap() {
     return {
       'warrantySerialNo': warrantySerialNo,
-      'invoiceNo': invoiceNo,
+      'crmCustomerName': crmCustomerName,
+      'crmCustomerMobileNo': crmCustomerMobileNo,
       'itemDescription': itemDescription,
-      'model': model,
       'installationDate': installationDate,
-      'guranteePeriod': guranteePeriod,
-      'validTill': validTill,
+      'model': model,
+      'guaranteeStatus': guaranteeStatus,
+      'guaranteePeriod': guaranteePeriod,
+      'assignedTo': assignedTo,
       'custBillDate': custBillDate,
-      'allocationStatus': allocationStatus,
       'billNo': billNo,
-      'subDealer': subDealer,
-      'dealers': dealers,
+      'invoiceNo': invoiceNo,
+      'crmDealerName': crmDealerName,
+      'crmStockistName': crmStockistName,
+      'crmStockistMobileNo': crmStockistMobileNo,
+      'crmStockistEmail': crmStockistEmail,
       'state': state,
       'description': description,
+      'stockists': stockists?.toMap(),
+      'customer': customer?.toMap(),
+      'allocationStatus': allocationStatus,
+      'createdOn': createdOn,
+      'updatedOn': updatedOn,
+      'initUserType': initUserType,
+      'initiatedBy': initiatedBy,
+      'approvedBy': approvedBy,
       'lpd': lpd,
     };
   }
@@ -93,19 +157,34 @@ class WarrantyModel {
   factory WarrantyModel.fromMap(Map<String, dynamic> map) {
     return WarrantyModel(
       warrantySerialNo: map['warrantySerialNo'],
-      invoiceNo: map['invoiceNo'],
+      crmCustomerName: map['crmCustomerName'],
+      crmCustomerMobileNo: map['crmCustomerMobileNo'],
       itemDescription: map['itemDescription'],
-      model: map['model'],
       installationDate: map['installationDate'],
-      guranteePeriod: map['guranteePeriod'],
-      validTill: map['validTill'],
+      model: map['model'],
+      guaranteeStatus: map['guaranteeStatus'],
+      guaranteePeriod: map['guaranteePeriod'],
+      assignedTo: map['assignedTo'],
       custBillDate: map['custBillDate'],
-      allocationStatus: map['allocationStatus'],
       billNo: map['billNo'],
-      subDealer: map['subDealer'],
-      dealers: map['dealers'],
+      invoiceNo: map['invoiceNo'],
+      crmDealerName: map['crmDealerName'],
+      crmStockistName: map['crmStockistName'],
+      crmStockistMobileNo: map['crmStockistMobileNo'],
+      crmStockistEmail: map['crmStockistEmail'],
       state: map['state'],
       description: map['description'],
+      stockists: map['stockists'] != null
+          ? StockistModel.fromMap(map['stockists'])
+          : null,
+      customer:
+          map['customer'] != null ? UserModel.fromMap(map['customer']) : null,
+      allocationStatus: map['allocationStatus'],
+      createdOn: map['createdOn'],
+      updatedOn: map['updatedOn'],
+      initUserType: map['initUserType'],
+      initiatedBy: map['initiatedBy'],
+      approvedBy: map['approvedBy'],
       lpd: map['lpd'],
     );
   }
@@ -117,7 +196,7 @@ class WarrantyModel {
 
   @override
   String toString() {
-    return 'WarrantyModel(warrantySerialNo: $warrantySerialNo, invoiceNo: $invoiceNo, itemDescription: $itemDescription, model: $model, installationDate: $installationDate, guranteePeriod: $guranteePeriod, validTill: $validTill, custBillDate: $custBillDate, allocationStatus: $allocationStatus, billNo: $billNo, subDealer: $subDealer, dealers: $dealers, state: $state, description: $description, lpd: $lpd)';
+    return 'WarrantyModel(warrantySerialNo: $warrantySerialNo, crmCustomerName: $crmCustomerName, crmCustomerMobileNo: $crmCustomerMobileNo, itemDescription: $itemDescription, installationDate: $installationDate, model: $model, guaranteeStatus: $guaranteeStatus, guaranteePeriod: $guaranteePeriod, assignedTo: $assignedTo, custBillDate: $custBillDate, billNo: $billNo, invoiceNo: $invoiceNo, crmDealerName: $crmDealerName, crmStockistName: $crmStockistName, crmStockistMobileNo: $crmStockistMobileNo, crmStockistEmail: $crmStockistEmail, state: $state, description: $description, stockists: $stockists, customer: $customer, allocationStatus: $allocationStatus, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, lpd: $lpd)';
   }
 
   @override
@@ -126,38 +205,62 @@ class WarrantyModel {
 
     return other is WarrantyModel &&
         other.warrantySerialNo == warrantySerialNo &&
-        other.invoiceNo == invoiceNo &&
+        other.crmCustomerName == crmCustomerName &&
+        other.crmCustomerMobileNo == crmCustomerMobileNo &&
         other.itemDescription == itemDescription &&
-        other.model == model &&
         other.installationDate == installationDate &&
-        other.guranteePeriod == guranteePeriod &&
-        other.validTill == validTill &&
+        other.model == model &&
+        other.guaranteeStatus == guaranteeStatus &&
+        other.guaranteePeriod == guaranteePeriod &&
+        other.assignedTo == assignedTo &&
         other.custBillDate == custBillDate &&
-        other.allocationStatus == allocationStatus &&
         other.billNo == billNo &&
-        other.subDealer == subDealer &&
-        other.dealers == dealers &&
+        other.invoiceNo == invoiceNo &&
+        other.crmDealerName == crmDealerName &&
+        other.crmStockistName == crmStockistName &&
+        other.crmStockistMobileNo == crmStockistMobileNo &&
+        other.crmStockistEmail == crmStockistEmail &&
         other.state == state &&
         other.description == description &&
+        other.stockists == stockists &&
+        other.customer == customer &&
+        other.allocationStatus == allocationStatus &&
+        other.createdOn == createdOn &&
+        other.updatedOn == updatedOn &&
+        other.initUserType == initUserType &&
+        other.initiatedBy == initiatedBy &&
+        other.approvedBy == approvedBy &&
         other.lpd == lpd;
   }
 
   @override
   int get hashCode {
     return warrantySerialNo.hashCode ^
-        invoiceNo.hashCode ^
+        crmCustomerName.hashCode ^
+        crmCustomerMobileNo.hashCode ^
         itemDescription.hashCode ^
-        model.hashCode ^
         installationDate.hashCode ^
-        guranteePeriod.hashCode ^
-        validTill.hashCode ^
+        model.hashCode ^
+        guaranteeStatus.hashCode ^
+        guaranteePeriod.hashCode ^
+        assignedTo.hashCode ^
         custBillDate.hashCode ^
-        allocationStatus.hashCode ^
         billNo.hashCode ^
-        subDealer.hashCode ^
-        dealers.hashCode ^
+        invoiceNo.hashCode ^
+        crmDealerName.hashCode ^
+        crmStockistName.hashCode ^
+        crmStockistMobileNo.hashCode ^
+        crmStockistEmail.hashCode ^
         state.hashCode ^
         description.hashCode ^
+        stockists.hashCode ^
+        customer.hashCode ^
+        allocationStatus.hashCode ^
+        createdOn.hashCode ^
+        updatedOn.hashCode ^
+        initUserType.hashCode ^
+        initiatedBy.hashCode ^
+        approvedBy.hashCode ^
         lpd.hashCode;
   }
 }

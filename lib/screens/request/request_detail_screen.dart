@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 
 import '../../utils/colors.dart';
@@ -9,7 +9,7 @@ import '../../widgets/gaps.dart';
 class RequestDetalScreen extends StatefulWidget {
   const RequestDetalScreen({super.key, required this.warrantyRequest});
   static const String routePath = '/requestDetalScreen';
-  final WarrantyRequestModel warrantyRequest;
+  final WarrantyModel warrantyRequest;
 
   @override
   State<RequestDetalScreen> createState() => _RequestDetalScreenState();
@@ -52,15 +52,15 @@ class _RequestDetalScreenState extends State<RequestDetalScreen> {
             ),
             verticalGap(defaultPadding * 0.5),
             cardLargeDetail(context, 'Dealer',
-                widget.warrantyRequest.dealers?.dealerName ?? ''),
+                widget.warrantyRequest.stockists?.stockistName ?? ''),
             cardLargeDetail(context, 'Business',
-                widget.warrantyRequest.dealers?.businessName ?? ''),
+                widget.warrantyRequest.stockists?.businessName ?? ''),
             cardLargeDetail(context, 'Phone',
-                widget.warrantyRequest.dealers?.mobileNo ?? ''),
-            cardLargeDetail(context, 'Place',
-                '${widget.warrantyRequest.warrantyDetails?.state}'),
+                widget.warrantyRequest.stockists?.mobileNo ?? ''),
+            cardLargeDetail(
+                context, 'Place', '${widget.warrantyRequest.state}'),
             cardLargeDetail(context, 'Address',
-                widget.warrantyRequest.dealers?.businessAddress ?? ''),
+                widget.warrantyRequest.stockists?.businessAddress ?? ''),
           ],
         ),
       ),
@@ -85,22 +85,23 @@ class _RequestDetalScreenState extends State<RequestDetalScreen> {
             cardLargeDetail(
               context,
               'System info',
-              '${widget.warrantyRequest.warrantyDetails?.itemDescription} ${widget.warrantyRequest.warrantyDetails?.lpd}',
+              '${widget.warrantyRequest.itemDescription} ${widget.warrantyRequest.lpd}',
             ),
             cardLargeDetail(context, 'Serial No',
-                '${widget.warrantyRequest.warrantyDetails?.warrantySerialNo}'),
+                '${widget.warrantyRequest.warrantySerialNo}'),
             cardLargeDetail(context, 'Guarantee',
-                '${widget.warrantyRequest.warrantyDetails?.guranteePeriod}'),
-            cardLargeDetail(context, 'Model No',
-                '${widget.warrantyRequest.warrantyDetails?.model}'),
-            cardLargeDetail(context, 'Invoice',
-                '${widget.warrantyRequest.warrantyDetails?.invoiceNo}'),
+                '${widget.warrantyRequest.guaranteePeriod}'),
+            cardLargeDetail(context, 'Guarantee Status',
+                '${widget.warrantyRequest.guaranteeStatus}'),
+            cardLargeDetail(
+                context, 'Model No', '${widget.warrantyRequest.model}'),
+            cardLargeDetail(
+                context, 'Invoice', '${widget.warrantyRequest.invoiceNo}'),
             cardLargeDetail(
               context,
               'Installed on',
               DateTimeFormatter.onlyDateShort(
-                  widget.warrantyRequest.warrantyDetails?.installationDate ??
-                      ''),
+                  widget.warrantyRequest.installationDate ?? ''),
             ),
           ],
         ),

@@ -190,6 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.red,
                 ),
                 onTap: () {
+                  prefs.clear();
                   Navigator.pushNamedAndRemoveUntil(
                       context, LoginScreen.routePath, (route) => false);
                 },

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/theme.dart';
@@ -43,6 +45,19 @@ class _BlockedUserScreenState extends State<BlockedUserScreen> {
                 await launchUrl(mail);
               },
               child: const Text('Contact Admin'),
+            ),
+            TextButton(
+              onPressed: () async {
+                prefs.clear().then((value) => Navigator.pushNamedAndRemoveUntil(
+                    context, LoginScreen.routePath, (route) => false));
+              },
+              child: Text(
+                'Logout',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(color: Colors.red),
+              ),
             )
           ],
         ),

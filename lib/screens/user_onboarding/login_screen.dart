@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/screens/blocked_user/blocked_users_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
+import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 import 'package:saur_customer/widgets/input_field_dark.dart';
@@ -111,12 +114,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       base64.encode(_passwordCtrl.text.codeUnits),
                     )
                         .then((value) {
-                      if (value) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          HomeContainer.routePath,
-                          (route) => false,
-                        );
+                      if (value != null) {
+                        if (value.status == UserStatus.ACTIVE.name) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            HomeContainer.routePath,
+                            (route) => false,
+                          );
+                        } else {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            BlockedUserScreen.routePath,
+                            (route) => false,
+                          );
+                        }
                       }
                     });
                   },

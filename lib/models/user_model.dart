@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:saur_customer/models/address_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
 
 class UserModel {
   int? customerId;

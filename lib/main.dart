@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/services/api_service.dart';
+import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/router.dart';
 import 'package:saur_customer/utils/theme.dart';
@@ -23,6 +24,10 @@ Future<void> main() async {
   if (prefs.getInt(SharedpreferenceKey.userId) != null) {
     userModel = await ApiProvider()
         .getCustomerById(prefs.getInt(SharedpreferenceKey.userId) ?? 0);
+    if (userModel != null) {
+      await ApiProvider().updateUser(
+          {'lastLogin': DateTimeFormatter.now()}, userModel?.customerId ?? 0);
+    }
   }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
 
 class WarrantyRequestList {
-  List<WarrantyRequestModel>? data;
+  List<WarrantyModel>? data;
   WarrantyRequestList({
     this.data,
   });
 
   WarrantyRequestList copyWith({
-    List<WarrantyRequestModel>? data,
+    List<WarrantyModel>? data,
   }) {
     return WarrantyRequestList(
       data: data ?? this.data,
@@ -20,15 +20,15 @@ class WarrantyRequestList {
 
   Map<String, dynamic> toMap() {
     return {
-      'data': data?.map((x) => x.toMap()).toList(),
+      'data': data?.map((x) => x?.toMap())?.toList(),
     };
   }
 
   factory WarrantyRequestList.fromMap(Map<String, dynamic> map) {
     return WarrantyRequestList(
       data: map['data'] != null
-          ? List<WarrantyRequestModel>.from(
-              map['data']?.map((x) => WarrantyRequestModel.fromMap(x)))
+          ? List<WarrantyModel>.from(
+              map['data']?.map((x) => WarrantyModel.fromMap(x)))
           : null,
     );
   }

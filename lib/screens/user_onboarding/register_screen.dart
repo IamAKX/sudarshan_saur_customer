@@ -200,7 +200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   base64.encode(_passwordCtrl.text.codeUnits),
                               lastLogin: DateTimeFormatter.now(),
                               mobileNo: _phoneCtrl.text,
-                              status: UserStatus.BLOCKED.name,
+                              status: UserStatus.CREATED.name,
                             );
 
                             _api.createUser(user).then((value) {

@@ -98,7 +98,7 @@ class _RequestScreenState extends State<RequestScreen> {
                           ),
                     ),
                     Text(
-                      '${list?.data?.elementAt(index).warrantyDetails?.warrantySerialNo}',
+                      '${list?.data?.elementAt(index).warrantySerialNo}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: textColorDark,
                           ),

@@ -1,9 +1,23 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:saur_customer/models/user_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
+import 'package:saur_customer/screens/warrenty/warranty_pdf.dart';
+import 'package:saur_customer/services/snakbar_service.dart';
 import 'package:saur_customer/utils/colors.dart';
+import 'package:saur_customer/utils/date_time_formatter.dart';
+import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
+
+import '../../models/list_models/warranty_request_list.dart';
+import '../../services/api_service.dart';
+import '../../utils/preference_key.dart';
 
 class WarrentyScreen extends StatefulWidget {
   const WarrentyScreen({super.key, required this.switchTabs});
@@ -14,135 +28,169 @@ class WarrentyScreen extends StatefulWidget {
 }
 
 class _WarrentyScreenState extends State<WarrentyScreen> {
-  bool isListVisible = false;
+  late ApiProvider _api;
+  String selectedDealer = '';
+  WarrantyRequestList? list;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => reloadScreen(),
+    );
+  }
+
+  reloadScreen() async {
+    await _api
+        .getWarrantyRequestListByCustomerId(SharedpreferenceKey.getUserId())
+        .then((value) {
+      setState(() {
+        list = value;
+
+        list?.data?.retainWhere((element) =>
+            element.allocationStatus == AllocationStatus.APPROVED.name);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: InkWell(
-          onTap: () => setState(() {
-            isListVisible = !isListVisible;
-          }),
-          child: Text(
-            'Warranty Card',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+        title: Text(
+          'Warranty Card',
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
-      body: getBody(context),
+      body: _api.status == ApiStatus.loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : getBody(context),
     );
   }
 
   getBody(BuildContext context) {
-    return isListVisible
-        ? ListView(
-            children: [
-              Card(
-                elevation: defaultPadding,
-                margin: const EdgeInsets.all(defaultPadding),
-                child: Container(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: warrantyCardSmallDetail(
-                                context, 'Serial No', '268899'),
-                          ),
-                          Expanded(
-                            child: warrantyCardSmallDetail(
-                                context, 'Invoice', 'C00374/525'),
-                          ),
-                          Expanded(
-                            child: warrantyCardSmallDetail(
-                                context, 'Issued On', '2022-11-15'),
-                          ),
-                        ],
-                      ),
-                      const Divider(
-                        color: dividerColor,
-                      ),
-                      warrantyCardLargeDetail(
-                        context,
-                        'Cust Name',
-                        'Shree Sunil Desai',
-                      ),
-                      verticalGap(5),
-                      warrantyCardLargeDetail(
-                        context,
-                        'Cust Address',
-                        'No:7 United Building, Paradise, M G Road, Hyderabad, Andhra Pradesh - 500003',
-                      ),
-                      verticalGap(5),
-                      warrantyCardLargeDetail(
-                        context,
-                        'Dealer',
-                        'Rajat Soni',
-                      ),
-                      verticalGap(5),
-                      warrantyCardLargeDetail(
-                        context,
-                        'System info',
-                        '200 WUGL-A 58X2100-10 Guarantee*',
-                      ),
-                      verticalGap(5),
-                      warrantyCardLargeDetail(
-                        context,
-                        'Valid Till',
-                        '2037-11-15',
-                      ),
-                      const Divider(
-                        color: dividerColor,
-                      ),
-                      verticalGap(5),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/logo/logo.png',
-                            width: 120,
-                            color: primaryColor,
-                          ),
-                          const Spacer(),
-                          InkWell(
-                            onTap: () {},
-                            child: const Icon(
-                              LineAwesomeIcons.what_s_app,
-                              color: Colors.green,
-                            ),
-                          ),
-                          horizontalGap(defaultPadding),
-                          InkWell(
-                            onTap: () {},
-                            child: const Icon(
-                              LineAwesomeIcons.envelope_1,
-                              color: Colors.red,
-                            ),
-                          ),
-                          horizontalGap(defaultPadding),
-                          InkWell(
-                            onTap: () {},
-                            child: const Icon(
-                                LineAwesomeIcons.alternate_cloud_download,
-                                color: Colors.blue),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
+    return list?.data?.isNotEmpty ?? false
+        ? ListView.builder(
+            itemCount: list?.data?.length ?? 0,
+            itemBuilder: (BuildContext context, int index) =>
+                warrantyCard(context, list?.data?.elementAt(index)),
           )
         : noWarrantyCardWidget(context);
+  }
+
+  Card warrantyCard(BuildContext context, WarrantyModel? model) {
+    return Card(
+      elevation: defaultPadding,
+      margin: const EdgeInsets.all(defaultPadding),
+      child: Container(
+        padding: const EdgeInsets.all(defaultPadding),
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: warrantyCardSmallDetail(
+                      context, 'Serial No', model?.warrantySerialNo ?? ''),
+                ),
+                Expanded(
+                  child: warrantyCardSmallDetail(
+                      context, 'Invoice', model?.invoiceNo ?? ''),
+                ),
+                Expanded(
+                  child: warrantyCardSmallDetail(
+                      context,
+                      'Issued On',
+                      DateTimeFormatter.onlyDateShort(
+                          model?.installationDate ?? '')),
+                ),
+              ],
+            ),
+            const Divider(
+              color: dividerColor,
+            ),
+            warrantyCardLargeDetail(
+              context,
+              'Cust Name',
+              model?.crmCustomerName ?? '',
+            ),
+            verticalGap(5),
+            warrantyCardLargeDetail(
+              context,
+              'State',
+              model?.state ?? '',
+            ),
+            verticalGap(5),
+            warrantyCardLargeDetail(
+              context,
+              'Dealer',
+              model?.crmDealerName ?? '',
+            ),
+            verticalGap(5),
+            warrantyCardLargeDetail(
+              context,
+              'System info',
+              '${model?.itemDescription} ${model?.model ?? ''}',
+            ),
+            verticalGap(5),
+            warrantyCardLargeDetail(
+              context,
+              'Valid Till',
+              '${model?.guaranteePeriod}',
+            ),
+            const Divider(
+              color: dividerColor,
+            ),
+            verticalGap(5),
+            Row(
+              children: [
+                Image.asset(
+                  'assets/logo/logo.png',
+                  width: 120,
+                  color: primaryColor,
+                ),
+                const Spacer(),
+                InkWell(
+                  onTap: () {},
+                  child: const Icon(
+                    LineAwesomeIcons.what_s_app,
+                    color: Colors.green,
+                  ),
+                ),
+                horizontalGap(defaultPadding),
+                InkWell(
+                  onTap: () {},
+                  child: const Icon(
+                    LineAwesomeIcons.envelope_1,
+                    color: Colors.red,
+                  ),
+                ),
+                horizontalGap(defaultPadding),
+                InkWell(
+                  onTap: () {
+                    makePdf(model);
+                    SnackBarService.instance
+                        .showSnackBarSuccess('Warranty downloaded');
+                  },
+                  child: const Icon(LineAwesomeIcons.alternate_cloud_download,
+                      color: Colors.blue),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Row warrantyCardLargeDetail(BuildContext context, String key, String value) {
