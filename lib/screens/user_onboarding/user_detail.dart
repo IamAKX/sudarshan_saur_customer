@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
+import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
@@ -26,8 +27,6 @@ class UserDetail extends StatefulWidget {
 }
 
 class _UserDetailState extends State<UserDetail> {
-  bool isAgreementChecked = false;
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -77,10 +76,11 @@ class _UserDetailState extends State<UserDetail> {
               child: Checkbox(
                 activeColor: Colors.white,
                 checkColor: primaryColor,
-                value: isAgreementChecked,
+                value: RegisterScreen.agreementStatus,
                 onChanged: (value) {
                   setState(() {
-                    isAgreementChecked = !isAgreementChecked;
+                    RegisterScreen.agreementStatus =
+                        !RegisterScreen.agreementStatus;
                   });
                 },
               ),

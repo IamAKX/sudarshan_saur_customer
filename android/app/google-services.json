@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "701933233833",
+    "firebase_url": "https://sudarshan-saur-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "sudarshan-saur",
+    "storage_bucket": "sudarshan-saur.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701933233833:android:3ea3b1edbd50fe2994abb8",
+        "android_client_info": {
+          "package_name": "com.sudarshansaur.customer.saur_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "701933233833-esq5hkr6g1in594lhvj89prp8htd21j9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZXRTmo9oWpEBlYlvLqr3IgNoiaTsLa0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "701933233833-esq5hkr6g1in594lhvj89prp8htd21j9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

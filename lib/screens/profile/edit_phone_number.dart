@@ -1,16 +1,26 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
+import 'dart:math';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:provider/provider.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/alert_popup.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 import 'package:saur_customer/widgets/input_field_light.dart';
 import 'package:saur_customer/widgets/primary_button_dark.dart';
+
+import '../../main.dart';
+import '../../models/user_model.dart';
+import '../../services/api_service.dart';
+import '../../services/snakbar_service.dart';
+import '../../utils/preference_key.dart';
 
 class EditPhoneNumber extends StatefulWidget {
   const EditPhoneNumber({super.key});
@@ -22,9 +32,37 @@ class EditPhoneNumber extends StatefulWidget {
 class _EditPhoneNumberState extends State<EditPhoneNumber> {
   final TextEditingController _phoneNumberCtrl = TextEditingController();
   final TextEditingController _otpCtrl = TextEditingController();
+  String code = '';
+
+  late ApiProvider _api;
+  UserModel? user;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => reloadScreen(),
+    );
+  }
+
+  sendOtp() {
+    code = (Random().nextInt(9000) + 1000).toString();
+    ApiProvider().sendOtp(_phoneNumberCtrl.text, code.toString());
+  }
+
+  reloadScreen() async {
+    await _api
+        .getCustomerById(prefs.getInt(SharedpreferenceKey.userId) ?? -1)
+        .then((value) {
+      setState(() {
+        user = value;
+        _phoneNumberCtrl.text = user?.mobileNo ?? '';
+      });
+    });
+  }
 
   Timer? _timer;
-  static const int otpResendThreshold = 10;
+  static const int otpResendThreshold = 30;
   int _secondsRemaining = otpResendThreshold;
   bool _timerActive = false;
   bool _isValidateButtonActive = true;
@@ -52,6 +90,8 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(defaultPadding),
@@ -78,6 +118,7 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
                     onPressed: () {
                       _isValidateButtonActive = false;
                       startTimer();
+                      sendOtp();
                     },
                     child: Text(
                       'Send OTP',
@@ -114,13 +155,29 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
           ),
           verticalGap(defaultPadding * 2),
           PrimaryButtonDark(
-            onPressed: () {
-              showPopup(context, DialogType.success, 'Success',
-                  'Your phone number is updated');
+            onPressed: () async {
+              if (_phoneNumberCtrl.text.isEmpty) {
+                SnackBarService.instance
+                    .showSnackBarError('All fields are mandatory');
+                return;
+              }
+              if (_otpCtrl.text != code) {
+                SnackBarService.instance.showSnackBarError('invalid otp');
+                return;
+              }
+              Map<String, dynamic> map = {"mobileNo": _phoneNumberCtrl.text};
+              _api.updateUser(map, user?.customerId ?? -1).then((value) async {
+                if (value) {
+                  await reloadScreen();
+                  showPopup(context, DialogType.success, 'Success',
+                      'Your phone number is updated');
+                }
+              });
             },
             label: 'Validate and Update',
-            isDisabled: _isValidateButtonActive,
-            isLoading: false,
+            isDisabled:
+                _isValidateButtonActive || _api.status == ApiStatus.loading,
+            isLoading: _api.status == ApiStatus.loading,
           )
         ],
       ),

@@ -34,3 +34,16 @@ extension HexColor on Color {
       '${green.toRadixString(16).padLeft(2, '0')}'
       '${blue.toRadixString(16).padLeft(2, '0')}';
 }
+
+Color getColorByStatus(String status) {
+  switch (status) {
+    case 'PENDING':
+      return pendingColor;
+    case 'APPROVED':
+      return acceptedColor;
+    case 'DECLINED':
+      return rejectedColor;
+    default:
+      return textColorDark;
+  }
+}
