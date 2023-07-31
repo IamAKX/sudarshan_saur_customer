@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:saur_customer/models/user_model.dart';
 
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
@@ -8,9 +9,10 @@ import '../../widgets/input_password_field_dark.dart';
 class NewPassword extends StatefulWidget {
   const NewPassword({
     Key? key,
-    required this.passwordCtrl,
+    required this.passwordCtrl, required this.userModel,
   }) : super(key: key);
   final TextEditingController passwordCtrl;
+  final UserModel userModel;
 
   @override
   State<NewPassword> createState() => _NewPasswordState();

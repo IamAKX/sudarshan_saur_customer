@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   late ApiProvider _api;
 
+  String code = '';
   @override
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
@@ -184,7 +186,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          if (_otpCodeCtrl.text == '1234') {
+                          if (_otpCodeCtrl.text == code) {
+                            step = 1;
                             UserModel user = UserModel(
                               address: AddressModel(
                                 addressLine1: addressLine1Ctrl.text,
@@ -237,9 +240,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             phoneCtrl: _phoneCtrl,
             nameCtrl: _nameCtrl);
       case 3:
+        code = (Random().nextInt(9000) + 1000).toString();
+        ApiProvider().sendOtp(_phoneCtrl.text, code.toString());
         return OtpVerification(
           phoneCtrl: _phoneCtrl,
-          otpCode: '1234',
+          otpCode: code.toString(),
           otpCodeCtrl: _otpCodeCtrl,
         );
 

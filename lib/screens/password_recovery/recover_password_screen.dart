@@ -1,8 +1,18 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
 import 'package:saur_customer/screens/password_recovery/new_password.dart';
 import 'package:saur_customer/screens/password_recovery/registered_phone_number.dart';
+import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/otp_verification.dart';
+import 'package:saur_customer/utils/api.dart';
 
+import '../../models/list_models/customer_list_model.dart';
+import '../../services/api_service.dart';
+import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
@@ -24,7 +34,9 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
   final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _otpCodeCtrl = TextEditingController();
   int step = 1;
-
+  CustomerListModel? customerListModel;
+  late ApiProvider _api;
+  String code = '';
   @override
   void initState() {
     super.initState();
@@ -39,6 +51,8 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       body: getBody(context),
     );
@@ -149,7 +163,16 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                 Visibility(
                   visible: (step == 1 || step == 2),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      if (step == 1) {
+                        customerListModel =
+                            await _api.getCustomerMobileNumber(_phoneCtrl.text);
+                        if (customerListModel == null ||
+                            customerListModel?.data == null ||
+                            (customerListModel?.data?.isEmpty ?? true)) {
+                          return;
+                        }
+                      }
                       setState(() {
                         step += 1;
                       });
@@ -169,7 +192,27 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          debugPrint(_otpCodeCtrl.text);
+                          if (_otpCodeCtrl.text != code) {
+                            SnackBarService.instance
+                                .showSnackBarError('Invalid OTP');
+                            return;
+                          }
+                          Map<String, dynamic> map = {
+                            'password':
+                                base64.encode(_passwordCtrl.text.codeUnits),
+                          };
+                          _api
+                              .updateUser(
+                                  map,
+                                  customerListModel?.data?.first.customerId ??
+                                      -1)
+                              .then((value) async {
+                            if (value) {
+                              prefs.clear();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  LoginScreen.routePath, (route) => false);
+                            }
+                          });
                         },
                         label: 'Change',
                         isDisabled: false,
@@ -190,10 +233,15 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
       case 1:
         return RegisteredPhoneNumber(phoneCtrl: _phoneCtrl);
       case 2:
+        code = (Random().nextInt(9000) + 1000).toString();
+        ApiProvider().sendOtp(_phoneCtrl.text, code.toString());
         return OtpVerification(
-            phoneCtrl: _phoneCtrl, otpCode: '1234', otpCodeCtrl: _otpCodeCtrl);
+            phoneCtrl: _phoneCtrl, otpCode: code, otpCodeCtrl: _otpCodeCtrl);
       case 3:
-        return NewPassword(passwordCtrl: _passwordCtrl);
+        return NewPassword(
+          passwordCtrl: _passwordCtrl,
+          userModel: customerListModel!.data!.first,
+        );
       default:
         return Container();
     }

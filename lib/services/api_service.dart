@@ -241,6 +241,42 @@ class ApiProvider extends ChangeNotifier {
     return list;
   }
 
+  Future<CustomerListModel?> getCustomerMobileNumber(String phone) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    CustomerListModel? list;
+    try {
+      Response response = await _dio.get(
+        '${Api.users}/?mobileNo=$phone',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        list = CustomerListModel.fromMap(response.data);
+        status = ApiStatus.success;
+        notifyListeners();
+        return list;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return list;
+  }
+
   Future<DealerListModel?> getAllDealers() async {
     status = ApiStatus.loading;
     notifyListeners();
@@ -349,5 +385,40 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.failed;
     notifyListeners();
     return list;
+  }
+
+  Future<bool> sendOtp(String phone, String otp) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.get(
+        Api.buildOtpUrl(phone, otp),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        SnackBarService.instance.showSnackBarInfo('OTP sent');
+        status = ApiStatus.success;
+        notifyListeners();
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
   }
 }

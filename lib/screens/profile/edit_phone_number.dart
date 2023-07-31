@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class EditPhoneNumber extends StatefulWidget {
 class _EditPhoneNumberState extends State<EditPhoneNumber> {
   final TextEditingController _phoneNumberCtrl = TextEditingController();
   final TextEditingController _otpCtrl = TextEditingController();
+  String code = '';
 
   late ApiProvider _api;
   UserModel? user;
@@ -41,6 +43,11 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
+  }
+
+  sendOtp() {
+    code = (Random().nextInt(9000) + 1000).toString();
+    ApiProvider().sendOtp(_phoneNumberCtrl.text, code.toString());
   }
 
   reloadScreen() async {
@@ -55,7 +62,7 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
   }
 
   Timer? _timer;
-  static const int otpResendThreshold = 10;
+  static const int otpResendThreshold = 30;
   int _secondsRemaining = otpResendThreshold;
   bool _timerActive = false;
   bool _isValidateButtonActive = true;
@@ -111,6 +118,7 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
                     onPressed: () {
                       _isValidateButtonActive = false;
                       startTimer();
+                      sendOtp();
                     },
                     child: Text(
                       'Send OTP',
@@ -153,7 +161,10 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
                     .showSnackBarError('All fields are mandatory');
                 return;
               }
-
+              if (_otpCtrl.text != code) {
+                SnackBarService.instance.showSnackBarError('invalid otp');
+                return;
+              }
               Map<String, dynamic> map = {"mobileNo": _phoneNumberCtrl.text};
               _api.updateUser(map, user?.customerId ?? -1).then((value) async {
                 if (value) {
