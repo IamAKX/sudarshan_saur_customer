@@ -192,7 +192,7 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          if (_otpCodeCtrl.text != code) {
+                          if (code!='' && _otpCodeCtrl.text != code) {
                             SnackBarService.instance
                                 .showSnackBarError('Invalid OTP');
                             return;
