@@ -76,7 +76,7 @@ class _EditAddressState extends State<EditAddress> {
             icon: LineAwesomeIcons.home),
         verticalGap(defaultPadding),
         InputFieldLight(
-            hint: 'Address Line 3',
+            hint: 'Address Line 2',
             controller: addressLine2Ctrl,
             keyboardType: TextInputType.streetAddress,
             obscure: false,

@@ -161,7 +161,7 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
                     .showSnackBarError('All fields are mandatory');
                 return;
               }
-              if (_otpCtrl.text != code) {
+              if (code == '' || _otpCtrl.text != code) {
                 SnackBarService.instance.showSnackBarError('invalid otp');
                 return;
               }

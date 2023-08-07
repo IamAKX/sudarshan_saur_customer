@@ -172,6 +172,12 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                             (customerListModel?.data?.isEmpty ?? true)) {
                           return;
                         }
+                      } else if (step == 2) {
+                        if (code == '' || _otpCodeCtrl.text != code) {
+                          SnackBarService.instance
+                              .showSnackBarError('Invalid OTP');
+                          return;
+                        }
                       }
                       setState(() {
                         step += 1;
@@ -192,7 +198,7 @@ class _RecoverPasswordScreenState extends State<RecoverPasswordScreen>
                     width: 250,
                     child: PrimaryButton(
                         onPressed: () {
-                          if (code!='' && _otpCodeCtrl.text != code) {
+                          if (code != '' && _otpCodeCtrl.text != code) {
                             SnackBarService.instance
                                 .showSnackBarError('Invalid OTP');
                             return;
