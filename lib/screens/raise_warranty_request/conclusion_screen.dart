@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/utils/colors.dart';
+import 'package:saur_customer/utils/constants.dart';
+import 'package:saur_customer/widgets/gaps.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/theme.dart';
 
 class ConclusionScreen extends StatefulWidget {
   const ConclusionScreen({
@@ -37,7 +41,7 @@ class _ConclusionScreenState extends State<ConclusionScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Conclusion',
+            'Request Submitted',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
@@ -45,6 +49,23 @@ class _ConclusionScreenState extends State<ConclusionScreen> {
   }
 
   getBody(BuildContext context) {
-    return ListView();
+    return ListView(
+      padding: const EdgeInsets.all(defaultPadding),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(defaultPadding),
+          child: Text(Constants.conclusionMessage),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(defaultPadding / 2),
+              border: Border.all(color: hintColor)),
+        ),
+        verticalGap(defaultPadding),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('OK'),
+        )
+      ],
+    );
   }
 }

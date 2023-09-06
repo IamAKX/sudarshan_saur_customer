@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 import 'package:string_validator/string_validator.dart';
@@ -162,7 +163,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   verticalGap(defaultPadding * 2),
                   PrimaryButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, InstallationAddressScreen.routePath);
+                    },
                     label: 'Register',
                     isDisabled: _api.status == ApiStatus.loading,
                     isLoading: _api.status == ApiStatus.loading,
