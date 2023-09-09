@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/system_details_screen.dart';
 
+import '../../models/address_model.dart';
 import '../../models/list_models/state_district_list_model.dart';
 import '../../models/state_district_model.dart';
 import '../../services/api_service.dart';
@@ -47,7 +48,8 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
   @override
   void initState() {
     super.initState();
-    stateDistrictList = StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
+    stateDistrictList =
+        StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
     selectedDistrict = stateDistrictList!.states!
         .firstWhere((element) => element.state == selectedState)
         .districts!
@@ -72,6 +74,24 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                if (!isValidInputs()) {
+                  return;
+                }
+                AddressModel ownerAddress = AddressModel(
+                    houseNo: _houseNumberCtrl.text,
+                    area: _colonyCtrl.text,
+                    street1: _street1Ctrl.text,
+                    street2: _street2Ctrl.text,
+                    landmark: _landmarkCtrl.text,
+                    state: selectedState,
+                    district: selectedDistrict,
+                    country: 'India',
+                    taluk: _talukaCtrl.text,
+                    town: _placeCtrl.text,
+                    zipCode: _zipCodeCtrl.text);
+
+                widget.warrantyRequestModel.ownerAddress = ownerAddress;
+
                 Navigator.pushNamed(context, SystemDetailScreen.routePath,
                     arguments: widget.warrantyRequestModel);
               },
@@ -86,33 +106,33 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
     return ListView(
       padding: const EdgeInsets.all(defaultPadding),
       children: [
+        // const Text(
+        //   'User Detail',
+        // ),
+        // verticalGap(defaultPadding),
+        // InputFieldLight(
+        //     hint: 'Name',
+        //     controller: _nameCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.user),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Phone Number',
+        //     controller: _phoneNumberCtrl,
+        //     keyboardType: TextInputType.phone,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.phone),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Whatsapp Number',
+        //     controller: _whatsappNumberCtrl,
+        //     keyboardType: TextInputType.phone,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.what_s_app),
+        // verticalGap(defaultPadding * 2),
         const Text(
-          'User Detail',
-        ),
-        verticalGap(defaultPadding),
-        InputFieldLight(
-            hint: 'Name',
-            controller: _nameCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.user),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Phone Number',
-            controller: _phoneNumberCtrl,
-            keyboardType: TextInputType.phone,
-            obscure: false,
-            icon: LineAwesomeIcons.phone),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Whatsapp Number',
-            controller: _whatsappNumberCtrl,
-            keyboardType: TextInputType.phone,
-            obscure: false,
-            icon: LineAwesomeIcons.what_s_app),
-        verticalGap(defaultPadding * 2),
-        const Text(
-          'Solar water heater installation address',
+          'Solar water heater owner\'s address',
         ),
         verticalGap(defaultPadding),
         InputFieldLight(
@@ -231,11 +251,54 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
         InputFieldLight(
             hint: 'Pincode',
             controller: _zipCodeCtrl,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
             obscure: false,
             icon: LineAwesomeIcons.home),
         verticalGap(defaultPadding),
       ],
     );
+  }
+
+  bool isValidInputs() {
+    if (_houseNumberCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('House Number cannot be empty');
+      return false;
+    }
+    if (_colonyCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Colony / Area cannot be empty');
+      return false;
+    }
+    if (_street1Ctrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Street 1 cannot be empty');
+      return false;
+    }
+    if (_landmarkCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
+      return false;
+    }
+    if (selectedState.isEmpty) {
+      SnackBarService.instance.showSnackBarError('State cannot be empty');
+      return false;
+    }
+    if (selectedDistrict.isEmpty) {
+      SnackBarService.instance.showSnackBarError('District cannot be empty');
+      return false;
+    }
+    if (_talukaCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Taluka cannot be empty');
+      return false;
+    }
+    if (_placeCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Place / Town cannot be empty');
+      return false;
+    }
+    if (_zipCodeCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Pincode cannot be empty');
+      return false;
+    }
+    return true;
   }
 }

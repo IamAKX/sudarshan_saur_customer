@@ -1,21 +1,21 @@
 import 'dart:convert';
 
-class DealerModel {
+class PlumberModel {
   String? name;
   String? mobile;
   String? place;
-  DealerModel({
+  PlumberModel({
     this.name,
     this.mobile,
     this.place,
   });
 
-  DealerModel copyWith({
+  PlumberModel copyWith({
     String? name,
     String? mobile,
     String? place,
   }) {
-    return DealerModel(
+    return PlumberModel(
       name: name ?? this.name,
       mobile: mobile ?? this.mobile,
       place: place ?? this.place,
@@ -30,8 +30,8 @@ class DealerModel {
     };
   }
 
-  factory DealerModel.fromMap(Map<String, dynamic> map) {
-    return DealerModel(
+  factory PlumberModel.fromMap(Map<String, dynamic> map) {
+    return PlumberModel(
       name: map['name'],
       mobile: map['mobile'],
       place: map['place'],
@@ -40,7 +40,7 @@ class DealerModel {
 
   String toJson() => json.encode(toMap());
 
-  factory DealerModel.fromJson(String source) => DealerModel.fromMap(json.decode(source));
+  factory PlumberModel.fromJson(String source) => PlumberModel.fromMap(json.decode(source));
 
   @override
   String toString() => 'DealerModel(name: $name, mobile: $mobile, place: $place)';
@@ -49,7 +49,7 @@ class DealerModel {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
   
-    return other is DealerModel &&
+    return other is PlumberModel &&
       other.name == name &&
       other.mobile == mobile &&
       other.place == place;

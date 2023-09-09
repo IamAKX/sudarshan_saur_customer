@@ -94,22 +94,22 @@ class _NewRequestScreenState extends State<NewRequestScreen> {
               ),
         ),
         verticalGap(defaultPadding / 2),
-        EasyAutocomplete(
-          controller: _dealerNameCtrl,
-          suggestions:
-              dealerList?.data?.map((e) => e.businessName ?? '').toList() ?? [],
-          onSubmitted: (value) {
-            setState(() {
-              selectedDealer = value;
-            });
-          },
-          suggestionBackgroundColor: Colors.white,
-          decoration: const InputDecoration(
-            hintText: 'Dealer name',
-            filled: true,
-            prefixIcon: Icon(LineAwesomeIcons.store),
-          ),
-        ),
+        // EasyAutocomplete(
+        //   controller: _dealerNameCtrl,
+        //   suggestions:
+        //       dealerList?.data?.map((e) => e.businessName ?? '').toList() ?? [],
+        //   onSubmitted: (value) {
+        //     setState(() {
+        //       selectedDealer = value;
+        //     });
+        //   },
+        //   suggestionBackgroundColor: Colors.white,
+        //   decoration: const InputDecoration(
+        //     hintText: 'Dealer name',
+        //     filled: true,
+        //     prefixIcon: Icon(LineAwesomeIcons.store),
+        //   ),
+        // ),
         Align(
           alignment: Alignment.centerLeft,
           child: Visibility(
@@ -139,37 +139,37 @@ class _NewRequestScreenState extends State<NewRequestScreen> {
         verticalGap(defaultPadding * 2),
         PrimaryButtonDark(
           onPressed: () async {
-            if (_serialNoCtrl.text.isEmpty) {
-              SnackBarService.instance.showSnackBarError('Enter serial number');
-              return;
-            }
-            DealerModel? dealer = dealerList?.data?.firstWhereOrNull(
-                (element) =>
-                    element.businessName?.trim().toLowerCase() ==
-                    selectedDealer.trim().toLowerCase());
-            if (dealer == null) {
-              SnackBarService.instance.showSnackBarError('Invalid dealer');
-              return;
-            }
-            int? customerId = prefs.getInt(SharedpreferenceKey.userId);
-            Map<String, dynamic> reqBody = {
-              "warrantySerialNo": _serialNoCtrl.text,
-              "dealers": {"dealerId": dealer.dealerId},
-              "customer": {"customerId": customerId},
-              "allocationStatus": "PENDING",
-              "initUserType": "CUSTOMER",
-              "initiatedBy": "$customerId",
-              "approvedBy": ""
-            };
+            //   if (_serialNoCtrl.text.isEmpty) {
+            //     SnackBarService.instance.showSnackBarError('Enter serial number');
+            //     return;
+            //   }
+            //   DealerModel? dealer = dealerList?.data?.firstWhereOrNull(
+            //       (element) =>
+            //           element.businessName?.trim().toLowerCase() ==
+            //           selectedDealer.trim().toLowerCase());
+            //   if (dealer == null) {
+            //     SnackBarService.instance.showSnackBarError('Invalid dealer');
+            //     return;
+            //   }
+            //   int? customerId = prefs.getInt(SharedpreferenceKey.userId);
+            //   Map<String, dynamic> reqBody = {
+            //     "warrantySerialNo": _serialNoCtrl.text,
+            //     "dealers": {"dealerId": dealer.dealerId},
+            //     "customer": {"customerId": customerId},
+            //     "allocationStatus": "PENDING",
+            //     "initUserType": "CUSTOMER",
+            //     "initiatedBy": "$customerId",
+            //     "approvedBy": ""
+            //   };
 
-            _api.createNewWarrantyRequest(reqBody).then((value) {
-              if (value) {
-                _serialNoCtrl.text = '';
-                _dealerNameCtrl.text = '';
-                showPopup(context, DialogType.success, 'Done!',
-                    'We have received your request. You will hear from us in 24 hours');
-              }
-            });
+            //   _api.createNewWarrantyRequest(reqBody).then((value) {
+            //     if (value) {
+            //       _serialNoCtrl.text = '';
+            //       _dealerNameCtrl.text = '';
+            //       showPopup(context, DialogType.success, 'Done!',
+            //           'We have received your request. You will hear from us in 24 hours');
+            //     }
+            //   });
           },
           label: 'Create',
           isDisabled: _api.status == ApiStatus.loading,

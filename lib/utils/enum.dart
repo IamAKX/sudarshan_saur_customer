@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-enum UserStatus { CREATED, SUSPENDED, ACTIVE, BLOCKED }
+enum UserStatus { CREATED, SUSPENDED, ACTIVE, BLOCKED, PENDING }
 
 enum AllocationStatus {
   PENDING,

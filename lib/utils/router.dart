@@ -76,9 +76,7 @@ class NavRoute {
         );
       case ConclusionScreen.routePath:
         return MaterialPageRoute(
-          builder: (_) => ConclusionScreen(
-            warrantyRequestModel: settings.arguments as WarrantyRequestModel,
-          ),
+          builder: (_) => const ConclusionScreen(),
         );
 
       case RequestDetalScreen.routePath:

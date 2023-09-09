@@ -23,7 +23,7 @@ class _HomeContainerState extends State<HomeContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return Scaffold(
       body: getBody(),
       bottomNavigationBar: FlashyTabBar(
         selectedIndex: _selectedIndex,

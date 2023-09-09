@@ -247,9 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         isImageUploading = true;
                       });
                       StorageService.uploadProfileImage(
-                              imageFile,
-                              '${user?.email}.${image.name.split('.')[1]}',
-                              'customer/profileImage')
+                              imageFile, user!.customerId!.toString())
                           .then((value) async {
                         _api.updateUser({'image': value},
                             user?.customerId ?? -1).then((value) {

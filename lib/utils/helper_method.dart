@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../models/address_model.dart';
 
 String getShortMessageByStatus(String status) {
@@ -27,5 +29,9 @@ String getDetailedMessageByStatus(String status) {
 }
 
 String prepareAddress(AddressModel? address) {
-  return '${address?.addressLine1}, ${address?.addressLine2}, ${address?.city}, ${address?.state} - ${address?.zipCode}';
+  return '${address?.houseNo}, ${address?.area}, ${address?.street1}, ${address?.street2}, ${address?.landmark}, ${address?.taluk}, ${address?.town}, ${address?.state}, ${address?.zipCode}';
+}
+
+String getOTPCode() {
+  return (Random().nextInt(900000) + 100000).toString();
 }

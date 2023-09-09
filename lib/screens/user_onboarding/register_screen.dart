@@ -3,14 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/models/user_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
+import 'package:saur_customer/utils/enum.dart';
+import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
+import '../../utils/preference_key.dart';
 import '../../widgets/input_field_dark.dart';
 import '../../widgets/primary_button.dart';
 
@@ -132,7 +139,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     'Enter valid 10 digit phone number');
                                 return;
                               }
+                              code = getOTPCode();
                               startTimer();
+                              _api.sendOtp(_phoneCtrl.text, code);
                             },
                       child: Text(
                         _timerActive
@@ -163,9 +172,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   verticalGap(defaultPadding * 2),
                   PrimaryButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                          context, InstallationAddressScreen.routePath);
+                    onPressed: () async {
+                      if (_nameCtrl.text.isEmpty ||
+                          _phoneCtrl.text.isEmpty ||
+                          _otpCodeCtrl.text.isEmpty ||
+                          _serialNumberCtrl.text.isEmpty) {
+                        SnackBarService.instance
+                            .showSnackBarError('All fields are mandatory');
+                        return;
+                      }
+
+                      if (_otpCodeCtrl.text != code) {
+                        SnackBarService.instance
+                            .showSnackBarError('Incorrect OTP');
+                        return;
+                      }
+                      WarrantyModel? warrantyModel = await _api
+                          .getDeviceBySerialNo(_serialNumberCtrl.text);
+                      if (warrantyModel == null) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid serial number');
+                        return;
+                      }
+                      UserModel userModel = UserModel(
+                          customerName: _nameCtrl.text,
+                          mobileNo: _phoneCtrl.text,
+                          status: UserStatus.CREATED.name);
+                      _api.createUser(userModel).then((value) async {
+                        if (value) {
+                          UserModel? newUser =
+                              await _api.getUserByPhone(_phoneCtrl.text);
+                          prefs.setString(SharedpreferenceKey.serialNumber,
+                              _serialNumberCtrl.text);
+                          prefs.setString(
+                              SharedpreferenceKey.userPhone, _phoneCtrl.text);
+                          prefs.setInt(SharedpreferenceKey.userId,
+                              newUser?.customerId ?? -1);
+                          Navigator.pushNamed(
+                              context, InstallationAddressScreen.routePath);
+                        }
+                      });
                     },
                     label: 'Register',
                     isDisabled: _api.status == ApiStatus.loading,

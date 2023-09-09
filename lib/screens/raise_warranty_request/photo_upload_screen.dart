@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/conclusion_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/constants.dart';
+import 'package:saur_customer/utils/enum.dart';
+import 'package:saur_customer/utils/preference_key.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../services/storage_service.dart';
 import '../../utils/theme.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
@@ -52,9 +56,45 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, ConclusionScreen.routePath,
-                    arguments: widget.warrantyRequestModel);
+              onPressed: () async {
+                if (systemImage == null ||
+                    serialNumberImage == null ||
+                    aadhaarImage == null) {
+                  SnackBarService.instance
+                      .showSnackBarError('Please select all 3 images');
+                  return;
+                }
+                if (agreement) {
+                  SnackBarService.instance
+                      .showSnackBarInfo('Uploading images...');
+                  widget.warrantyRequestModel.images =
+                      await StorageService.uploadReqDocuments(
+                          systemImage!,
+                          serialNumberImage!,
+                          aadhaarImage!,
+                          widget.warrantyRequestModel.customers?.customerId
+                                  .toString() ??
+                              '');
+                  widget.warrantyRequestModel.status =
+                      AllocationStatus.PENDING.name;
+                  widget.warrantyRequestModel.initUserType = 'CUSTOMER';
+                  widget.warrantyRequestModel.initiatedBy = widget
+                      .warrantyRequestModel.customers?.customerId
+                      .toString();
+                  _api
+                      .createNewWarrantyRequest(widget.warrantyRequestModel)
+                      .then((value) {
+                    if (value) {
+                      prefs.remove(SharedpreferenceKey.serialNumber);
+                      Navigator.pushNamed(context, ConclusionScreen.routePath,
+                          arguments: widget.warrantyRequestModel);
+                    }
+                  });
+                } else {
+                  SnackBarService.instance.showSnackBarError(
+                      'Please read and agree tems and conditions');
+                  return;
+                }
               },
               child: const Text('Next'),
             ),

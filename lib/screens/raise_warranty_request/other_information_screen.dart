@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/models/list_models/question_answer_model.dart';
+import 'package:saur_customer/models/list_models/question_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/photo_upload_screen.dart';
 import 'package:saur_customer/utils/constants.dart';
-import 'package:saur_customer/widgets/gaps.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
@@ -62,6 +63,12 @@ class _OtherInformationScreenState extends State<OtherInformationScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                if (!isValidInputs()) {
+                  return;
+                }
+
+                widget.warrantyRequestModel.answers = buildQnAList();
+
                 Navigator.pushNamed(context, PhotoUploadScreen.routePath,
                     arguments: widget.warrantyRequestModel);
               },
@@ -125,5 +132,56 @@ class _OtherInformationScreenState extends State<OtherInformationScreen> {
             selectedAnswer: answer13),
       ],
     );
+  }
+
+  bool isValidInputs() {
+    if (answer1.isEmpty ||
+        answer2.isEmpty ||
+        answer3.isEmpty ||
+        answer4.text.isEmpty ||
+        answer5.isEmpty ||
+        answer6.text.isEmpty ||
+        answer7.isEmpty ||
+        answer8.isEmpty ||
+        answer9.text.isEmpty ||
+        answer10.isEmpty ||
+        answer11.isEmpty ||
+        answer12.isEmpty ||
+        answer13.isEmpty) {
+      SnackBarService.instance.showSnackBarError('All fields are mandatory');
+      return false;
+    }
+    return true;
+  }
+
+  List<QuestionAnswerModel> buildQnAList() {
+    return [
+      QuestionAnswerModel(
+          answerText: answer1, questions: QuestionModel(questionId: 1)),
+      QuestionAnswerModel(
+          answerText: answer2, questions: QuestionModel(questionId: 2)),
+      QuestionAnswerModel(
+          answerText: answer3, questions: QuestionModel(questionId: 3)),
+      QuestionAnswerModel(
+          answerText: answer4.text, questions: QuestionModel(questionId: 4)),
+      QuestionAnswerModel(
+          answerText: answer5, questions: QuestionModel(questionId: 5)),
+      QuestionAnswerModel(
+          answerText: answer6.text, questions: QuestionModel(questionId: 6)),
+      QuestionAnswerModel(
+          answerText: answer7, questions: QuestionModel(questionId: 7)),
+      QuestionAnswerModel(
+          answerText: answer8, questions: QuestionModel(questionId: 8)),
+      QuestionAnswerModel(
+          answerText: answer9.text, questions: QuestionModel(questionId: 9)),
+      QuestionAnswerModel(
+          answerText: answer10, questions: QuestionModel(questionId: 10)),
+      QuestionAnswerModel(
+          answerText: answer11, questions: QuestionModel(questionId: 11)),
+      QuestionAnswerModel(
+          answerText: answer12, questions: QuestionModel(questionId: 12)),
+      QuestionAnswerModel(
+          answerText: answer13, questions: QuestionModel(questionId: 13)),
+    ];
   }
 }

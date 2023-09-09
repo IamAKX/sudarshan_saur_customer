@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/models/dealer_model.dart';
+import 'package:saur_customer/models/plumber_model.dart';
+import 'package:saur_customer/models/technician_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/other_information_screen.dart';
+import 'package:saur_customer/utils/preference_key.dart';
 
+import '../../models/warranty_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/theme.dart';
@@ -40,16 +46,33 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
   final TextEditingController _plumberNameCtrl = TextEditingController();
   final TextEditingController _plumberPhoneCtrl = TextEditingController();
   final TextEditingController _plumberPlaceCtrl = TextEditingController();
-
+  WarrantyModel? warrantyModel;
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
   }
 
-  reloadScreen() async {}
+  reloadScreen() async {
+    _serialNoCtrl.addListener(() async {
+      if (_serialNoCtrl.text.isNotEmpty) {
+        warrantyModel = await _api.getDeviceBySerialNo(_serialNoCtrl.text,
+            showAlerts: false);
+        if (warrantyModel != null) {
+          _lpdCtrl.text = warrantyModel?.lpd ?? '';
+          _modelCtrl.text = warrantyModel?.model ?? '';
+        } else {
+          _lpdCtrl.text = '';
+          _modelCtrl.text = '';
+        }
+      }
+    });
+    _serialNoCtrl.text =
+        prefs.getString(SharedpreferenceKey.serialNumber) ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +87,30 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                if (!isValidInputs()) {
+                  return;
+                }
+
+                widget.warrantyRequestModel.warrantyDetails = warrantyModel;
+                widget.warrantyRequestModel.invoiceNumber =
+                    _dealerInvoiceNoCtrl.text;
+                widget.warrantyRequestModel.invoiceDate =
+                    _dealerInvoiceDateCtrl.text;
+                widget.warrantyRequestModel.installationDate =
+                    _installationDateCtrl.text;
+                widget.warrantyRequestModel.dealerInfo = DealerModel(
+                    mobile: _dealerPhoneCtrl.text,
+                    name: _dealerNameCtrl.text,
+                    place: _dealerPlaceCtrl.text);
+                widget.warrantyRequestModel.technicianInfo = TechnicianModel(
+                    mobile: _technicianPhoneCtrl.text,
+                    name: _technicianNameCtrl.text,
+                    place: _technicianPlaceCtrl.text);
+                widget.warrantyRequestModel.plumberInfo = PlumberModel(
+                    mobile: _plumberPhoneCtrl.text,
+                    name: _plumberNameCtrl.text,
+                    place: _plumberPlaceCtrl.text);
+
                 Navigator.pushNamed(context, OtherInformationScreen.routePath,
                     arguments: widget.warrantyRequestModel);
               },
@@ -94,6 +141,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
             controller: _lpdCtrl,
             keyboardType: TextInputType.name,
             obscure: false,
+            enabled: false,
             icon: LineAwesomeIcons.plug),
         verticalGap(defaultPadding / 2),
         InputFieldLight(
@@ -101,6 +149,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
             controller: _modelCtrl,
             keyboardType: TextInputType.name,
             obscure: false,
+            enabled: false,
             icon: LineAwesomeIcons.plug),
         verticalGap(defaultPadding / 2),
         InputFieldLight(
@@ -138,7 +187,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
         InputFieldLight(
             hint: 'Dealer Phone',
             controller: _dealerPhoneCtrl,
-            keyboardType: TextInputType.name,
+            keyboardType: TextInputType.phone,
             obscure: false,
             icon: LineAwesomeIcons.plug),
         verticalGap(defaultPadding / 2),
@@ -163,7 +212,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
         InputFieldLight(
             hint: 'Technician Phone',
             controller: _technicianPhoneCtrl,
-            keyboardType: TextInputType.name,
+            keyboardType: TextInputType.phone,
             obscure: false,
             icon: LineAwesomeIcons.plug),
         verticalGap(defaultPadding / 2),
@@ -188,7 +237,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
         InputFieldLight(
             hint: 'Plumber Phone',
             controller: _plumberPhoneCtrl,
-            keyboardType: TextInputType.name,
+            keyboardType: TextInputType.phone,
             obscure: false,
             icon: LineAwesomeIcons.plug),
         verticalGap(defaultPadding / 2),
@@ -200,5 +249,70 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
             icon: LineAwesomeIcons.plug),
       ],
     );
+  }
+
+  bool isValidInputs() {
+    if (_serialNoCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter serial number');
+      return false;
+    }
+
+    if (warrantyModel == null ||
+        _lpdCtrl.text.isEmpty ||
+        _modelCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Invalid serial number');
+      return false;
+    }
+    if (_dealerInvoiceNoCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter dealer invoice number');
+      return false;
+    }
+    if (_dealerInvoiceDateCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter dealer invoice date');
+      return false;
+    }
+    if (_installationDateCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter installation date');
+      return false;
+    }
+    if (_dealerNameCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter dealer name');
+      return false;
+    }
+    if (_dealerPhoneCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter dealer phone number');
+      return false;
+    }
+    if (_dealerPlaceCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter dealer place');
+      return false;
+    }
+    if (_technicianNameCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter technician name');
+      return false;
+    }
+    if (_technicianPhoneCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Enter technician phone number');
+      return false;
+    }
+    if (_technicianPlaceCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter technician place');
+      return false;
+    }
+    if (_plumberNameCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter plumber name');
+      return false;
+    }
+    if (_plumberPhoneCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter plumber phone number');
+      return false;
+    }
+    if (_plumberPlaceCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Enter plumber place');
+      return false;
+    }
+
+    return true;
   }
 }

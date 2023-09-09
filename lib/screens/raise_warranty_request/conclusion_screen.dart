@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/screens/home_container/home_container.dart';
+import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/constants.dart';
+import 'package:saur_customer/utils/preference_key.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 
 import '../../services/api_service.dart';
@@ -12,9 +17,7 @@ import '../../utils/theme.dart';
 class ConclusionScreen extends StatefulWidget {
   const ConclusionScreen({
     super.key,
-    required this.warrantyRequestModel,
   });
-  final WarrantyRequestModel warrantyRequestModel;
   static const String routePath = '/conclusionScreen';
 
   @override
@@ -62,7 +65,15 @@ class _ConclusionScreenState extends State<ConclusionScreen> {
         ),
         verticalGap(defaultPadding),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (prefs.containsKey(SharedpreferenceKey.loggedIn)) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, HomeContainer.routePath, (route) => false);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, LoginScreen.routePath, (route) => false);
+            }
+          },
           child: const Text('OK'),
         )
       ],

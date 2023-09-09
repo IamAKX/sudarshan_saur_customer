@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:saur_customer/screens/password_recovery/recover_password_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/change_phone_number.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
+import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
 import 'package:saur_customer/widgets/input_field_dark.dart';
@@ -15,6 +16,10 @@ import 'package:string_validator/string_validator.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/enum.dart';
+import '../blocked_user/blocked_users_screen.dart';
+import '../home_container/home_container.dart';
+import '../raise_warranty_request/conclusion_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +32,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _otpCtrl = TextEditingController();
-
+  String code = '';
   late ApiProvider _api;
 
   Timer? _timer;
@@ -129,6 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               return;
                             }
                             startTimer();
+                            code = getOTPCode();
+                            _api.sendOtp(_phoneCtrl.text, code);
                           },
                     child: Text(
                       _timerActive
@@ -151,28 +158,38 @@ class _LoginScreenState extends State<LoginScreen> {
                 verticalGap(defaultPadding * 2),
                 PrimaryButton(
                   onPressed: () {
-                    // _api
-                    //     .login(
-                    //   _emailCtrl.text,
-                    //   base64.encode(_passwordCtrl.text.codeUnits),
-                    // )
-                    //     .then((value) {
-                    //   if (value != null) {
-                    //     if (value.status == UserStatus.ACTIVE.name) {
-                    //       Navigator.pushNamedAndRemoveUntil(
-                    //         context,
-                    //         HomeContainer.routePath,
-                    //         (route) => false,
-                    //       );
-                    //     } else {
-                    //       Navigator.pushNamedAndRemoveUntil(
-                    //         context,
-                    //         BlockedUserScreen.routePath,
-                    //         (route) => false,
-                    //       );
-                    //     }
-                    //   }
-                    // });
+                    if (_otpCtrl.text == code) {
+                      _api.getUserByPhone(_phoneCtrl.text).then((value) {
+                        if (value == null) {
+                          SnackBarService.instance
+                              .showSnackBarError('User not registered');
+                          return;
+                        }
+
+                        if (value.status == UserStatus.ACTIVE.name) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            HomeContainer.routePath,
+                            (route) => false,
+                          );
+                        } else if (value.status == UserStatus.PENDING.name) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            ConclusionScreen.routePath,
+                            (route) => false,
+                          );
+                        } else if (value.status == UserStatus.SUSPENDED.name) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            BlockedUserScreen.routePath,
+                            (route) => false,
+                          );
+                        }
+                      });
+                    } else {
+                      SnackBarService.instance
+                          .showSnackBarError('Incorrect OTP');
+                    }
                   },
                   label: 'Login',
                   isDisabled: _api.status == ApiStatus.loading,

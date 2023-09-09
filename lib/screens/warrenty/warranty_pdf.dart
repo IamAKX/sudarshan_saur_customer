@@ -74,8 +74,8 @@ Container warrantyContext(
             warrantyRowItem('Customer name', '${userModel?.customerName}'),
             warrantyRowItem(
                 'Customer address', prepareAddress(userModel?.address)),
-            warrantyRowItem(
-                'Dealer name', '${warranty?.stockists?.stockistName}'),
+            // warrantyRowItem(
+            //     'Dealer name', '${warranty?.stockists?.stockistName}'),
             warrantyRowItem('Dealer Address', '${warranty?.state}'),
             warrantyRowItem('System/Model Rating',
                 '${warranty?.lpd} ${warranty?.model} ${warranty?.itemDescription}'),

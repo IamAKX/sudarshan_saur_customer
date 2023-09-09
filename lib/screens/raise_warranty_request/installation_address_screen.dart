@@ -3,14 +3,20 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/models/address_model.dart';
 import 'package:saur_customer/models/list_models/state_district_list_model.dart';
+import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/owner_address_screen.dart';
+import 'package:saur_customer/screens/raise_warranty_request/system_details_screen.dart';
+import 'package:saur_customer/utils/preference_key.dart';
 
 import '../../models/state_district_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/constants.dart';
+import '../../utils/enum.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
 import '../../widgets/input_field_light.dart';
@@ -27,6 +33,7 @@ class InstallationAddressScreen extends StatefulWidget {
 class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
   late ApiProvider _api;
   WarrantyRequestModel? warrantyRequestModel;
+  UserModel? user;
 
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _phoneNumberCtrl = TextEditingController();
@@ -61,6 +68,13 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
 
   reloadScreen() async {
     warrantyRequestModel = WarrantyRequestModel();
+    user = await _api
+        .getUserByPhone(prefs.getString(SharedpreferenceKey.userPhone) ?? '');
+    setState(() {
+      warrantyRequestModel?.customers = user;
+      _nameCtrl.text = user?.customerName ?? '';
+      _phoneNumberCtrl.text = user?.mobileNo ?? '';
+    });
   }
 
   @override
@@ -76,8 +90,31 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, OwnerAddressScreen.routePath,
-                    arguments: warrantyRequestModel);
+                if (!isValidInputs()) {
+                  return;
+                }
+                AddressModel installationAddress = AddressModel(
+                    houseNo: _houseNumberCtrl.text,
+                    area: _colonyCtrl.text,
+                    street1: _street1Ctrl.text,
+                    street2: _street2Ctrl.text,
+                    landmark: _landmarkCtrl.text,
+                    state: selectedState,
+                    district: selectedDistrict,
+                    country: 'India',
+                    taluk: _talukaCtrl.text,
+                    town: _placeCtrl.text,
+                    zipCode: _zipCodeCtrl.text);
+                warrantyRequestModel?.mobile2 = _whatsappNumberCtrl.text;
+                warrantyRequestModel?.installationAddress = installationAddress;
+                if (isOwnerAddressSame) {
+                  warrantyRequestModel?.ownerAddress = installationAddress;
+                  Navigator.pushNamed(context, SystemDetailScreen.routePath,
+                      arguments: warrantyRequestModel);
+                } else {
+                  Navigator.pushNamed(context, OwnerAddressScreen.routePath,
+                      arguments: warrantyRequestModel);
+                }
               },
               child: const Text('Next'),
             ),
@@ -99,6 +136,7 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             controller: _nameCtrl,
             keyboardType: TextInputType.name,
             obscure: false,
+            enabled: false,
             icon: LineAwesomeIcons.user),
         verticalGap(defaultPadding / 2),
         InputFieldLight(
@@ -106,6 +144,7 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             controller: _phoneNumberCtrl,
             keyboardType: TextInputType.phone,
             obscure: false,
+            enabled: false,
             icon: LineAwesomeIcons.phone),
         verticalGap(defaultPadding / 2),
         InputFieldLight(
@@ -236,22 +275,68 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
         InputFieldLight(
             hint: 'Pincode',
             controller: _zipCodeCtrl,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number,
             obscure: false,
             icon: LineAwesomeIcons.home),
         verticalGap(defaultPadding),
-        CheckboxListTile(
-          tileColor: Colors.white,
-          value: isOwnerAddressSame,
-          onChanged: (value) {
-            setState(() {
-              isOwnerAddressSame = !isOwnerAddressSame;
-            });
-          },
-          title:
-              const Text('Is owner\'s address same as installation address '),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: CheckboxListTile(
+            tileColor: Colors.white,
+            value: isOwnerAddressSame,
+            onChanged: (value) {
+              setState(() {
+                isOwnerAddressSame = !isOwnerAddressSame;
+              });
+            },
+            title:
+                const Text('Is owner\'s address same as installation address '),
+          ),
         )
       ],
     );
+  }
+
+  bool isValidInputs() {
+    if (_houseNumberCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('House Number cannot be empty');
+      return false;
+    }
+    if (_colonyCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Colony / Area cannot be empty');
+      return false;
+    }
+    if (_street1Ctrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Street 1 cannot be empty');
+      return false;
+    }
+    if (_landmarkCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
+      return false;
+    }
+    if (selectedState.isEmpty) {
+      SnackBarService.instance.showSnackBarError('State cannot be empty');
+      return false;
+    }
+    if (selectedDistrict.isEmpty) {
+      SnackBarService.instance.showSnackBarError('District cannot be empty');
+      return false;
+    }
+    if (_talukaCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Taluka cannot be empty');
+      return false;
+    }
+    if (_placeCtrl.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Place / Town cannot be empty');
+      return false;
+    }
+    if (_zipCodeCtrl.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Pincode cannot be empty');
+      return false;
+    }
+    return true;
   }
 }
