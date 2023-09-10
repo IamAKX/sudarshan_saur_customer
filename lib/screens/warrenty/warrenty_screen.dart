@@ -7,6 +7,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
+import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/warrenty/warranty_pdf.dart';
 import 'package:saur_customer/services/snakbar_service.dart';
 import 'package:saur_customer/utils/colors.dart';
@@ -47,8 +48,8 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
       setState(() {
         list = value;
 
-        list?.data?.retainWhere((element) =>
-            element.allocationStatus == AllocationStatus.APPROVED.name);
+        list?.data?.retainWhere(
+            (element) => element.status == AllocationStatus.APPROVED.name);
       });
     });
   }
@@ -82,7 +83,7 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
         : noWarrantyCardWidget(context);
   }
 
-  Card warrantyCard(BuildContext context, WarrantyModel? model) {
+  Card warrantyCard(BuildContext context, WarrantyRequestModel? model) {
     return Card(
       elevation: defaultPadding,
       margin: const EdgeInsets.all(defaultPadding),
@@ -100,19 +101,19 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
             Row(
               children: [
                 Expanded(
-                  child: warrantyCardSmallDetail(
-                      context, 'Serial No', model?.warrantySerialNo ?? ''),
+                  child: warrantyCardSmallDetail(context, 'Serial No',
+                      model?.warrantyDetails?.warrantySerialNo ?? ''),
                 ),
                 Expanded(
-                  child: warrantyCardSmallDetail(
-                      context, 'Invoice', model?.invoiceNo ?? ''),
+                  child: warrantyCardSmallDetail(context, 'Invoice',
+                      model?.warrantyDetails?.invoiceNo ?? ''),
                 ),
                 Expanded(
                   child: warrantyCardSmallDetail(
                       context,
                       'Issued On',
                       DateTimeFormatter.onlyDateShort(
-                          model?.installationDate ?? '')),
+                          model?.warrantyDetails?.installationDate ?? '')),
                 ),
               ],
             ),
@@ -122,31 +123,31 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
             warrantyCardLargeDetail(
               context,
               'Cust Name',
-              model?.crmCustomerName ?? '',
+              model?.warrantyDetails?.crmCustomerName ?? '',
             ),
             verticalGap(5),
             warrantyCardLargeDetail(
               context,
               'State',
-              model?.state ?? '',
+              model?.warrantyDetails?.state ?? '',
             ),
             verticalGap(5),
             warrantyCardLargeDetail(
               context,
               'Dealer',
-              model?.crmDealerName ?? '',
+              model?.dealerInfo?.name ?? '',
             ),
             verticalGap(5),
             warrantyCardLargeDetail(
               context,
               'System info',
-              '${model?.itemDescription} ${model?.model ?? ''}',
+              '${model?.warrantyDetails?.itemDescription} ${model?.warrantyDetails?.model ?? ''}',
             ),
             verticalGap(5),
             warrantyCardLargeDetail(
               context,
               'Valid Till',
-              '${model?.guaranteePeriod}',
+              '${model?.warrantyDetails?.guaranteePeriod}',
             ),
             const Divider(
               color: dividerColor,
@@ -178,7 +179,7 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
                 horizontalGap(defaultPadding),
                 InkWell(
                   onTap: () {
-                    makePdf(model);
+                    makePdf(model?.warrantyDetails);
                     SnackBarService.instance
                         .showSnackBarSuccess('Warranty downloaded');
                   },

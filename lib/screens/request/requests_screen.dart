@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/list_models/warranty_request_list.dart';
+import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
 import 'package:saur_customer/screens/request/new_request.dart';
 import 'package:saur_customer/screens/request/request_detail_screen.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
@@ -62,7 +63,7 @@ class _RequestScreenState extends State<RequestScreen> {
           : getBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, NewRequestScreen.routePath)
+          Navigator.pushNamed(context, InstallationAddressScreen.routePath)
               .then((value) => reloadScreen());
         },
         shape: const CircleBorder(),
@@ -98,7 +99,7 @@ class _RequestScreenState extends State<RequestScreen> {
                           ),
                     ),
                     Text(
-                      '${list?.data?.elementAt(index).warrantySerialNo}',
+                      '${list?.data?.elementAt(index).warrantyDetails?.warrantySerialNo}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: textColorDark,
                           ),
@@ -124,11 +125,10 @@ class _RequestScreenState extends State<RequestScreen> {
                     ),
                     Text(
                       getShortMessageByStatus(
-                          list?.data?.elementAt(index).allocationStatus ?? ''),
+                          list?.data?.elementAt(index).status ?? ''),
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: getColorByStatus(
-                                list?.data?.elementAt(index).allocationStatus ??
-                                    ''),
+                                list?.data?.elementAt(index).status ?? ''),
                           ),
                     ),
                   ],
@@ -137,7 +137,7 @@ class _RequestScreenState extends State<RequestScreen> {
                   Container(
                     width: double.maxFinite,
                     color: getColorByStatus(
-                        list?.data?.elementAt(index).allocationStatus ?? ''),
+                        list?.data?.elementAt(index).status ?? ''),
                     child: Container(
                       margin: const EdgeInsets.only(left: defaultPadding / 2),
                       color: Colors.white,
@@ -147,10 +147,8 @@ class _RequestScreenState extends State<RequestScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                getDetailedMessageByStatus(list?.data
-                                        ?.elementAt(index)
-                                        .allocationStatus ??
-                                    ''),
+                                getDetailedMessageByStatus(
+                                    list?.data?.elementAt(index).status ?? ''),
                               ),
                             ),
                             IconButton(

@@ -85,6 +85,7 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     UserModel? userModel;
     notifyListeners();
+    log('${Api.getUserByMobile}$phone');
     try {
       Response response = await _dio.get(
         '${Api.getUserByMobile}$phone',
@@ -113,8 +114,6 @@ class ApiProvider extends ChangeNotifier {
       notifyListeners();
       log(e.toString());
     }
-    status = ApiStatus.failed;
-    notifyListeners();
     return userModel;
   }
 
@@ -306,7 +305,9 @@ class ApiProvider extends ChangeNotifier {
     try {
       Map<String, dynamic> reqMap = requestModel.toMap();
       reqMap['customers'] = {"customerId": requestModel.customers?.customerId};
-      reqMap['warrantyDetails'] = {"warrantySerialNo": requestModel.warrantyDetails?.warrantySerialNo};
+      reqMap['warrantyDetails'] = {
+        "warrantySerialNo": requestModel.warrantyDetails?.warrantySerialNo
+      };
       log(
         json.encode(reqMap),
       );
@@ -345,7 +346,7 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     WarrantyRequestList? list;
-    log('${Api.requestWarranty}customer/  $id');
+    log('${Api.requestWarranty}customer/$id');
     try {
       Response response = await _dio.get(
         '${Api.requestWarranty}customer/$id',

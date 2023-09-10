@@ -85,13 +85,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 profileImageWidget(),
                 verticalGap(defaultPadding),
                 Text(
-                  '${user?.customerName}',
+                  '${user?.customerName ?? ''}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Text(
-                  '${user?.email}',
+                  '${user?.mobileNo ?? ''}',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(),
                 ),
               ],
@@ -103,42 +103,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
           color: Colors.white,
           child: Column(
             children: [
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(
-                  LineAwesomeIcons.user_edit,
-                ),
-                title: const Text('Edit Profile'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamed(EditProfile.routePath)
-                      .then((value) => reloadScreen());
-                },
-              ),
-              const Divider(
-                height: 0,
-                color: dividerColor,
-                endIndent: defaultPadding,
-                indent: defaultPadding * 3,
-              ),
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(
-                  LineAwesomeIcons.user_lock,
-                ),
-                title: const Text('Change Password'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pushNamed(context, ChangePassword.routePath);
-                },
-              ),
-              const Divider(
-                height: 0,
-                color: dividerColor,
-                endIndent: defaultPadding,
-                indent: defaultPadding * 3,
-              ),
+              // ListTile(
+              //   tileColor: Colors.white,
+              //   leading: const Icon(
+              //     LineAwesomeIcons.user_edit,
+              //   ),
+              //   title: const Text('Edit Profile'),
+              //   trailing: const Icon(Icons.chevron_right),
+              //   onTap: () {
+              //     Navigator.of(context)
+              //         .pushNamed(EditProfile.routePath)
+              //         .then((value) => reloadScreen());
+              //   },
+              // ),
+              // const Divider(
+              //   height: 0,
+              //   color: dividerColor,
+              //   endIndent: defaultPadding,
+              //   indent: defaultPadding * 3,
+              // ),
+              // ListTile(
+              //   tileColor: Colors.white,
+              //   leading: const Icon(
+              //     LineAwesomeIcons.user_lock,
+              //   ),
+              //   title: const Text('Change Password'),
+              //   trailing: const Icon(Icons.chevron_right),
+              //   onTap: () {
+              //     Navigator.pushNamed(context, ChangePassword.routePath);
+              //   },
+              // ),
+              // const Divider(
+              //   height: 0,
+              //   color: dividerColor,
+              //   endIndent: defaultPadding,
+              //   indent: defaultPadding * 3,
+              // ),
               ListTile(
                 tileColor: Colors.white,
                 leading: const Icon(

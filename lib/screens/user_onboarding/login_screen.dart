@@ -14,9 +14,11 @@ import 'package:saur_customer/widgets/input_field_dark.dart';
 import 'package:saur_customer/widgets/primary_button.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../../main.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/enum.dart';
+import '../../utils/preference_key.dart';
 import '../blocked_user/blocked_users_screen.dart';
 import '../home_container/home_container.dart';
 import '../raise_warranty_request/conclusion_screen.dart';
@@ -119,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   obscure: false,
-                  icon: LineAwesomeIcons.at,
+                  icon: LineAwesomeIcons.phone,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -165,6 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               .showSnackBarError('User not registered');
                           return;
                         }
+
+                        prefs.setString(SharedpreferenceKey.userPhone,
+                            value.mobileNo ?? '');
+                        prefs.setInt(
+                            SharedpreferenceKey.userId, value.customerId ?? -1);
 
                         if (value.status == UserStatus.ACTIVE.name) {
                           Navigator.pushNamedAndRemoveUntil(
