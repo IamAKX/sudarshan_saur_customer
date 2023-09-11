@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/theme.dart';
@@ -39,10 +40,17 @@ class _BuildDropdownQuestionState extends State<BuildDropdownQuestion> {
             ),
             horizontalGap(defaultPadding),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
+                child: DropdownButton2<String>(
                   value: widget.selectedAnswer,
+                  hint: Text(
+                    'Select ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
                   underline: null,
                   isExpanded: true,
                   items: widget.options

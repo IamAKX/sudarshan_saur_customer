@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/screens/raise_warranty_request/other_information_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/change_phone_number.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 import 'package:saur_customer/utils/colors.dart';

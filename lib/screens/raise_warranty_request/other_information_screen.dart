@@ -26,19 +26,19 @@ class OtherInformationScreen extends StatefulWidget {
 
 class _OtherInformationScreenState extends State<OtherInformationScreen> {
   late ApiProvider _api;
-  String answer1 = Constants.option1.first;
-  String answer2 = Constants.option2.first;
-  String answer3 = Constants.option3.first;
+  String? answer1; // = Constants.option1.first;
+  String? answer2; // = Constants.option2.first;
+  String? answer3; // = Constants.option3.first;
   final TextEditingController answer4 = TextEditingController();
-  String answer5 = Constants.option4.first;
+  String? answer5; //= Constants.option4.first;
   final TextEditingController answer6 = TextEditingController();
-  String answer7 = Constants.option5.first;
-  String answer8 = Constants.option1.first;
+  String? answer7; //= Constants.option5.first;
+  String? answer8; // = Constants.option1.first;
   final TextEditingController answer9 = TextEditingController();
-  String answer10 = Constants.option1.first;
-  String answer11 = Constants.option7.first;
-  String answer12 = Constants.option8.first;
-  String answer13 = Constants.option8.first;
+  String? answer10; // = Constants.option1.first;
+  String? answer11; // = Constants.option7.first;
+  String? answer12; // = Constants.option8.first;
+  String? answer13; // = Constants.option8.first;
 
   @override
   void initState() {
@@ -135,19 +135,19 @@ class _OtherInformationScreenState extends State<OtherInformationScreen> {
   }
 
   bool isValidInputs() {
-    if (answer1.isEmpty ||
-        answer2.isEmpty ||
-        answer3.isEmpty ||
+    if ((answer1?.isEmpty ?? true) ||
+        (answer2?.isEmpty ?? true) ||
+        (answer3?.isEmpty ?? true) ||
         answer4.text.isEmpty ||
-        answer5.isEmpty ||
+        (answer5?.isEmpty ?? true) ||
         answer6.text.isEmpty ||
-        answer7.isEmpty ||
-        answer8.isEmpty ||
+        (answer7?.isEmpty ?? true) ||
+        (answer8?.isEmpty ?? true) ||
         answer9.text.isEmpty ||
-        answer10.isEmpty ||
-        answer11.isEmpty ||
-        answer12.isEmpty ||
-        answer13.isEmpty) {
+        (answer10?.isEmpty ?? true) ||
+        (answer11?.isEmpty ?? true) ||
+        (answer12?.isEmpty ?? true) ||
+        (answer13?.isEmpty ?? true)) {
       SnackBarService.instance.showSnackBarError('All fields are mandatory');
       return false;
     }
