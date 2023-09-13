@@ -287,31 +287,13 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
       SnackBarService.instance.showSnackBarError('Enter dealer place');
       return false;
     }
-    // if (_technicianNameCtrl.text.isEmpty) {
-    //   SnackBarService.instance.showSnackBarError('Enter technician name');
-    //   return false;
-    // }
-    // if (_technicianPhoneCtrl.text.isEmpty) {
-    //   SnackBarService.instance
-    //       .showSnackBarError('Enter technician phone number');
-    //   return false;
-    // }
-    // if (_technicianPlaceCtrl.text.isEmpty) {
-    //   SnackBarService.instance.showSnackBarError('Enter technician place');
-    //   return false;
-    // }
-    // if (_plumberNameCtrl.text.isEmpty) {
-    //   SnackBarService.instance.showSnackBarError('Enter plumber name');
-    //   return false;
-    // }
-    // if (_plumberPhoneCtrl.text.isEmpty) {
-    //   SnackBarService.instance.showSnackBarError('Enter plumber phone number');
-    //   return false;
-    // }
-    // if (_plumberPlaceCtrl.text.isEmpty) {
-    //   SnackBarService.instance.showSnackBarError('Enter plumber place');
-    //   return false;
-    // }
+
+    if (_dealerPhoneCtrl.text == _plumberPhoneCtrl.text ||
+        _dealerPhoneCtrl.text == _technicianPhoneCtrl.text) {
+      SnackBarService.instance.showSnackBarError(
+          'Enter dealer phone cannot be same as technician or plumber phone');
+      return false;
+    }
 
     return true;
   }

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -49,18 +50,18 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
   bool isOwnerAddressSame = false;
 
   StateDistrictListModel? stateDistrictList;
-  String selectedState = 'Andhra Pradesh';
-  String selectedDistrict = '';
+  String? selectedState;
+  String? selectedDistrict;
 
   @override
   void initState() {
     super.initState();
     stateDistrictList =
         StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
-    selectedDistrict = stateDistrictList!.states!
-        .firstWhere((element) => element.state == selectedState)
-        .districts!
-        .first;
+    // selectedDistrict = stateDistrictList!.states!
+    //     .firstWhere((element) => element.state == selectedState)
+    //     .districts!
+    //     .first;
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
@@ -203,10 +204,17 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedState,
               underline: null,
               isExpanded: true,
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
               items: stateDistrictList!.states!.map((StateDistrictModel value) {
                 return DropdownMenuItem<String>(
                   value: value.state,
@@ -215,14 +223,13 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedState = value!;
-                  selectedDistrict = stateDistrictList!.states!
-                      .firstWhere((element) => element.state == selectedState)
-                      .districts!
-                      .first;
+                  selectedState = value;
+                  // selectedDistrict = stateDistrictList!.states!
+                  //     .firstWhere((element) => element.state == selectedState)
+                  //     .districts!
+                  //     .first;
                 });
               },
-              hint: Text('Select state'),
             ),
           ),
         ),
@@ -237,21 +244,32 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedDistrict,
               underline: null,
               isExpanded: true,
-              items: stateDistrictList!.states!
-                  .firstWhere((element) => element.state == selectedState)
-                  .districts!
-                  .map((value) => DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      ))
-                  .toList(),
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
+              items: selectedState == null
+                  ? []
+                  : stateDistrictList?.states
+                          ?.firstWhere(
+                              (element) => element.state == selectedState)
+                          .districts
+                          ?.map((value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ))
+                          .toList() ??
+                      [],
               onChanged: (value) {
                 setState(() {
-                  selectedDistrict = value!;
+                  selectedDistrict = value;
                 });
               },
             ),
@@ -316,11 +334,11 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
       SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
       return false;
     }
-    if (selectedState.isEmpty) {
+    if (selectedState?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('State cannot be empty');
       return false;
     }
-    if (selectedDistrict.isEmpty) {
+    if (selectedDistrict?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('District cannot be empty');
       return false;
     }

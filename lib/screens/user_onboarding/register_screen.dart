@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -140,6 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return;
                               }
                               code = getOTPCode();
+                              log('OTP = $code');
                               startTimer();
                               _api.sendOtp(_phoneCtrl.text, code);
                             },

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +11,12 @@ class BuildDropdownQuestion extends StatefulWidget {
       {super.key,
       required this.question,
       this.selectedAnswer,
+      this.showError,
       required this.options});
   final String? question;
   String? selectedAnswer;
   final List<String> options;
+  bool? showError;
 
   @override
   State<BuildDropdownQuestion> createState() => _BuildDropdownQuestionState();
@@ -23,7 +27,11 @@ class _BuildDropdownQuestionState extends State<BuildDropdownQuestion> {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      child: Padding(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: (widget.showError ?? false) ? Colors.red : Colors.white),
+        ),
         padding: const EdgeInsets.symmetric(
             horizontal: defaultPadding, vertical: defaultPadding),
         child: Row(
@@ -62,6 +70,7 @@ class _BuildDropdownQuestionState extends State<BuildDropdownQuestion> {
                   onChanged: (value) {
                     setState(() {
                       widget.selectedAnswer = value!;
+                      log(widget.selectedAnswer ?? '');
                     });
                   },
                 ),

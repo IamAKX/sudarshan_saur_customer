@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -42,18 +43,15 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
   final TextEditingController _zipCodeCtrl = TextEditingController();
 
   StateDistrictListModel? stateDistrictList;
-  String selectedState = 'Andhra Pradesh';
-  String selectedDistrict = '';
+  String? selectedState;
+  String? selectedDistrict;
 
   @override
   void initState() {
     super.initState();
     stateDistrictList =
         StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
-    selectedDistrict = stateDistrictList!.states!
-        .firstWhere((element) => element.state == selectedState)
-        .districts!
-        .first;
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
@@ -106,31 +104,6 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
     return ListView(
       padding: const EdgeInsets.all(defaultPadding),
       children: [
-        // const Text(
-        //   'User Detail',
-        // ),
-        // verticalGap(defaultPadding),
-        // InputFieldLight(
-        //     hint: 'Name',
-        //     controller: _nameCtrl,
-        //     keyboardType: TextInputType.name,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.user),
-        // verticalGap(defaultPadding / 2),
-        // InputFieldLight(
-        //     hint: 'Phone Number',
-        //     controller: _phoneNumberCtrl,
-        //     keyboardType: TextInputType.phone,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.phone),
-        // verticalGap(defaultPadding / 2),
-        // InputFieldLight(
-        //     hint: 'Whatsapp Number',
-        //     controller: _whatsappNumberCtrl,
-        //     keyboardType: TextInputType.phone,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.what_s_app),
-        // verticalGap(defaultPadding * 2),
         const Text(
           'Solar water heater owner\'s address',
         ),
@@ -180,10 +153,17 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedState,
               underline: null,
               isExpanded: true,
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
               items: stateDistrictList!.states!.map((StateDistrictModel value) {
                 return DropdownMenuItem<String>(
                   value: value.state,
@@ -192,11 +172,7 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedState = value!;
-                  selectedDistrict = stateDistrictList!.states!
-                      .firstWhere((element) => element.state == selectedState)
-                      .districts!
-                      .first;
+                  selectedState = value;
                 });
               },
             ),
@@ -213,21 +189,32 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedDistrict,
               underline: null,
               isExpanded: true,
-              items: stateDistrictList!.states!
-                  .firstWhere((element) => element.state == selectedState)
-                  .districts!
-                  .map((value) => DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      ))
-                  .toList(),
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
+              items: selectedState == null
+                  ? []
+                  : stateDistrictList?.states
+                          ?.firstWhere(
+                              (element) => element.state == selectedState)
+                          .districts
+                          ?.map((value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ))
+                          .toList() ??
+                      [],
               onChanged: (value) {
                 setState(() {
-                  selectedDistrict = value!;
+                  selectedDistrict = value;
                 });
               },
             ),
@@ -278,11 +265,11 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
       SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
       return false;
     }
-    if (selectedState.isEmpty) {
+    if (selectedState?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('State cannot be empty');
       return false;
     }
-    if (selectedDistrict.isEmpty) {
+    if (selectedDistrict?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('District cannot be empty');
       return false;
     }
