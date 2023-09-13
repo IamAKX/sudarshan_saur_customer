@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
+import 'package:saur_customer/screens/warrenty/certificate_pdf.dart';
+import 'package:saur_customer/screens/warrenty/pdf_dummy.dart';
 import 'package:saur_customer/screens/warrenty/warranty_pdf.dart';
 import 'package:saur_customer/services/snakbar_service.dart';
 import 'package:saur_customer/utils/colors.dart';
@@ -162,28 +164,24 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
                 ),
                 const Spacer(),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    makeCertificatePdf(model);
+                    SnackBarService.instance.showSnackBarSuccess(
+                        'Installation Certificate downloaded');
+                  },
                   child: const Icon(
-                    LineAwesomeIcons.what_s_app,
+                    LineAwesomeIcons.certificate,
                     color: Colors.green,
                   ),
                 ),
                 horizontalGap(defaultPadding),
                 InkWell(
-                  onTap: () {},
-                  child: const Icon(
-                    LineAwesomeIcons.envelope_1,
-                    color: Colors.red,
-                  ),
-                ),
-                horizontalGap(defaultPadding),
-                InkWell(
                   onTap: () {
-                    makePdf(model?.warrantyDetails);
+                    makePdf(model);
                     SnackBarService.instance
-                        .showSnackBarSuccess('Warranty downloaded');
+                        .showSnackBarSuccess('Guarantee Card downloaded');
                   },
-                  child: const Icon(LineAwesomeIcons.alternate_cloud_download,
+                  child: const Icon(LineAwesomeIcons.address_card,
                       color: Colors.blue),
                 )
               ],

@@ -17,6 +17,7 @@ import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/change_phone_number.dart';
 import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
+import 'package:saur_customer/screens/warrenty/pdf_dummy.dart';
 
 import '../models/warranty_model.dart';
 import '../screens/app_intro/app_intro_screen.dart';
@@ -83,6 +84,12 @@ class NavRoute {
         return MaterialPageRoute(
           builder: (_) => RequestDetalScreen(
             warrantyRequest: settings.arguments as WarrantyRequestModel,
+          ),
+        );
+      case PdfDummy.routePath:
+        return MaterialPageRoute(
+          builder: (_) => PdfDummy(
+            warrantyRequestModel: settings.arguments as WarrantyRequestModel,
           ),
         );
       default:

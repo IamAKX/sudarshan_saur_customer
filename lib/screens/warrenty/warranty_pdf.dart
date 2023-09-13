@@ -6,17 +6,19 @@ import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
+import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
 
 import '../../services/api_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/preference_key.dart';
 
-makePdf(WarrantyModel? warranty) async {
+Future<String> makePdf(WarrantyRequestModel? warranty) async {
   final pdf = Document();
   final imageLogo = MemoryImage(
-      (await rootBundle.load('assets/logo/warranty_branding.png'))
+      (await rootBundle.load('assets/images/guarantee_logo.png'))
           .buffer
           .asUint8List());
   UserModel? userModel =
@@ -25,169 +27,209 @@ makePdf(WarrantyModel? warranty) async {
   pdf.addPage(
     Page(
       pageFormat: PdfPageFormat.a4,
-      orientation: PageOrientation.landscape,
+      orientation: PageOrientation.portrait,
+      margin: EdgeInsets.all(defaultPadding),
       build: (Context context) {
-        return Center(
-          child: Stack(children: [
-            Center(
-              child: Text(
-                'Sudarshan Saur',
-                style: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    color: PdfColors.grey200),
-              ),
-            ),
-            warrantyContext(imageLogo, warranty, userModel),
-          ]),
-        ); // Center
+        return warrantyContext(imageLogo, warranty!, userModel); // Center
       },
     ),
   ); // Page
 
-  return writeFile(pdf.save(), warranty?.warrantySerialNo ?? '');
+  return writeFile(
+      pdf.save(), warranty?.warrantyDetails?.warrantySerialNo ?? '');
 }
 
-Container warrantyContext(
-    MemoryImage imageLogo, WarrantyModel? warranty, UserModel? userModel) {
+Container warrantyContext(MemoryImage imageLogo,
+    WarrantyRequestModel warrantyRequestModel, UserModel? userModel) {
   return Container(
-    height: double.maxFinite,
     width: double.infinity,
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: PdfColors.black),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: Column(
-          children: [
-            Text(
-              'WARRANTY CERTIFICATE',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            SizedBox(
-              height: defaultPadding * 2,
-            ),
-            warrantyRowItem('Customer name', '${userModel?.customerName}'),
-            warrantyRowItem(
-                'Customer address', prepareAddress(userModel?.address)),
-            // warrantyRowItem(
-            //     'Dealer name', '${warranty?.stockists?.stockistName}'),
-            warrantyRowItem('Dealer Address', '${warranty?.state}'),
-            warrantyRowItem('System/Model Rating',
-                '${warranty?.lpd} ${warranty?.model} ${warranty?.itemDescription}'),
-            warrantyRowItem('Sr. No', '${warranty?.warrantySerialNo}'),
-            warrantyRowItem(
-                'Date',
-                DateTimeFormatter.onlyDateShort(
-                    warranty?.installationDate ?? '')),
-            warrantyRowItem('Invoice No', '${warranty?.invoiceNo}'),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Text(
-                'We here by confirm that your Sudarshan Saur Solar Water Heater System\nis guaranteed for the period mentioned from the date of the invoice.',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(
-              height: defaultPadding,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(defaultPadding / 2),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Dealer Stamp',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: PdfColors.black),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '* Condition apply',
-                          style: const TextStyle(
-                            fontSize: 8,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(defaultPadding / 2),
-                    child: Image(imageLogo),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    decoration: BoxDecoration(
+      color: PdfColors.white,
+      border: Border.all(color: pdfBorderColor),
     ),
-  );
-}
-
-warrantyRowItem(String key, String value) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Expanded(
-        child: Text(
-          key,
+    child: Column(
+      children: [
+        Text(
+          'GUARANTEE CARD',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
         ),
-      ),
-      Expanded(
-        flex: 2,
-        child: Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
+        divider(),
+        rowItem('Customer Name:',
+            warrantyRequestModel.customers?.customerName ?? ''),
+        divider(),
+        rowItem('Address:',
+            prepareAddress(warrantyRequestModel.installationAddress)),
+        divider(),
+        rowItem('Landmark:',
+            warrantyRequestModel.installationAddress?.landmark ?? ''),
+        divider(),
+        rowItem(
+            'State:', warrantyRequestModel.installationAddress?.state ?? ''),
+        divider(),
+        rowItem('District:',
+            warrantyRequestModel.installationAddress?.district ?? ''),
+        divider(),
+        rowItem(
+            'Taluka:', warrantyRequestModel.installationAddress?.taluk ?? ''),
+        divider(),
+        rowItem('Mobile No:', warrantyRequestModel.customers?.mobileNo ?? ''),
+        divider(),
+        rowItem('Mobile No:', warrantyRequestModel.mobile2 ?? ''),
+        divider(),
+        rowItem('Dealer Name:', warrantyRequestModel.dealerInfo?.name ?? ''),
+        divider(),
+        rowItem(
+            'Dealer Mobile No:', warrantyRequestModel.dealerInfo?.mobile ?? ''),
+        divider(),
+        rowItem('System Info:',
+            warrantyRequestModel.warrantyDetails?.description ?? ''),
+        divider(),
+        rowItem('System Sr. No:',
+            warrantyRequestModel.warrantyDetails?.warrantySerialNo ?? ''),
+        divider(),
+        rowItem(
+            'Company Invoice No:', warrantyRequestModel.invoiceNumber ?? ''),
+        divider(),
+        rowItem(
+            'Company Invoice Date:', warrantyRequestModel.invoiceDate ?? ''),
+        divider(),
+        rowItem(
+            'Installation Date:', warrantyRequestModel.installationDate ?? ''),
+        divider(),
+        rowItem('Guarantee* Years:',
+            warrantyRequestModel.warrantyDetails?.guaranteePeriod ?? ''),
+        divider(),
+        Text(
+          '*Conditions apply.',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
           ),
         ),
-      ),
-    ],
+        divider(),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Customer Care contact  details:- 7770066008 / 9225309153',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        divider(),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Email ID - customercare@sudarshansaur.com',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        divider(),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            Constants.guaranteeCardMsg,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 8,
+            ),
+          ),
+        ),
+        divider(),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Container(height: 40),
+                  Text(
+                    'Customer Sign',
+                    style: TextStyle(
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    height: 40,
+                    child: Image(imageLogo),
+                  ),
+                  Text(
+                    'Company Stamp',
+                    style: TextStyle(
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        divider(),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'This is electronically generated Guarantee card and does not require any signature and stamp.',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
-writeFile(Future<Uint8List> save, String slNo) async {
+PdfColor pdfBorderColor = PdfColors.purple;
+Divider divider() => Divider(
+      color: pdfBorderColor,
+    );
+Row rowItem(String key, String value) => Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Text(
+            key,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: TextStyle(fontSize: 12, color: PdfColors.black),
+          ),
+        ),
+      ],
+    );
+
+Future<String> writeFile(Future<Uint8List> save, String slNo) async {
   String filePath = '';
   if (Platform.isIOS) {
     await getApplicationDocumentsDirectory().then((dir) => filePath = dir.path);
   } else {
     filePath = '/storage/emulated/0/Download';
   }
-  filePath += '/warranty_$slNo.pdf';
+  filePath += '/Guarantee_Card_$slNo.pdf';
 
   final file = File(filePath);
-  save.then((value) async {
+  await save.then((value) async {
     await file.writeAsBytes(value);
   });
+  return filePath;
 }
