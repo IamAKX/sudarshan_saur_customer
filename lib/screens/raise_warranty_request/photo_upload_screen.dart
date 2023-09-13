@@ -1,8 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/main.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
@@ -16,6 +20,7 @@ import 'package:saur_customer/widgets/gaps.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../services/storage_service.dart';
+import '../../utils/location_controller.dart';
 import '../../utils/theme.dart';
 
 class PhotoUploadScreen extends StatefulWidget {
@@ -57,6 +62,29 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
           actions: [
             TextButton(
               onPressed: () async {
+                if (await Permission.location.status.isPermanentlyDenied) {
+                  // ignore: use_build_context_synchronously
+                  AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.warning,
+                    animType: AnimType.bottomSlide,
+                    title: 'Location access needed',
+                    desc:
+                        'You have denied location request multiple times, you have to grant access from app settings',
+                    onDismissCallback: (type) {},
+                    autoDismiss: false,
+                    btnOkOnPress: () async {
+                      await openAppSettings();
+                      navigatorKey.currentState?.pop();
+                    },
+                    btnOkText: 'Open settings',
+                    btnOkColor: primaryColor,
+                  ).show();
+
+                  return;
+                }
+
+                Position? position = await determinePosition();
                 if (systemImage == null ||
                     serialNumberImage == null ||
                     aadhaarImage == null) {
@@ -81,11 +109,35 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   widget.warrantyRequestModel.initiatedBy = widget
                       .warrantyRequestModel.customers?.customerId
                       .toString();
+
+                  String? lat = position.latitude.toString();
+                  lat = lat.substring(0, min(lat.length, 10));
+                  String? lon = position.longitude.toString();
+                  lon = lon.substring(0, min(lon.length, 10));
+
+                  if (lat.isEmpty || lon.isEmpty) {
+                    SnackBarService.instance
+                        .showSnackBarError('Please give location access');
+
+                    if (await Permission.locationWhenInUse
+                        .request()
+                        .isGranted) {
+                      // Either the permission was already granted before or the user just granted it.
+                    }
+
+                    return;
+                  }
+
+                  widget.warrantyRequestModel.lat = lat;
+
+                  widget.warrantyRequestModel.lon = lon;
                   _api
                       .createNewWarrantyRequest(widget.warrantyRequestModel)
                       .then((value) {
                     if (value) {
                       prefs.remove(SharedpreferenceKey.serialNumber);
+                      prefs.remove(SharedpreferenceKey.ongoingRequest);
+
                       Navigator.pushNamed(context, ConclusionScreen.routePath,
                           arguments: widget.warrantyRequestModel);
                     }

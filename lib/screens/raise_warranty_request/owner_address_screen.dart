@@ -1,15 +1,21 @@
+import 'dart:developer';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/system_details_screen.dart';
 
+import '../../main.dart';
 import '../../models/address_model.dart';
 import '../../models/list_models/state_district_list_model.dart';
 import '../../models/state_district_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/constants.dart';
+import '../../utils/helper_method.dart';
+import '../../utils/preference_key.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
 import '../../widgets/input_field_light.dart';
@@ -42,24 +48,36 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
   final TextEditingController _zipCodeCtrl = TextEditingController();
 
   StateDistrictListModel? stateDistrictList;
-  String selectedState = 'Andhra Pradesh';
-  String selectedDistrict = '';
+  String? selectedState;
+  String? selectedDistrict;
 
   @override
   void initState() {
     super.initState();
     stateDistrictList =
         StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
-    selectedDistrict = stateDistrictList!.states!
-        .firstWhere((element) => element.state == selectedState)
-        .districts!
-        .first;
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
   }
 
-  reloadScreen() async {}
+  reloadScreen() async {
+    log(widget.warrantyRequestModel.ownerAddress?.toJson() ?? '');
+    _houseNumberCtrl.text =
+        widget.warrantyRequestModel.ownerAddress?.houseNo ?? '';
+    _colonyCtrl.text = widget.warrantyRequestModel.ownerAddress?.area ?? '';
+    _street1Ctrl.text = widget.warrantyRequestModel.ownerAddress?.street1 ?? '';
+    _street2Ctrl.text = widget.warrantyRequestModel.ownerAddress?.street2 ?? '';
+    _landmarkCtrl.text =
+        widget.warrantyRequestModel.ownerAddress?.landmark ?? '';
+    selectedState = widget.warrantyRequestModel.ownerAddress?.state ?? '';
+    selectedDistrict = widget.warrantyRequestModel.ownerAddress?.district ?? '';
+    _talukaCtrl.text = widget.warrantyRequestModel.ownerAddress?.taluk ?? '';
+    _placeCtrl.text = widget.warrantyRequestModel.ownerAddress?.town ?? '';
+    _zipCodeCtrl.text = widget.warrantyRequestModel.ownerAddress?.zipCode ?? '';
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +109,8 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
                     zipCode: _zipCodeCtrl.text);
 
                 widget.warrantyRequestModel.ownerAddress = ownerAddress;
-
+                prefs.setString(SharedpreferenceKey.ongoingRequest,
+                    widget.warrantyRequestModel.toJson());
                 Navigator.pushNamed(context, SystemDetailScreen.routePath,
                     arguments: widget.warrantyRequestModel);
               },
@@ -106,31 +125,6 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
     return ListView(
       padding: const EdgeInsets.all(defaultPadding),
       children: [
-        // const Text(
-        //   'User Detail',
-        // ),
-        // verticalGap(defaultPadding),
-        // InputFieldLight(
-        //     hint: 'Name',
-        //     controller: _nameCtrl,
-        //     keyboardType: TextInputType.name,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.user),
-        // verticalGap(defaultPadding / 2),
-        // InputFieldLight(
-        //     hint: 'Phone Number',
-        //     controller: _phoneNumberCtrl,
-        //     keyboardType: TextInputType.phone,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.phone),
-        // verticalGap(defaultPadding / 2),
-        // InputFieldLight(
-        //     hint: 'Whatsapp Number',
-        //     controller: _whatsappNumberCtrl,
-        //     keyboardType: TextInputType.phone,
-        //     obscure: false,
-        //     icon: LineAwesomeIcons.what_s_app),
-        // verticalGap(defaultPadding * 2),
         const Text(
           'Solar water heater owner\'s address',
         ),
@@ -180,10 +174,17 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedState,
               underline: null,
               isExpanded: true,
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
               items: stateDistrictList!.states!.map((StateDistrictModel value) {
                 return DropdownMenuItem<String>(
                   value: value.state,
@@ -192,11 +193,12 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedState = value!;
-                  selectedDistrict = stateDistrictList!.states!
-                      .firstWhere((element) => element.state == selectedState)
-                      .districts!
-                      .first;
+                  selectedState = value;
+                  selectedDistrict = null;
+                  // selectedDistrict = stateDistrictList!.states!
+                  //     .firstWhere((element) => element.state == selectedState)
+                  //     .districts!
+                  //     .first;
                 });
               },
             ),
@@ -213,21 +215,32 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedDistrict,
               underline: null,
               isExpanded: true,
-              items: stateDistrictList!.states!
-                  .firstWhere((element) => element.state == selectedState)
-                  .districts!
-                  .map((value) => DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      ))
-                  .toList(),
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
+              items: selectedState == null
+                  ? []
+                  : stateDistrictList?.states
+                          ?.firstWhere(
+                              (element) => element.state == selectedState)
+                          .districts
+                          ?.map((value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ))
+                          .toList() ??
+                      [],
               onChanged: (value) {
                 setState(() {
-                  selectedDistrict = value!;
+                  selectedDistrict = value;
                 });
               },
             ),
@@ -253,6 +266,7 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
             controller: _zipCodeCtrl,
             keyboardType: TextInputType.number,
             obscure: false,
+            maxChar: 6,
             icon: LineAwesomeIcons.home),
         verticalGap(defaultPadding),
       ],
@@ -278,11 +292,11 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
       SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
       return false;
     }
-    if (selectedState.isEmpty) {
+    if (selectedState?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('State cannot be empty');
       return false;
     }
-    if (selectedDistrict.isEmpty) {
+    if (selectedDistrict?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('District cannot be empty');
       return false;
     }
@@ -295,8 +309,8 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
           .showSnackBarError('Place / Town cannot be empty');
       return false;
     }
-    if (_zipCodeCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Pincode cannot be empty');
+    if (!isValidZipcode(_zipCodeCtrl.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid pincode');
       return false;
     }
     return true;

@@ -35,3 +35,35 @@ String prepareAddress(AddressModel? address) {
 String getOTPCode() {
   return (Random().nextInt(900000) + 100000).toString();
 }
+
+bool isValidPhoneNumber(String number) {
+  if (number.length != 10) return false;
+  try {
+    int.parse(number);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+bool isValidZipcode(String number) {
+  if (number.length != 6) return false;
+  try {
+    int.parse(number);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+
+bool isValidSerialNumber(String number) {
+  if (number.length != 6) return false;
+  try {
+    int.parse(number);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+

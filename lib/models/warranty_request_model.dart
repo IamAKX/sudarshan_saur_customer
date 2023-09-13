@@ -32,6 +32,8 @@ class WarrantyRequestModel {
   String? installationDate;
   String? invoiceDate;
   String? invoiceNumber;
+  String? lat;
+  String? lon;
   WarrantyRequestModel({
     this.customers,
     this.mobile2,
@@ -52,6 +54,8 @@ class WarrantyRequestModel {
     this.installationDate,
     this.invoiceDate,
     this.invoiceNumber,
+    this.lat,
+    this.lon,
   });
 
   WarrantyRequestModel copyWith({
@@ -74,6 +78,8 @@ class WarrantyRequestModel {
     String? installationDate,
     String? invoiceDate,
     String? invoiceNumber,
+    String? lat,
+    String? lon,
   }) {
     return WarrantyRequestModel(
       customers: customers ?? this.customers,
@@ -95,6 +101,8 @@ class WarrantyRequestModel {
       installationDate: installationDate ?? this.installationDate,
       invoiceDate: invoiceDate ?? this.invoiceDate,
       invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      lat: lat ?? this.lat,
+      lon: lon ?? this.lon,
     );
   }
 
@@ -119,6 +127,8 @@ class WarrantyRequestModel {
       'installationDate': installationDate,
       'invoiceDate': invoiceDate,
       'invoiceNumber': invoiceNumber,
+      'lat': lat,
+      'lon': lon,
     };
   }
 
@@ -159,6 +169,8 @@ class WarrantyRequestModel {
       installationDate: map['installationDate'],
       invoiceDate: map['invoiceDate'],
       invoiceNumber: map['invoiceNumber'],
+      lat: map['lat'],
+      lon: map['lon'],
     );
   }
 
@@ -169,7 +181,7 @@ class WarrantyRequestModel {
 
   @override
   String toString() {
-    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber)';
+    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber, lat: $lat, lon: $lon)';
   }
 
   @override
@@ -195,7 +207,9 @@ class WarrantyRequestModel {
         other.approvedBy == approvedBy &&
         other.installationDate == installationDate &&
         other.invoiceDate == invoiceDate &&
-        other.invoiceNumber == invoiceNumber;
+        other.invoiceNumber == invoiceNumber &&
+        other.lat == lat &&
+        other.lon == lon;
   }
 
   @override
@@ -218,6 +232,8 @@ class WarrantyRequestModel {
         approvedBy.hashCode ^
         installationDate.hashCode ^
         invoiceDate.hashCode ^
-        invoiceNumber.hashCode;
+        invoiceNumber.hashCode ^
+        lat.hashCode ^
+        lon.hashCode;
   }
 }

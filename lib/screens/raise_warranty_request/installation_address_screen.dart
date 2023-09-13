@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/owner_address_screen.dart';
 import 'package:saur_customer/screens/raise_warranty_request/system_details_screen.dart';
+import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/preference_key.dart';
 
 import '../../models/state_district_model.dart';
@@ -49,25 +51,47 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
   bool isOwnerAddressSame = false;
 
   StateDistrictListModel? stateDistrictList;
-  String selectedState = 'Andhra Pradesh';
-  String selectedDistrict = '';
+  String? selectedState;
+  String? selectedDistrict;
 
   @override
   void initState() {
     super.initState();
     stateDistrictList =
         StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
-    selectedDistrict = stateDistrictList!.states!
-        .firstWhere((element) => element.state == selectedState)
-        .districts!
-        .first;
+    // selectedDistrict = stateDistrictList!.states!
+    //     .firstWhere((element) => element.state == selectedState)
+    //     .districts!
+    //     .first;
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => reloadScreen(),
     );
   }
 
   reloadScreen() async {
-    warrantyRequestModel = WarrantyRequestModel();
+    if (prefs.containsKey(SharedpreferenceKey.ongoingRequest)) {
+      warrantyRequestModel = WarrantyRequestModel.fromJson(
+          prefs.getString(SharedpreferenceKey.ongoingRequest)!);
+      _whatsappNumberCtrl.text = warrantyRequestModel?.mobile2 ?? '';
+      _houseNumberCtrl.text =
+          warrantyRequestModel?.installationAddress?.houseNo ?? '';
+      _colonyCtrl.text = warrantyRequestModel?.installationAddress?.area ?? '';
+      _street1Ctrl.text =
+          warrantyRequestModel?.installationAddress?.street1 ?? '';
+      _street2Ctrl.text =
+          warrantyRequestModel?.installationAddress?.street2 ?? '';
+      _landmarkCtrl.text =
+          warrantyRequestModel?.installationAddress?.landmark ?? '';
+      selectedState = warrantyRequestModel?.installationAddress?.state ?? '';
+      selectedDistrict =
+          warrantyRequestModel?.installationAddress?.district ?? '';
+      _talukaCtrl.text = warrantyRequestModel?.installationAddress?.taluk ?? '';
+      _placeCtrl.text = warrantyRequestModel?.installationAddress?.town ?? '';
+      _zipCodeCtrl.text =
+          warrantyRequestModel?.installationAddress?.zipCode ?? '';
+    } else {
+      warrantyRequestModel = WarrantyRequestModel();
+    }
     user = await _api
         .getUserByPhone(prefs.getString(SharedpreferenceKey.userPhone) ?? '');
     setState(() {
@@ -109,9 +133,13 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
                 warrantyRequestModel?.installationAddress = installationAddress;
                 if (isOwnerAddressSame) {
                   warrantyRequestModel?.ownerAddress = installationAddress;
+                  prefs.setString(SharedpreferenceKey.ongoingRequest,
+                      warrantyRequestModel?.toJson() ?? '');
                   Navigator.pushNamed(context, SystemDetailScreen.routePath,
                       arguments: warrantyRequestModel);
                 } else {
+                  prefs.setString(SharedpreferenceKey.ongoingRequest,
+                      warrantyRequestModel?.toJson() ?? '');
                   Navigator.pushNamed(context, OwnerAddressScreen.routePath,
                       arguments: warrantyRequestModel);
                 }
@@ -152,6 +180,7 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             controller: _whatsappNumberCtrl,
             keyboardType: TextInputType.phone,
             obscure: false,
+            maxChar: 10,
             icon: LineAwesomeIcons.what_s_app),
         verticalGap(defaultPadding * 2),
         const Text(
@@ -203,10 +232,17 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedState,
               underline: null,
               isExpanded: true,
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
               items: stateDistrictList!.states!.map((StateDistrictModel value) {
                 return DropdownMenuItem<String>(
                   value: value.state,
@@ -215,14 +251,15 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedState = value!;
-                  selectedDistrict = stateDistrictList!.states!
-                      .firstWhere((element) => element.state == selectedState)
-                      .districts!
-                      .first;
+                  selectedState = value;
+                  selectedDistrict = null;
+                  log('selectedState : $selectedState');
+                  // selectedDistrict = stateDistrictList!.states!
+                  //     .firstWhere((element) => element.state == selectedState)
+                  //     .districts!
+                  //     .first;
                 });
               },
-              hint: Text('Select state'),
             ),
           ),
         ),
@@ -237,21 +274,32 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             borderRadius: BorderRadius.circular(defaultPadding * 3),
           ),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
+            child: DropdownButton2<String>(
               value: selectedDistrict,
               underline: null,
               isExpanded: true,
-              items: stateDistrictList!.states!
-                  .firstWhere((element) => element.state == selectedState)
-                  .districts!
-                  .map((value) => DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      ))
-                  .toList(),
+              hint: Text(
+                'Select ',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
+              items: selectedState == null
+                  ? []
+                  : stateDistrictList?.states
+                          ?.firstWhere(
+                              (element) => element.state == selectedState)
+                          .districts
+                          ?.map((value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ))
+                          .toList() ??
+                      [],
               onChanged: (value) {
                 setState(() {
-                  selectedDistrict = value!;
+                  selectedDistrict = value;
                 });
               },
             ),
@@ -277,6 +325,7 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
             controller: _zipCodeCtrl,
             keyboardType: TextInputType.number,
             obscure: false,
+            maxChar: 6,
             icon: LineAwesomeIcons.home),
         verticalGap(defaultPadding),
         ClipRRect(
@@ -298,6 +347,10 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
   }
 
   bool isValidInputs() {
+    if (!isValidPhoneNumber(_whatsappNumberCtrl.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid whatsapp number');
+      return false;
+    }
     if (_houseNumberCtrl.text.isEmpty) {
       SnackBarService.instance
           .showSnackBarError('House Number cannot be empty');
@@ -316,11 +369,11 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
       SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
       return false;
     }
-    if (selectedState.isEmpty) {
+    if (selectedState?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('State cannot be empty');
       return false;
     }
-    if (selectedDistrict.isEmpty) {
+    if (selectedDistrict?.trim().isEmpty ?? true) {
       SnackBarService.instance.showSnackBarError('District cannot be empty');
       return false;
     }
@@ -333,8 +386,8 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
           .showSnackBarError('Place / Town cannot be empty');
       return false;
     }
-    if (_zipCodeCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Pincode cannot be empty');
+    if (!isValidZipcode(_zipCodeCtrl.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid pincode');
       return false;
     }
     return true;

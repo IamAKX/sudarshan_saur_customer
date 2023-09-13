@@ -103,7 +103,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
             ),
             verticalGap(defaultPadding),
             Text(
-              'Change Phone\nNumber ☎️',
+              'Change Mobile\nNumber ☎️',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
               child: ListView(
                 children: [
                   InputFieldDark(
-                    hint: 'Current Phone',
+                    hint: 'Old Mobile Number',
                     controller: _phoneCtrl,
                     keyboardType: TextInputType.phone,
                     obscure: false,
@@ -121,7 +121,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
                   ),
                   verticalGap(defaultPadding * 1.5),
                   InputFieldDark(
-                    hint: 'New Phone',
+                    hint: 'New Mobile Number',
                     controller: _newPhoneCtrl,
                     keyboardType: TextInputType.phone,
                     obscure: false,
@@ -136,7 +136,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
                               if (_phoneCtrl.text.length != 10 ||
                                   !isNumeric(_phoneCtrl.text)) {
                                 SnackBarService.instance.showSnackBarError(
-                                    'Enter valid 10 digit phone number');
+                                    'Enter valid 10 digit mobile number');
                                 return;
                               }
                               startTimer();
@@ -162,7 +162,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
                   ),
                   verticalGap(defaultPadding * 1.5),
                   InputFieldDark(
-                    hint: 'Serial Number',
+                    hint: 'System Serial Number',
                     controller: _serialNumberCtrl,
                     keyboardType: TextInputType.text,
                     obscure: false,
@@ -171,7 +171,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
                   verticalGap(defaultPadding * 2),
                   PrimaryButton(
                     onPressed: () {},
-                    label: 'Change Phone Number',
+                    label: 'Change Mobile Number',
                     isDisabled: _api.status == ApiStatus.loading,
                     isLoading: _api.status == ApiStatus.loading,
                   ),

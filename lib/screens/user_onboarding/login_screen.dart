@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 verticalGap(defaultPadding * 1.5),
                 InputFieldDark(
-                  hint: 'Phone',
+                  hint: 'Mobile Number',
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   obscure: false,
@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (_phoneCtrl.text.length != 10 ||
                                 !isNumeric(_phoneCtrl.text)) {
                               SnackBarService.instance.showSnackBarError(
-                                  'Enter valid 10 digit phone number');
+                                  'Enter valid 10 digit mobil number');
                               return;
                             }
                             startTimer();
@@ -233,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             context, ChangePhoneNumber.routePath);
                       },
                       child: Text(
-                        'Change Phone',
+                        'Change Mobile Number',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: Colors.white,

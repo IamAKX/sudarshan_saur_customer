@@ -4,14 +4,17 @@ import '../utils/theme.dart';
 import 'gaps.dart';
 
 class BuildInputTextQuestion extends StatefulWidget {
-  const BuildInputTextQuestion({
+  BuildInputTextQuestion({
     super.key,
+    this.showError,
     required this.question,
     required this.answer,
+    this.textInputType,
   });
   final String question;
-
+  bool? showError;
   final TextEditingController answer;
+  final TextInputType? textInputType;
 
   @override
   State<BuildInputTextQuestion> createState() => _BuildInputTextQuestionState();
@@ -22,7 +25,11 @@ class _BuildInputTextQuestionState extends State<BuildInputTextQuestion> {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      child: Padding(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+              color: (widget.showError ?? false) ? Colors.red : Colors.white),
+        ),
         padding: const EdgeInsets.symmetric(
             horizontal: defaultPadding, vertical: defaultPadding),
         child: Column(
@@ -37,7 +44,7 @@ class _BuildInputTextQuestionState extends State<BuildInputTextQuestion> {
             ),
             verticalGap(defaultPadding),
             TextField(
-              keyboardType: TextInputType.name,
+              keyboardType: widget.textInputType ?? TextInputType.name,
               autocorrect: true,
               controller: widget.answer,
               decoration: secondaryTextFieldDecoration('Type here...'),

@@ -26,9 +26,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
   if (prefs.getString(SharedpreferenceKey.userPhone) != null) {
+    log('User found in cache, fething user details');
     userModel = await ApiProvider()
         .getUserByPhone(prefs.getString(SharedpreferenceKey.userPhone) ?? "");
     if (userModel != null) {
+      log('User fetch, updating last login');
       await ApiProvider().updateUser(
           {'lastLogin': DateTimeFormatter.now()}, userModel?.customerId ?? 0);
     }
@@ -64,7 +66,6 @@ class MyApp extends StatelessWidget {
   }
 
   getHomeScreen() {
-    log(userModel.toString());
     if (prefs.getBool(SharedpreferenceKey.firstTimeAppOpen) ?? true) {
       prefs.setBool(SharedpreferenceKey.firstTimeAppOpen, false);
       return const AppIntroScreen();

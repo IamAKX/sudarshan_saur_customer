@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -121,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   verticalGap(defaultPadding * 1.5),
                   InputFieldDark(
-                    hint: 'Phone Number',
+                    hint: 'Mobile Number',
                     controller: _phoneCtrl,
                     keyboardType: TextInputType.phone,
                     obscure: false,
@@ -136,10 +137,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (_phoneCtrl.text.length != 10 ||
                                   !isNumeric(_phoneCtrl.text)) {
                                 SnackBarService.instance.showSnackBarError(
-                                    'Enter valid 10 digit phone number');
+                                    'Enter valid 10 digit mobile number');
                                 return;
                               }
                               code = getOTPCode();
+                              log('OTP = $code');
                               startTimer();
                               _api.sendOtp(_phoneCtrl.text, code);
                             },
@@ -164,11 +166,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   verticalGap(defaultPadding * 1.5),
                   InputFieldDark(
-                    hint: 'Serial Number',
+                    hint: 'System Serial Number',
                     controller: _serialNumberCtrl,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     obscure: false,
                     icon: LineAwesomeIcons.plug,
+                    maxChar: 6,
                   ),
                   verticalGap(defaultPadding * 2),
                   PrimaryButton(
@@ -179,6 +182,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _serialNumberCtrl.text.isEmpty) {
                         SnackBarService.instance
                             .showSnackBarError('All fields are mandatory');
+                        return;
+                      }
+
+                      if (!isValidPhoneNumber(_phoneCtrl.text)) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid phone number');
+                        return;
+                      }
+
+                      if (!isValidSerialNumber(_serialNumberCtrl.text)) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid Serial number');
                         return;
                       }
 

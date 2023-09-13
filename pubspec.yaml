@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"
 
-version: 1.0.0+6
+version: 1.0.0+9
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -22,6 +22,7 @@ dependencies:
     sdk: flutter
   flutter_html: any
   flutter_svg: ^2.0.7
+  geolocator: ^10.0.1
   google_fonts: any
   image_picker: ^1.0.1
   intl: ^0.18.1
@@ -30,6 +31,7 @@ dependencies:
   otp_text_field: ^1.1.3
   path_provider: ^2.0.15
   pdf: ^3.10.4
+  permission_handler: ^11.0.0
   printing: ^5.11.0
   provider: ^6.0.5
   shared_preferences: ^2.2.0
