@@ -181,7 +181,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             HomeContainer.routePath,
                             (route) => false,
                           );
-                        } else if (value.status == UserStatus.PENDING.name) {
+                        } else if (value.status == UserStatus.PENDING.name ||
+                            value.status == UserStatus.CREATED.name) {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             ConclusionScreen.routePath,

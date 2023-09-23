@@ -71,9 +71,11 @@ class MyApp extends StatelessWidget {
       return const AppIntroScreen();
     } else if (userModel == null || userModel?.customerId == null) {
       return const LoginScreen();
-    } else if ((userModel!.status) == UserStatus.CREATED.name) {
+    } else if ((userModel!.status) == UserStatus.CREATED.name &&
+        prefs.containsKey(SharedpreferenceKey.ongoingRequest)) {
       return const InstallationAddressScreen();
-    } else if ((userModel!.status) == UserStatus.PENDING.name) {
+    } else if ((userModel!.status) == UserStatus.PENDING.name ||
+        (userModel!.status) == UserStatus.CREATED.name) {
       return const ConclusionScreen();
     } else if ((userModel!.status) == UserStatus.SUSPENDED.name) {
       return const BlockedUserScreen();
