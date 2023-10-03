@@ -37,6 +37,7 @@ class PhotoUploadScreen extends StatefulWidget {
 
 class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   late ApiProvider _api;
+  bool uploadingImage = false;
   File? systemImage, serialNumberImage, aadhaarImage;
   bool agreement = false;
   @override
@@ -60,96 +61,114 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           actions: [
-            TextButton(
-              onPressed: () async {
-                if (await Permission.location.status.isPermanentlyDenied) {
-                  // ignore: use_build_context_synchronously
-                  AwesomeDialog(
-                    context: context,
-                    dialogType: DialogType.warning,
-                    animType: AnimType.bottomSlide,
-                    title: 'Location access needed',
-                    desc:
-                        'You have denied location request multiple times, you have to grant access from app settings',
-                    onDismissCallback: (type) {},
-                    autoDismiss: false,
-                    btnOkOnPress: () async {
-                      await openAppSettings();
-                      navigatorKey.currentState?.pop();
+            (uploadingImage || _api.status == ApiStatus.loading)
+                ? Container(
+                    margin: EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    // width: 20,
+                    // height: 20,
+                    child: const CircularProgressIndicator(),
+                  )
+                : TextButton(
+                    onPressed: () async {
+                      if (await Permission
+                          .location.status.isPermanentlyDenied) {
+                        // ignore: use_build_context_synchronously
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.bottomSlide,
+                          title: 'Location access needed',
+                          desc:
+                              'You have denied location request multiple times, you have to grant access from app settings',
+                          onDismissCallback: (type) {},
+                          autoDismiss: false,
+                          btnOkOnPress: () async {
+                            await openAppSettings();
+                            navigatorKey.currentState?.pop();
+                          },
+                          btnOkText: 'Open settings',
+                          btnOkColor: primaryColor,
+                        ).show();
+
+                        return;
+                      }
+
+                      Position? position = await determinePosition();
+                      if (systemImage == null ||
+                          serialNumberImage == null ||
+                          aadhaarImage == null) {
+                        SnackBarService.instance
+                            .showSnackBarError('Please select all 3 images');
+                        return;
+                      }
+                      if (agreement) {
+                        setState(() {
+                          uploadingImage = true;
+                        });
+                        SnackBarService.instance.showSnackBarInfo(
+                            'Uploading images, please wait it will take some time...');
+                        widget.warrantyRequestModel.images =
+                            await StorageService.uploadReqDocuments(
+                                systemImage!,
+                                serialNumberImage!,
+                                aadhaarImage!,
+                                widget.warrantyRequestModel.customers
+                                        ?.customerId
+                                        .toString() ??
+                                    '');
+                        setState(() {
+                          uploadingImage = false;
+                        });
+                        widget.warrantyRequestModel.status =
+                            AllocationStatus.PENDING.name;
+                        widget.warrantyRequestModel.initUserType = 'CUSTOMER';
+                        widget.warrantyRequestModel.initiatedBy = widget
+                            .warrantyRequestModel.customers?.customerId
+                            .toString();
+
+                        String? lat = position.latitude.toString();
+                        lat = lat.substring(0, min(lat.length, 10));
+                        String? lon = position.longitude.toString();
+                        lon = lon.substring(0, min(lon.length, 10));
+
+                        if (lat.isEmpty || lon.isEmpty) {
+                          SnackBarService.instance
+                              .showSnackBarError('Please give location access');
+
+                          if (await Permission.locationWhenInUse
+                              .request()
+                              .isGranted) {
+                            // Either the permission was already granted before or the user just granted it.
+                          }
+
+                          return;
+                        }
+
+                        widget.warrantyRequestModel.lat = lat;
+
+                        widget.warrantyRequestModel.lon = lon;
+                        _api
+                            .createNewWarrantyRequest(
+                                widget.warrantyRequestModel)
+                            .then((value) {
+                          if (value) {
+                            prefs.remove(SharedpreferenceKey.serialNumber);
+                            prefs.remove(SharedpreferenceKey.ongoingRequest);
+
+                            Navigator.pushNamed(
+                                context, ConclusionScreen.routePath,
+                                arguments: widget.warrantyRequestModel);
+                          }
+                        });
+                      } else {
+                        SnackBarService.instance.showSnackBarError(
+                            'Please read and agree tems and conditions');
+                        return;
+                      }
                     },
-                    btnOkText: 'Open settings',
-                    btnOkColor: primaryColor,
-                  ).show();
-
-                  return;
-                }
-
-                Position? position = await determinePosition();
-                if (systemImage == null ||
-                    serialNumberImage == null ||
-                    aadhaarImage == null) {
-                  SnackBarService.instance
-                      .showSnackBarError('Please select all 3 images');
-                  return;
-                }
-                if (agreement) {
-                  SnackBarService.instance
-                      .showSnackBarInfo('Uploading images...');
-                  widget.warrantyRequestModel.images =
-                      await StorageService.uploadReqDocuments(
-                          systemImage!,
-                          serialNumberImage!,
-                          aadhaarImage!,
-                          widget.warrantyRequestModel.customers?.customerId
-                                  .toString() ??
-                              '');
-                  widget.warrantyRequestModel.status =
-                      AllocationStatus.PENDING.name;
-                  widget.warrantyRequestModel.initUserType = 'CUSTOMER';
-                  widget.warrantyRequestModel.initiatedBy = widget
-                      .warrantyRequestModel.customers?.customerId
-                      .toString();
-
-                  String? lat = position.latitude.toString();
-                  lat = lat.substring(0, min(lat.length, 10));
-                  String? lon = position.longitude.toString();
-                  lon = lon.substring(0, min(lon.length, 10));
-
-                  if (lat.isEmpty || lon.isEmpty) {
-                    SnackBarService.instance
-                        .showSnackBarError('Please give location access');
-
-                    if (await Permission.locationWhenInUse
-                        .request()
-                        .isGranted) {
-                      // Either the permission was already granted before or the user just granted it.
-                    }
-
-                    return;
-                  }
-
-                  widget.warrantyRequestModel.lat = lat;
-
-                  widget.warrantyRequestModel.lon = lon;
-                  _api
-                      .createNewWarrantyRequest(widget.warrantyRequestModel)
-                      .then((value) {
-                    if (value) {
-                      prefs.remove(SharedpreferenceKey.serialNumber);
-                      prefs.remove(SharedpreferenceKey.ongoingRequest);
-
-                      Navigator.pushNamed(context, ConclusionScreen.routePath,
-                          arguments: widget.warrantyRequestModel);
-                    }
-                  });
-                } else {
-                  SnackBarService.instance.showSnackBarError(
-                      'Please read and agree tems and conditions');
-                  return;
-                }
-              },
-              child: const Text('Next'),
-            ),
+                    child: const Text('Next'),
+                  ),
           ],
         ),
         body: getBody(context));

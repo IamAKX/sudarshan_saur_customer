@@ -34,6 +34,10 @@ class WarrantyRequestModel {
   String? invoiceNumber;
   String? lat;
   String? lon;
+  bool? photoChecked;
+  bool? otherInfoChecked;
+  String? verifiedBy;
+  String? verifiedDate;
   WarrantyRequestModel({
     this.customers,
     this.mobile2,
@@ -56,6 +60,10 @@ class WarrantyRequestModel {
     this.invoiceNumber,
     this.lat,
     this.lon,
+    this.photoChecked,
+    this.otherInfoChecked,
+    this.verifiedBy,
+    this.verifiedDate,
   });
 
   WarrantyRequestModel copyWith({
@@ -80,6 +88,10 @@ class WarrantyRequestModel {
     String? invoiceNumber,
     String? lat,
     String? lon,
+    bool? photoChecked,
+    bool? otherInfoChecked,
+    String? verifiedBy,
+    String? verifiedDate,
   }) {
     return WarrantyRequestModel(
       customers: customers ?? this.customers,
@@ -103,6 +115,10 @@ class WarrantyRequestModel {
       invoiceNumber: invoiceNumber ?? this.invoiceNumber,
       lat: lat ?? this.lat,
       lon: lon ?? this.lon,
+      photoChecked: photoChecked ?? this.photoChecked,
+      otherInfoChecked: otherInfoChecked ?? this.otherInfoChecked,
+      verifiedBy: verifiedBy ?? this.verifiedBy,
+      verifiedDate: verifiedDate ?? this.verifiedDate,
     );
   }
 
@@ -129,6 +145,10 @@ class WarrantyRequestModel {
       'invoiceNumber': invoiceNumber,
       'lat': lat,
       'lon': lon,
+      'photoChecked': photoChecked,
+      'otherInfoChecked': otherInfoChecked,
+      'verifiedBy': verifiedBy,
+      'verifiedDate': verifiedDate,
     };
   }
 
@@ -171,6 +191,10 @@ class WarrantyRequestModel {
       invoiceNumber: map['invoiceNumber'],
       lat: map['lat'],
       lon: map['lon'],
+      photoChecked: map['photoChecked'],
+      otherInfoChecked: map['otherInfoChecked'],
+      verifiedBy: map['verifiedBy'],
+      verifiedDate: map['verifiedDate'],
     );
   }
 
@@ -181,7 +205,7 @@ class WarrantyRequestModel {
 
   @override
   String toString() {
-    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber, lat: $lat, lon: $lon)';
+    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber, lat: $lat, lon: $lon, photoChecked: $photoChecked, otherInfoChecked: $otherInfoChecked, verifiedBy: $verifiedBy, verifiedDate: $verifiedDate)';
   }
 
   @override
@@ -209,7 +233,11 @@ class WarrantyRequestModel {
         other.invoiceDate == invoiceDate &&
         other.invoiceNumber == invoiceNumber &&
         other.lat == lat &&
-        other.lon == lon;
+        other.lon == lon &&
+        other.photoChecked == photoChecked &&
+        other.otherInfoChecked == otherInfoChecked &&
+        other.verifiedBy == verifiedBy &&
+        other.verifiedDate == verifiedDate;
   }
 
   @override
@@ -234,6 +262,10 @@ class WarrantyRequestModel {
         invoiceDate.hashCode ^
         invoiceNumber.hashCode ^
         lat.hashCode ^
-        lon.hashCode;
+        lon.hashCode ^
+        photoChecked.hashCode ^
+        otherInfoChecked.hashCode ^
+        verifiedBy.hashCode ^
+        verifiedDate.hashCode;
   }
 }

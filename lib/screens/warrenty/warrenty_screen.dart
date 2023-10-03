@@ -1,15 +1,10 @@
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:saur_customer/models/user_model.dart';
-import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/warrenty/certificate_pdf.dart';
-import 'package:saur_customer/screens/warrenty/pdf_dummy.dart';
 import 'package:saur_customer/screens/warrenty/warranty_pdf.dart';
 import 'package:saur_customer/services/snakbar_service.dart';
 import 'package:saur_customer/utils/colors.dart';

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 class WarrantyModel {
   String? warrantySerialNo;
   String? crmCustomerName;
@@ -185,7 +184,8 @@ class WarrantyModel {
 
   String toJson() => json.encode(toMap());
 
-  factory WarrantyModel.fromJson(String source) => WarrantyModel.fromMap(json.decode(source));
+  factory WarrantyModel.fromJson(String source) =>
+      WarrantyModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -195,65 +195,65 @@ class WarrantyModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is WarrantyModel &&
-      other.warrantySerialNo == warrantySerialNo &&
-      other.crmCustomerName == crmCustomerName &&
-      other.crmCustomerMobileNo == crmCustomerMobileNo &&
-      other.itemDescription == itemDescription &&
-      other.installationDate == installationDate &&
-      other.model == model &&
-      other.guaranteeStatus == guaranteeStatus &&
-      other.guaranteePeriod == guaranteePeriod &&
-      other.assignedTo == assignedTo &&
-      other.custBillDate == custBillDate &&
-      other.billNo == billNo &&
-      other.invoiceNo == invoiceNo &&
-      other.crmDealerName == crmDealerName &&
-      other.crmStockistName == crmStockistName &&
-      other.crmStockistMobileNo == crmStockistMobileNo &&
-      other.crmStockistEmail == crmStockistEmail &&
-      other.state == state &&
-      other.description == description &&
-      other.stockists == stockists &&
-      other.customer == customer &&
-      other.allocationStatus == allocationStatus &&
-      other.createdOn == createdOn &&
-      other.updatedOn == updatedOn &&
-      other.initUserType == initUserType &&
-      other.initiatedBy == initiatedBy &&
-      other.approvedBy == approvedBy &&
-      other.lpd == lpd;
+        other.warrantySerialNo == warrantySerialNo &&
+        other.crmCustomerName == crmCustomerName &&
+        other.crmCustomerMobileNo == crmCustomerMobileNo &&
+        other.itemDescription == itemDescription &&
+        other.installationDate == installationDate &&
+        other.model == model &&
+        other.guaranteeStatus == guaranteeStatus &&
+        other.guaranteePeriod == guaranteePeriod &&
+        other.assignedTo == assignedTo &&
+        other.custBillDate == custBillDate &&
+        other.billNo == billNo &&
+        other.invoiceNo == invoiceNo &&
+        other.crmDealerName == crmDealerName &&
+        other.crmStockistName == crmStockistName &&
+        other.crmStockistMobileNo == crmStockistMobileNo &&
+        other.crmStockistEmail == crmStockistEmail &&
+        other.state == state &&
+        other.description == description &&
+        other.stockists == stockists &&
+        other.customer == customer &&
+        other.allocationStatus == allocationStatus &&
+        other.createdOn == createdOn &&
+        other.updatedOn == updatedOn &&
+        other.initUserType == initUserType &&
+        other.initiatedBy == initiatedBy &&
+        other.approvedBy == approvedBy &&
+        other.lpd == lpd;
   }
 
   @override
   int get hashCode {
     return warrantySerialNo.hashCode ^
-      crmCustomerName.hashCode ^
-      crmCustomerMobileNo.hashCode ^
-      itemDescription.hashCode ^
-      installationDate.hashCode ^
-      model.hashCode ^
-      guaranteeStatus.hashCode ^
-      guaranteePeriod.hashCode ^
-      assignedTo.hashCode ^
-      custBillDate.hashCode ^
-      billNo.hashCode ^
-      invoiceNo.hashCode ^
-      crmDealerName.hashCode ^
-      crmStockistName.hashCode ^
-      crmStockistMobileNo.hashCode ^
-      crmStockistEmail.hashCode ^
-      state.hashCode ^
-      description.hashCode ^
-      stockists.hashCode ^
-      customer.hashCode ^
-      allocationStatus.hashCode ^
-      createdOn.hashCode ^
-      updatedOn.hashCode ^
-      initUserType.hashCode ^
-      initiatedBy.hashCode ^
-      approvedBy.hashCode ^
-      lpd.hashCode;
+        crmCustomerName.hashCode ^
+        crmCustomerMobileNo.hashCode ^
+        itemDescription.hashCode ^
+        installationDate.hashCode ^
+        model.hashCode ^
+        guaranteeStatus.hashCode ^
+        guaranteePeriod.hashCode ^
+        assignedTo.hashCode ^
+        custBillDate.hashCode ^
+        billNo.hashCode ^
+        invoiceNo.hashCode ^
+        crmDealerName.hashCode ^
+        crmStockistName.hashCode ^
+        crmStockistMobileNo.hashCode ^
+        crmStockistEmail.hashCode ^
+        state.hashCode ^
+        description.hashCode ^
+        stockists.hashCode ^
+        customer.hashCode ^
+        allocationStatus.hashCode ^
+        createdOn.hashCode ^
+        updatedOn.hashCode ^
+        initUserType.hashCode ^
+        initiatedBy.hashCode ^
+        approvedBy.hashCode ^
+        lpd.hashCode;
   }
 }
