@@ -71,8 +71,8 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
     _street2Ctrl.text = widget.warrantyRequestModel.ownerAddress?.street2 ?? '';
     _landmarkCtrl.text =
         widget.warrantyRequestModel.ownerAddress?.landmark ?? '';
-    selectedState = widget.warrantyRequestModel.ownerAddress?.state;
-    selectedDistrict = widget.warrantyRequestModel.ownerAddress?.district;
+    selectedState = widget.warrantyRequestModel.ownerAddress?.state ?? '';
+    selectedDistrict = widget.warrantyRequestModel.ownerAddress?.district ?? '';
     _talukaCtrl.text = widget.warrantyRequestModel.ownerAddress?.taluk ?? '';
     _placeCtrl.text = widget.warrantyRequestModel.ownerAddress?.town ?? '';
     _zipCodeCtrl.text = widget.warrantyRequestModel.ownerAddress?.zipCode ?? '';
