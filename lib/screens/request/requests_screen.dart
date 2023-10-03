@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -9,11 +11,15 @@ import 'package:saur_customer/screens/request/request_detail_screen.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/preference_key.dart';
+import 'package:saur_customer/widgets/input_field_light.dart';
+import '../../main.dart';
+import '../../models/warranty_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
+import '../../widgets/input_field_dark.dart';
 
 class RequestScreen extends StatefulWidget {
   const RequestScreen({super.key, required this.switchTabs});
@@ -63,8 +69,7 @@ class _RequestScreenState extends State<RequestScreen> {
           : getBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, InstallationAddressScreen.routePath)
-              .then((value) => reloadScreen());
+          showSerialNumber(context);
         },
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
@@ -195,6 +200,55 @@ class _RequestScreenState extends State<RequestScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void showSerialNumber(BuildContext mainContext) {
+    TextEditingController _serialNumberCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Serial Number'),
+          content: InputFieldLight(
+            hint: 'System Serial Number',
+            controller: _serialNumberCtrl,
+            keyboardType: TextInputType.number,
+            obscure: false,
+            icon: LineAwesomeIcons.plug,
+            maxChar: 6,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(mainContext);
+                SnackBarService.instance.showSnackBarInfo(
+                    'Validating serial number. Please wait...');
+                WarrantyModel? warrantyModel =
+                    await _api.getDeviceBySerialNo(_serialNumberCtrl.text);
+                if (warrantyModel == null) {
+                } else {
+                  log('Serial no validated : ${warrantyModel.toString()}');
+
+                  await prefs.setString(
+                      SharedpreferenceKey.serialNumber, _serialNumberCtrl.text);
+
+                  Navigator.pushNamed(
+                          mainContext, InstallationAddressScreen.routePath)
+                      .then((value) => reloadScreen());
+                }
+              },
+              child: Text('Okay'),
+            )
+          ],
+        );
+      },
     );
   }
 }

@@ -1,5 +1,6 @@
 class Api {
-  static const String baseUrl = 'https://icrmonline.in:8084';
+  static const String baseUrl = 'https://13.51.238.100:8084';
+  // static const String baseUrl = 'https://icrmonline.in:8084';
   // static const String baseUrl = 'http://10.0.2.2:8084';
 
   static const String users = '$baseUrl/saur/customers';

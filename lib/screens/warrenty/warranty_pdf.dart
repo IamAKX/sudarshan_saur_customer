@@ -85,16 +85,18 @@ Container warrantyContext(MemoryImage imageLogo,
             'Dealer Mobile No:', warrantyRequestModel.dealerInfo?.mobile ?? ''),
         divider(),
         rowItem('System Info:',
-            warrantyRequestModel.warrantyDetails?.description ?? ''),
+            warrantyRequestModel.warrantyDetails?.itemDescription ?? ''),
         divider(),
         rowItem('System Sr. No:',
             warrantyRequestModel.warrantyDetails?.warrantySerialNo ?? ''),
         divider(),
-        rowItem(
-            'Company Invoice No:', warrantyRequestModel.invoiceNumber ?? ''),
+        rowItem('Company Invoice No:',
+            warrantyRequestModel.warrantyDetails?.invoiceNo ?? ''),
         divider(),
         rowItem(
-            'Company Invoice Date:', warrantyRequestModel.invoiceDate ?? ''),
+            'Company Invoice Date:',
+            DateTimeFormatter.guaranteeCardDate(
+                warrantyRequestModel.warrantyDetails?.installationDate ?? '')),
         divider(),
         rowItem(
             'Installation Date:', warrantyRequestModel.installationDate ?? ''),

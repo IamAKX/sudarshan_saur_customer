@@ -82,9 +82,9 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
           warrantyRequestModel?.installationAddress?.street2 ?? '';
       _landmarkCtrl.text =
           warrantyRequestModel?.installationAddress?.landmark ?? '';
-      selectedState = warrantyRequestModel?.installationAddress?.state ?? '';
+      selectedState = warrantyRequestModel?.installationAddress?.state;
       selectedDistrict =
-          warrantyRequestModel?.installationAddress?.district ?? '';
+          warrantyRequestModel?.installationAddress?.district;
       _talukaCtrl.text = warrantyRequestModel?.installationAddress?.taluk ?? '';
       _placeCtrl.text = warrantyRequestModel?.installationAddress?.town ?? '';
       _zipCodeCtrl.text =

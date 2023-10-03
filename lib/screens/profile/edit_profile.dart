@@ -19,7 +19,7 @@ class _EditProfileState extends State<EditProfile>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -44,7 +44,7 @@ class _EditProfileState extends State<EditProfile>
           tabs: const [
             Tab(text: 'Phone'),
             Tab(text: 'Name'),
-            Tab(text: 'Address'),
+            // Tab(text: 'Address'),
           ],
         ),
       ),
@@ -53,7 +53,7 @@ class _EditProfileState extends State<EditProfile>
         children: const [
           EditPhoneNumber(),
           EditName(),
-          EditAddress(),
+          // EditAddress(),
         ],
       ),
     );

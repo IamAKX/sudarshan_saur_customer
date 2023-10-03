@@ -19,6 +19,15 @@ class DateTimeFormatter {
     }
   }
 
+  static String guaranteeCardDate(String rawDate) {
+    try {
+      DateTime date = DateFormat(databaseFormat).parse(rawDate);
+      return DateFormat('dd/MM/yyyy').format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
   static String onlyDateShort(String rawDate) {
     try {
       DateTime date = DateFormat(databaseFormat).parse(rawDate);

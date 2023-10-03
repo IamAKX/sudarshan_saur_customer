@@ -319,6 +319,7 @@ class ApiProvider extends ChangeNotifier {
           responseType: ResponseType.json,
         ),
       );
+      log('resp code : ' + response.statusCode.toString());
       if (response.statusCode == 200) {
         status = ApiStatus.success;
         notifyListeners();
@@ -417,6 +418,7 @@ class ApiProvider extends ChangeNotifier {
       {bool? showAlerts}) async {
     status = ApiStatus.loading;
     WarrantyModel? device;
+    log('${Api.exernalWarranty}$serialNo');
     notifyListeners();
     try {
       Response response = await _dio.get(

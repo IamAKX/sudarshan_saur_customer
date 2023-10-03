@@ -20,6 +20,7 @@ import '../../main.dart';
 import '../../models/user_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/helper_method.dart';
 import '../../utils/preference_key.dart';
 
 class EditPhoneNumber extends StatefulWidget {
@@ -116,6 +117,11 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
                   )
                 : TextButton(
                     onPressed: () {
+                      if (!isValidPhoneNumber(_phoneNumberCtrl.text)) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid mobile number');
+                        return;
+                      }
                       _isValidateButtonActive = false;
                       startTimer();
                       sendOtp();
@@ -156,9 +162,14 @@ class _EditPhoneNumberState extends State<EditPhoneNumber> {
           verticalGap(defaultPadding * 2),
           PrimaryButtonDark(
             onPressed: () async {
-              if (_phoneNumberCtrl.text.isEmpty) {
+              // if (_phoneNumberCtrl.text.isEmpty) {
+              //   SnackBarService.instance
+              //       .showSnackBarError('All fields are mandatory');
+              //   return;
+              // }
+              if (!isValidPhoneNumber(_phoneNumberCtrl.text)) {
                 SnackBarService.instance
-                    .showSnackBarError('All fields are mandatory');
+                    .showSnackBarError('Invalid mobile number');
                 return;
               }
               if (code == '' || _otpCtrl.text != code) {

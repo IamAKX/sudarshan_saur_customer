@@ -56,32 +56,22 @@ class _OtherInformationScreenState extends State<OtherInformationScreen> {
 
   reloadScreen() async {
     setState(() {
-      answer1 =
-          widget.warrantyRequestModel.answers?.elementAt(0).answerText ?? '';
-      answer2 =
-          widget.warrantyRequestModel.answers?.elementAt(1).answerText ?? '';
-      answer3 =
-          widget.warrantyRequestModel.answers?.elementAt(2).answerText ?? '';
+      answer1 = widget.warrantyRequestModel.answers?.elementAt(0).answerText;
+      answer2 = widget.warrantyRequestModel.answers?.elementAt(1).answerText;
+      answer3 = widget.warrantyRequestModel.answers?.elementAt(2).answerText;
       answer4.text =
           widget.warrantyRequestModel.answers?.elementAt(3).answerText ?? '';
-      answer5 =
-          widget.warrantyRequestModel.answers?.elementAt(4).answerText ?? '';
+      answer5 = widget.warrantyRequestModel.answers?.elementAt(4).answerText;
       answer6.text =
           widget.warrantyRequestModel.answers?.elementAt(5).answerText ?? '';
-      answer7 =
-          widget.warrantyRequestModel.answers?.elementAt(6).answerText ?? '';
-      answer8 =
-          widget.warrantyRequestModel.answers?.elementAt(7).answerText ?? '';
+      answer7 = widget.warrantyRequestModel.answers?.elementAt(6).answerText;
+      answer8 = widget.warrantyRequestModel.answers?.elementAt(7).answerText;
       answer9.text =
           widget.warrantyRequestModel.answers?.elementAt(8).answerText ?? '';
-      answer10 =
-          widget.warrantyRequestModel.answers?.elementAt(9).answerText ?? '';
-      answer11 =
-          widget.warrantyRequestModel.answers?.elementAt(10).answerText ?? '';
-      answer12 =
-          widget.warrantyRequestModel.answers?.elementAt(11).answerText ?? '';
-      answer13 =
-          widget.warrantyRequestModel.answers?.elementAt(12).answerText ?? '';
+      answer10 = widget.warrantyRequestModel.answers?.elementAt(9).answerText;
+      answer11 = widget.warrantyRequestModel.answers?.elementAt(10).answerText;
+      answer12 = widget.warrantyRequestModel.answers?.elementAt(11).answerText;
+      answer13 = widget.warrantyRequestModel.answers?.elementAt(12).answerText;
     });
   }
 
