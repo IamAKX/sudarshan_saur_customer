@@ -10,6 +10,7 @@ import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
+import 'package:saur_customer/widgets/gaps.dart';
 
 import '../../services/api_service.dart';
 import '../../utils/constants.dart';
@@ -21,6 +22,15 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
       (await rootBundle.load('assets/images/guarantee_logo.png'))
           .buffer
           .asUint8List());
+
+  final tnc1Img = MemoryImage(
+      (await rootBundle.load('assets/images/Pictureall.png'))
+          .buffer
+          .asUint8List());
+  final tnc2Img = MemoryImage(
+      (await rootBundle.load('assets/images/tnc2.png')).buffer.asUint8List());
+  final tnc3Img = MemoryImage(
+      (await rootBundle.load('assets/images/tnc3.png')).buffer.asUint8List());
   UserModel? userModel =
       await ApiProvider().getCustomerById(SharedpreferenceKey.getUserId());
 
@@ -28,7 +38,7 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
     Page(
       pageFormat: PdfPageFormat.a4,
       orientation: PageOrientation.portrait,
-      margin: EdgeInsets.all(defaultPadding),
+      margin: const EdgeInsets.all(defaultPadding),
       build: (Context context) {
         return warrantyContext(imageLogo, warranty!, userModel); // Center
       },
@@ -38,7 +48,7 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
     Page(
       pageFormat: PdfPageFormat.a4,
       orientation: PageOrientation.portrait,
-      margin: EdgeInsets.all(defaultPadding),
+      margin: const EdgeInsets.all(defaultPadding),
       build: (Context context) {
         return tnc(imageLogo, warranty!, userModel); // Center
       },
@@ -49,9 +59,42 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
     Page(
       pageFormat: PdfPageFormat.a4,
       orientation: PageOrientation.portrait,
-      margin: EdgeInsets.all(defaultPadding),
+      margin: const EdgeInsets.all(defaultPadding),
       build: (Context context) {
         return tnc2(imageLogo, warranty!, userModel); // Center
+      },
+    ),
+  ); // Page
+
+  pdf.addPage(
+    Page(
+      pageFormat: PdfPageFormat.a4,
+      orientation: PageOrientation.portrait,
+      margin: const EdgeInsets.all(defaultPadding),
+      build: (Context context) {
+        return tnc3(imageLogo, warranty!, userModel); // Center
+      },
+    ),
+  ); // Page
+
+  pdf.addPage(
+    Page(
+      pageFormat: PdfPageFormat.a4,
+      orientation: PageOrientation.portrait,
+      margin: const EdgeInsets.all(defaultPadding),
+      build: (Context context) {
+        return tnc4(imageLogo, warranty!, userModel); // Center
+      },
+    ),
+  ); // Page
+
+  pdf.addPage(
+    Page(
+      pageFormat: PdfPageFormat.a4,
+      orientation: PageOrientation.portrait,
+      margin: const EdgeInsets.all(defaultPadding),
+      build: (Context context) {
+        return tnc5(tnc1Img, tnc2Img, tnc3Img, warranty!, userModel); // Center
       },
     ),
   ); // Page
@@ -160,7 +203,7 @@ Container warrantyContext(MemoryImage imageLogo,
           child: Text(
             Constants.guaranteeCardMsg,
             textAlign: TextAlign.left,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 8,
             ),
           ),
@@ -174,7 +217,7 @@ Container warrantyContext(MemoryImage imageLogo,
                   Container(height: 40),
                   Text(
                     'Customer Sign',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10,
                     ),
                   ),
@@ -190,7 +233,7 @@ Container warrantyContext(MemoryImage imageLogo,
                   ),
                   Text(
                     'Company Stamp',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10,
                     ),
                   ),
@@ -205,7 +248,7 @@ Container warrantyContext(MemoryImage imageLogo,
           child: Text(
             'This is electronically generated Guarantee card and does not require any signature and stamp.',
             textAlign: TextAlign.left,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 10,
             ),
           ),
@@ -227,7 +270,7 @@ Container tnc(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           child: Text(
             "We hereby confirm that your Sudarshan Saur Solar Water Heating System is Guaranteed for the period mentioned, from the date of the invoice on pro‐rata basis.",
             style: TextStyle(
@@ -238,7 +281,7 @@ Container tnc(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
         ),
         tncdivider(),
         Padding(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           child: Text(
             "Guarantee Exclusions",
             style: TextStyle(
@@ -249,7 +292,7 @@ Container tnc(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
         ),
         tncdivider(),
         Padding(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           child: Text(
             "Repair and replacement work will be carried out as set, but following terms and exclusions may cause the solar water heater Guarantee* to become VOID and may incur a service charge and cost of part/s if any.",
             style: TextStyle(
@@ -306,8 +349,16 @@ Container tnc(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
         rowItemTnC('16',
             'In no event shall the company be liable to a user for any special, incidental or consequential loss or damage; any such claims are specially excluded under this Guarantee* certificate.'),
         tncdivider(),
-        rowItemTnC('17',
-            'Cleaning of scales of deposits inside the evacuated tube & Flat plate collector absorber is not covered under Guarantee*.'),
+        Spacer(),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            "*Conditions apply",
+            style: const TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ),
       ],
     ),
   );
@@ -324,18 +375,284 @@ Container tnc2(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        rowItemTnC('17',
+            'Cleaning of scales of deposits inside the evacuated tube & Flat plate collector absorber is not covered under Guarantee*.'),
+        tncdivider(),
         rowItemTnC('18',
             'If solar water heater which, during the Guarantee* period either, has been shifted from one location to another or changed ownership by sale or lease, gift or otherwise, without written intimation to that effect being given to the company within seven days of such shifting or change of ownership and, in the case of shifting, has not been installed in the new location as per instruction given in user manual or by one of the company\'s authorized dealers or technician at cost of the purchaser.'),
         tncdivider(),
-        Spacer(),
+        Row(
+          children: [
+            Container(
+              width: 30,
+              alignment: Alignment.center,
+              child: Text(
+                '*',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                child: Text(
+                  'Guarantee* Terms and Conditions',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: PdfColors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(color: pdfBorderColor),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         tncdivider(),
+        rowItemTnC('1',
+            'We agree to repair or if found necessary to replace any defective part. While the company and/or authorized dealer will make every effort to carry out repairs and/or replacements at the earliest. However it is made expressly clear that the company and/or authorized dealer is under no obligation to do so in specified period of time without any material/part charges to the user.'),
+        tncdivider(),
+        rowItemTnC('2',
+            'The Guarantee* does not include transport, delivery, handling charges of defective and replaced items.'),
+        tncdivider(),
+        rowItemTnC('3',
+            'The Company Reserves the right to decide whether the defective part is to be repaired or replaced but in no case do we Guarantee* to replace the total system.'),
+        tncdivider(),
+        rowItemTnC('4',
+            'Where failed component or solar water heater is replaced under Guarantee*: the balance of original Guarantee* period will remain in effect. The repaired/replaced part or solar water heater does not carry a new Guarantee*. The liability of Sudarshan Saur under this Guarantee* is limited to the Guarantee* obligations as provided for herein. Any liability for indirect or consequential loss or damages which may be suffered by the customer including, but not limited to, loss/ damage of data or programs, loss of use, loss of profits, loss of production, loss of physical assets, loss of revenues or business interruption, is therefore specifically excluded.'),
+        tncdivider(),
+        rowItemTnC('5',
+            'Guarantee* for the solar water heater will be on pro‐rata basis as per the bellow details. New hot water storage tank against replacement will be given on pro‐rata Guarantee* at discounts on spare price list, which is decided and finalized by Sudarshan Saur Shakti Pvt. Ltd time to time.'),
+        tncdivider(),
+        rowItemTnC('',
+            'For Evacuated tube collector based GL non pressurized model 10 Year* ‐ Pro‐rata calculation for replacement of the tank after proper inspection and permission.'),
+        tncdivider(),
+        rowItemTnC('5A\n##',
+            'For 100/150/200/200CA#/225CA#/250CA#/250/300 LPD 1St year to 5th year tank price free*, for 6th year 50% discount, for 7th year 40% discount, for 8th year 30% discount for 9th year 20% discount and for 10th year 10% discount to the standard spare price list.                                 # - Collector area'),
+        tncdivider(),
+        rowItemTnC('5B\n##',
+            'For 407/450/500 LPD 1St year to 5th year tank price free*, for 6th year 25% discount, for 7th year 20% discount, for 8th year 15% discount for 9th year 10% discount and for 10th year 05% discount to the standard spare price list.'),
+        tncdivider(),
+        rowItemTnC('5C\n##',
+            'For Evacuated tube collector based GL pressurized model 5 Year* ‐ Pro‐rata calculation for replacement of the tank after proper inspection and permission. 1 to 30 month tank price free*, For 31 to 36 month 40% discount, for 37 to 42 month 30% discount, for 43 to 48 month 20% discount, for 49 to 54 month 10% discount and for 55 to 60 month 5% discount to the standard spare price list.'),
+        tncdivider(),
+        rowItemTnC('5D\n##',
+            'For Evacuated collector based pressurized solar, Air Release and Pressure Release Valve should be Change Yearly for soft water supply and once in Six month for hard water water supply. (Charges Applicable)'),
+        tncdivider(),
+        Spacer(),
         Padding(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           child: Text(
             "*Conditions apply",
             style: const TextStyle(
               fontSize: 12,
             ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Container tnc3(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
+    UserModel? userModel) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: PdfColors.white,
+      border: Border.all(color: pdfBorderColor),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        rowItemTnC('5E\n##',
+            'Maximum working pressure for post pressurized (Pressure pump installed at non pressurized solar water heaters outlet) Evacuated collector based system is 2.5 Kg/cm2'),
+        tncdivider(),
+        rowItemTnC('5F\n##',
+            'Post pressurized (Pressure pump installed at non pressurized solar water heaters outlet) Evacuated collector based system should be install in series mode/ combination.'),
+        tncdivider(),
+        rowItemTnC('5G\n##',
+            'If solar water heater system capacity, model, plumbing is not installed as per guidelines and requirements.'),
+        tncdivider(),
+        Row(
+          children: [
+            Container(
+              width: 30,
+              alignment: Alignment.center,
+              child: Text(
+                '6',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                child: Text(
+                  'This Guarantee* is valid only if quality of the water supplied to this Sudarshan Saur product is as follows for the period of use:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: PdfColors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(color: pdfBorderColor),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        tncdivider(),
+        rowItemTnC('6A',
+            'Chloride hardness of water supplied should be less than 600ppm and TDS must be less than 1500 ppm for Wonder Ultimate GL series.'),
+        tncdivider(),
+        rowItemTnC('6B',
+            'pH value of water supplied to this solar water heating system should be 6.5 to 7.5'),
+        tncdivider(),
+        rowItemTnC('7',
+            'The TDS value measured and recorded at time of sale are approximate and may vary during the course of use due to the depth, type Of the water source. Hence the TDS measurement at the time of sale does not in any way bind Sudarshan saur to  suppor this Guarantee* if The above criteria in clause 6(A&B), is not met during the period of use.'),
+        tncdivider(),
+        rowItemTnC('8',
+            'Damages resulting from not grouting the supports/air vent/outlet pipeline.'),
+        tncdivider(),
+        rowItemTnC('9',
+            'The Sudarshan Saur solar water heating system must be purchased from our authorized dealer.'),
+        tncdivider(),
+        rowItemTnC('10',
+            'For Digital controller and solenoid valve Guarantee* 2 (Two) Years. Against manufacturing defect. It is mandatory to have voltage fluctuations Controlling devices to be installed by customer.'),
+        tncdivider(),
+        rowItemTnC('11',
+            'Service charges will be applicable after completion of 1(one) Year.'),
+        tncdivider(),
+        rowItemTnC('12',
+            'Solar water heating system should be installed and functioned within one month from company invoice date'),
+        tncdivider(),
+        rowItemTnC('13',
+            'If customer complaints frequently despite of zero failure, customer have to pay for any service after two free visits of technician.'),
+        tncdivider(),
+        rowItemTnC('14',
+            'The company\'s employees, dealers and service contractors have no authority to vary the terms of this Guarantee*.'),
+        tncdivider(),
+        rowItemTnC('15',
+            'Service charge would be applicable in case of non standard installation and/ or where the system is installed on a slope roof / fabricated Structure or in a place difficult to access the system. The service charge applicable would be extra at actual, payable by the customer.'),
+        tncdivider(),
+        rowItemTnC('16',
+            'This Guarantee* shall not cover any consequential or resulting liability, damage or loss to property or life arising directly or indirectly out of any defect or improper use of/in the solar water heating system. The company\'s obligation under this Guarantee shall be limited to repair or providing replacement of defective parts only under the Guarantee* period.'),
+        tncdivider(),
+        rowItemTnC('17',
+            'Maximum liability of the system installed and failed to perform should not be more than the cost of the failed part of the individual system. Whether are not installed in series or parallel.'),
+        tncdivider(),
+        rowItemTnC('18',
+            'The company reserves the right to retain any parts/s or components at its discretion, in the event of a defect being noticed in the equipment during Guarantee period.'),
+        tncdivider(),
+        Spacer(),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            "*Conditions apply",
+            style: const TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Container tnc4(MemoryImage imageLogo, WarrantyRequestModel warrantyRequestModel,
+    UserModel? userModel) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: PdfColors.white,
+      border: Border.all(color: pdfBorderColor),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        rowItemTnC('19',
+            'This Guarantee* will automatically terminate on the expiry of the Guarantee period, even if the solar water heating system may not be in use for any time during the Guarantee period for any reason.'),
+        tncdivider(),
+        rowItemTnC('20',
+            'In case of doubts in interpretation of the terms of Guarantee* or the mode of redressal of these complaints, the purchaser is required To seek such clarification in writing from the company. The decision of the company is final in all such cases of complaints.'),
+        tncdivider(),
+        rowItemTnC('21',
+            'Sudarshan saur is liable or responcible for complaints, which are communicated in wrritten on our customer care Email ID. (customercare@sudarshansaur.com)'),
+        tncdivider(),
+        rowItemTnC('22',
+            'All disputes shall be subject to Aurangabad Jurisdiction only.'),
+        tncdivider(),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            'Performance Of Solar Water Heating System In (Winter) Cold Climate Season.',
+            style: TextStyle(
+              fontSize: 14,
+              color: PdfColors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            'As you very well aware that the solar water heater absorbs the heat from the sunlight and transfers this heat to the water & make it hot. The input energy to heat the water is sunlight which we receive from sun and as you know, intensity of the sunlight changes during the year with-respect to change in season. So we request to you all to understand that the performance of solar water heater is depending upon many parameters as given below. 1)  Capacity  of  Solar  Water  Heating  System  with  respect  to  the number of users. 2) Capacity of Solar Water Heating System  with respect to water used by the number of user. 3) The hot water used for Bathing / Washing hands and legs during last night . 4) Intensity of Solar Rays. 5) The temperature of cold water entering in hot water solar tank. 6) Continues Drop leakage from solar water tank. 7) Failure of hot & cold water mixer causing entering the cold water in the hot water tank from    outlet side due to gravity and height of cold  water  tank.  8)  Improper  Cold  Water  Pipeline  (Do  it  as  per sticker given on solar tank). So from above  given detailing,  it is  very much clear to you , that the  effectiveness  of  solar  water  heating  system  is  much  more related to the intensity of heat present in sunlight and performance of solar water heater is also related with various points given above which should be taken care by the customer. We hope that you will understand us , be with us and will enjoy the hot water from solar water heating systems for the clean & healthy life.',
+            style: const TextStyle(
+              fontSize: 14,
+              color: PdfColors.black,
+            ),
+          ),
+        ),
+        Spacer(),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            "*Conditions apply",
+            style: const TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Container tnc5(MemoryImage tnc1img, MemoryImage tnc2img, MemoryImage tnc3img,
+    WarrantyRequestModel warrantyRequestModel, UserModel? userModel) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: PdfColors.white,
+      border: Border.all(color: pdfBorderColor),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'IMPORATANT PRECAUTIONS',
+          style: TextStyle(
+            fontSize: 14,
+            color: PdfColors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        tncdivider(),
+        Expanded(
+          child: Image(
+            tnc1img,
           ),
         ),
       ],
@@ -368,7 +685,7 @@ Row rowItem(String key, String value) => Row(
           flex: 3,
           child: Text(
             value,
-            style: TextStyle(fontSize: 12, color: PdfColors.black),
+            style: const TextStyle(fontSize: 12, color: PdfColors.black),
           ),
         ),
       ],

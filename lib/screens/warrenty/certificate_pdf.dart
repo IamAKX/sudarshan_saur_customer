@@ -28,7 +28,7 @@ Future<String> makeCertificatePdf(WarrantyRequestModel? warranty) async {
     Page(
       pageFormat: PdfPageFormat.a4,
       orientation: PageOrientation.landscape,
-      margin: EdgeInsets.all(defaultPadding),
+      margin: const EdgeInsets.all(defaultPadding),
       build: (Context context) {
         return warrantyContext(imageLogo, warranty!, userModel); // Center
       },
@@ -50,7 +50,7 @@ Container warrantyContext(MemoryImage imageLogo,
     child: Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(4.0),
           child: Text(
             'INSTALLATION CERTIFICATE',
             style: TextStyle(
@@ -79,7 +79,7 @@ Container warrantyContext(MemoryImage imageLogo,
                 Expanded(
                   child: Text(
                     'No:. ${warrantyRequestModel.warrantyDetails?.warrantySerialNo}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                     ),
                   ),
@@ -87,8 +87,8 @@ Container warrantyContext(MemoryImage imageLogo,
                 verticalDivider(),
                 Expanded(
                   child: Text(
-                    'Date: ${DateTimeFormatter.onlyDateShort(warrantyRequestModel.warrantyDetails?.installationDate ?? '')}',
-                    style: TextStyle(
+                    'Installation Date: ${warrantyRequestModel.installationDate}',
+                    style: const TextStyle(
                       fontSize: 12,
                     ),
                   ),
@@ -111,7 +111,7 @@ Container warrantyContext(MemoryImage imageLogo,
               ),
               Text(
                 warrantyRequestModel.customers?.customerName ?? '',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                 ),
               ),
@@ -138,7 +138,7 @@ Container warrantyContext(MemoryImage imageLogo,
                     ),
                     divider(),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       alignment: Alignment.center,
                       child: Text(
                         prepareAddress(
@@ -169,7 +169,7 @@ Container warrantyContext(MemoryImage imageLogo,
                     ),
                     divider(),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       alignment: Alignment.center,
                       child: Text(
                         prepareAddress(warrantyRequestModel.ownerAddress),
@@ -394,7 +394,7 @@ Container warrantyContext(MemoryImage imageLogo,
               Expanded(
                 flex: 3,
                 child: Text(
-                  '${warrantyRequestModel.warrantyDetails?.lpd} LPD ${warrantyRequestModel.warrantyDetails?.model}',
+                  '${warrantyRequestModel.warrantyDetails?.itemDescription}',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -662,7 +662,7 @@ Row rowItem(String key, String value) => Row(
           flex: 3,
           child: Text(
             value,
-            style: TextStyle(fontSize: 12, color: PdfColors.black),
+            style: const TextStyle(fontSize: 12, color: PdfColors.black),
           ),
         ),
       ],
