@@ -117,6 +117,40 @@ class ApiProvider extends ChangeNotifier {
     return userModel;
   }
 
+  Future<UserModel?> getUserByPhoneSilent(String phone) async {
+    status = ApiStatus.loading;
+    UserModel? userModel;
+    notifyListeners();
+    log('${Api.getUserByMobile}$phone');
+    try {
+      Response response = await _dio.get(
+        '${Api.getUserByMobile}$phone',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        userModel = UserModel.fromMap(response.data['data']);
+        prefs.setInt(SharedpreferenceKey.userId, userModel.customerId ?? 0);
+        status = ApiStatus.success;
+        notifyListeners();
+        return userModel;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return userModel;
+  }
+
   Future<bool> updateUser(Map<String, dynamic> user, int id) async {
     status = ApiStatus.loading;
     notifyListeners();

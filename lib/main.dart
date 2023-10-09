@@ -27,8 +27,8 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   if (prefs.getString(SharedpreferenceKey.userPhone) != null) {
     log('User found in cache, fething user details');
-    userModel = await ApiProvider()
-        .getUserByPhone(prefs.getString(SharedpreferenceKey.userPhone) ?? "");
+    userModel = await ApiProvider().getUserByPhoneSilent(
+        prefs.getString(SharedpreferenceKey.userPhone) ?? "");
     if (userModel != null) {
       log('User fetch, updating last login');
       await ApiProvider().updateUser(

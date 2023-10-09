@@ -103,7 +103,7 @@ class _ChangePhoneNumberState extends State<ChangePhoneNumber> {
             ),
             verticalGap(defaultPadding),
             Text(
-              'Change Mobile\nNumber ☎️',
+              'Change Mobile\nNumber',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

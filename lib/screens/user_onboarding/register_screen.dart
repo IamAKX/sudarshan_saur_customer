@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             verticalGap(defaultPadding),
             Text(
-              'New\nAccount 🙋🏼‍♂️',
+              'New\nAccount',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

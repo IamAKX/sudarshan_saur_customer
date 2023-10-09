@@ -38,6 +38,7 @@ class WarrantyRequestModel {
   bool? otherInfoChecked;
   String? verifiedBy;
   String? verifiedDate;
+  bool? paymentDone;
   WarrantyRequestModel({
     this.customers,
     this.mobile2,
@@ -64,6 +65,7 @@ class WarrantyRequestModel {
     this.otherInfoChecked,
     this.verifiedBy,
     this.verifiedDate,
+    this.paymentDone,
   });
 
   WarrantyRequestModel copyWith({
@@ -92,6 +94,7 @@ class WarrantyRequestModel {
     bool? otherInfoChecked,
     String? verifiedBy,
     String? verifiedDate,
+    bool? paymentDone,
   }) {
     return WarrantyRequestModel(
       customers: customers ?? this.customers,
@@ -119,6 +122,7 @@ class WarrantyRequestModel {
       otherInfoChecked: otherInfoChecked ?? this.otherInfoChecked,
       verifiedBy: verifiedBy ?? this.verifiedBy,
       verifiedDate: verifiedDate ?? this.verifiedDate,
+      paymentDone: paymentDone ?? this.paymentDone,
     );
   }
 
@@ -149,6 +153,7 @@ class WarrantyRequestModel {
       'otherInfoChecked': otherInfoChecked,
       'verifiedBy': verifiedBy,
       'verifiedDate': verifiedDate,
+      'paymentDone': paymentDone,
     };
   }
 
@@ -195,6 +200,7 @@ class WarrantyRequestModel {
       otherInfoChecked: map['otherInfoChecked'],
       verifiedBy: map['verifiedBy'],
       verifiedDate: map['verifiedDate'],
+      paymentDone: map['paymentDone'],
     );
   }
 
@@ -205,7 +211,7 @@ class WarrantyRequestModel {
 
   @override
   String toString() {
-    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber, lat: $lat, lon: $lon, photoChecked: $photoChecked, otherInfoChecked: $otherInfoChecked, verifiedBy: $verifiedBy, verifiedDate: $verifiedDate)';
+    return 'WarrantyRequestModel(customers: $customers, mobile2: $mobile2, installationAddress: $installationAddress, ownerAddress: $ownerAddress, warrantyDetails: $warrantyDetails, dealerInfo: $dealerInfo, technicianInfo: $technicianInfo, plumberInfo: $plumberInfo, answers: $answers, status: $status, images: $images, createdOn: $createdOn, updatedOn: $updatedOn, initUserType: $initUserType, initiatedBy: $initiatedBy, approvedBy: $approvedBy, installationDate: $installationDate, invoiceDate: $invoiceDate, invoiceNumber: $invoiceNumber, lat: $lat, lon: $lon, photoChecked: $photoChecked, otherInfoChecked: $otherInfoChecked, verifiedBy: $verifiedBy, verifiedDate: $verifiedDate, paymentDone: $paymentDone)';
   }
 
   @override
@@ -237,7 +243,8 @@ class WarrantyRequestModel {
         other.photoChecked == photoChecked &&
         other.otherInfoChecked == otherInfoChecked &&
         other.verifiedBy == verifiedBy &&
-        other.verifiedDate == verifiedDate;
+        other.verifiedDate == verifiedDate &&
+        other.paymentDone == paymentDone;
   }
 
   @override
@@ -266,6 +273,7 @@ class WarrantyRequestModel {
         photoChecked.hashCode ^
         otherInfoChecked.hashCode ^
         verifiedBy.hashCode ^
-        verifiedDate.hashCode;
+        verifiedDate.hashCode ^
+        paymentDone.hashCode;
   }
 }

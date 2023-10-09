@@ -11,8 +11,8 @@ class Api {
 
   static const String requestWarranty = '$baseUrl/saur/warrantyRequests/';
 
-  static const String warrantyByCustomer =
-      '$baseUrl/saur/warrantyDetails/customer/';
+  // static const String warrantyByCustomer =
+  //     '$baseUrl/saur/warrantyDetails/customer/';
 
   static const String exernalWarranty = '$baseUrl/saur/warrantyDetails/crm/';
 

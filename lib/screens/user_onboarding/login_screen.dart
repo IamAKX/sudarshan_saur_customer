@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 verticalGap(defaultPadding),
                 Text(
-                  'Welcome\nBack 👋🏻',
+                  'Welcome\nBack',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
