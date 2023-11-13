@@ -58,7 +58,7 @@ class _RequestScreenState extends State<RequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Warranty Request',
+          'Guarantee Request',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
@@ -191,7 +191,7 @@ class _RequestScreenState extends State<RequestScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
               child: Text(
-                'Not requested for warranty card yet?\nHit the "+" button to raise new request.',
+                'Not requested for guarantee card yet?\nHit the "+" button to raise new request.',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: hintColor,
                     ),

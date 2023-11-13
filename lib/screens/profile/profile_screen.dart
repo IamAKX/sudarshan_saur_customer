@@ -231,51 +231,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
           ),
         ),
-        Positioned(
-          bottom: 1,
-          right: 1,
-          child: InkWell(
-            onTap: isImageUploading
-                ? null
-                : () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      File imageFile = File(image.path);
-                      setState(() {
-                        isImageUploading = true;
-                      });
-                      StorageService.uploadProfileImage(
-                              imageFile, user!.customerId!.toString())
-                          .then((value) async {
-                        _api.updateUser({'image': value},
-                            user?.customerId ?? -1).then((value) {
-                          isImageUploading = false;
-                          reloadScreen();
+        if (Platform.isAndroid)
+          Positioned(
+            bottom: 1,
+            right: 1,
+            child: InkWell(
+              onTap: isImageUploading
+                  ? null
+                  : () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        File imageFile = File(image.path);
+                        setState(() {
+                          isImageUploading = true;
                         });
-                      });
-                    }
-                  },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: primaryColor,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 3,
+                        StorageService.uploadProfileImage(
+                                imageFile, user!.customerId!.toString())
+                            .then((value) async {
+                          _api.updateUser({'image': value},
+                              user?.customerId ?? -1).then((value) {
+                            isImageUploading = false;
+                            reloadScreen();
+                          });
+                        });
+                      }
+                    },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 3,
+                  ),
                 ),
-              ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 15,
+                child: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: 15,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

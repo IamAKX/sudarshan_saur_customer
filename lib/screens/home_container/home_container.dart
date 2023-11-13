@@ -34,7 +34,7 @@ class _HomeContainerState extends State<HomeContainer> {
             icon: const Icon(
               Icons.shield_outlined,
             ),
-            title: const Text('Warranty'),
+            title: const Text('Guarantee'),
           ),
           FlashyTabBarItem(
             icon: const Icon(Icons.history),

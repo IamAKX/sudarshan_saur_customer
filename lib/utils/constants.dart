@@ -914,4 +914,7 @@ Best regards
 
   static String guaranteeCardMsg =
       '''"in part consideration for the Solar Water Heater(s), I, the customer agree to irrevocably and unconditionally transfer to M/s. Sudarshan Saur Shakti Pvt Ltd., full legal and beneficial title to all & any rights relating to the reduction of Green House Gas emissions & environmental benefits arising from the installation & use of solar water heating system(s) including Voluntary Emission Reductions (VERs) under the Kyoto Protocol & Paris Agreement. I agree to provide M/s. Sudarshan Saur Shakti Pvt Ltd., any necessary assistance to bring such rights into existence"''';
+
+  static String manual_link =
+      'https://firebasestorage.googleapis.com/v0/b/sudarshan-saur.appspot.com/o/user_manual%2FETC%20Manual%20All%2019-10-2023.pdf?alt=media&token=edd44dd6-04a4-474b-800e-d9588eeb2e14&_gl=1*1upqfum*_ga*MjMxMzQ5MTY5LjE2ODQ2NjIyNjA.*_ga_CW55HF8NVT*MTY5NzczNzI2Ni4xMjkuMS4xNjk3NzM3MzQwLjYwLjAuMA..';
 }

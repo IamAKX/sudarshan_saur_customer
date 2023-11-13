@@ -1,17 +1,23 @@
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/warrenty/certificate_pdf.dart';
 import 'package:saur_customer/screens/warrenty/warranty_pdf.dart';
 import 'package:saur_customer/services/snakbar_service.dart';
 import 'package:saur_customer/utils/colors.dart';
+import 'package:saur_customer/utils/constants.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/list_models/warranty_request_list.dart';
 import '../../services/api_service.dart';
@@ -58,7 +64,7 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Warranty Card',
+          'Guarantee Card',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
@@ -158,27 +164,75 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
                   color: primaryColor,
                 ),
                 const Spacer(),
-                InkWell(
-                  onTap: () {
-                    makeCertificatePdf(model);
-                    SnackBarService.instance.showSnackBarSuccess(
-                        'Installation Certificate downloaded');
+                // InkWell(
+                //   onTap: () {
+                //     makeCertificatePdf(model);
+                //     SnackBarService.instance.showSnackBarSuccess(
+                //         'Installation Certificate downloaded');
+                //   },
+                //   child: const Icon(
+                //     LineAwesomeIcons.certificate,
+                //     color: Colors.green,
+                //   ),
+                // ),
+                // horizontalGap(defaultPadding),
+                // InkWell(
+                //   onTap: () {
+                //     makePdf(model);
+                //     SnackBarService.instance
+                //         .showSnackBarSuccess('Guarantee Card downloaded');
+                //   },
+                //   child: const Icon(LineAwesomeIcons.address_card,
+                //       color: Colors.blue),
+                // ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.download),
+                  onSelected: (String value) async {
+                    switch (value) {
+                      case '1':
+                        makePdf(model).then((value) => {log(value)});
+                        SnackBarService.instance
+                            .showSnackBarSuccess('Guarantee Card downloaded');
+                        break;
+                      case '2':
+                        makeCertificatePdf(model).then((value) => {log(value)});
+                        SnackBarService.instance.showSnackBarSuccess(
+                            'Installation Certificate downloaded');
+                        break;
+                      case '3':
+                        if (Platform.isAndroid) {
+                          FileDownloader.downloadFile(
+                            url: Constants.manual_link,
+                            // name:
+                            //     'User Manual', //THE FILE NAME AFTER DOWNLOADING,
+                          ).then((value) {
+                            SnackBarService.instance
+                                .showSnackBarSuccess('User Manual downloaded');
+                          });
+                        } else {
+                          launchUrl(Uri.parse(Constants.manual_link));
+                        }
+
+                        break;
+                    }
                   },
-                  child: const Icon(
-                    LineAwesomeIcons.certificate,
-                    color: Colors.green,
-                  ),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: '1',
+                        child: Text('Download Guarantee Card'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '2',
+                        child: Text('Download Installation Certificate'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: '3',
+                        child: Text('User Manual'),
+                      ),
+                    ];
+                  },
                 ),
-                horizontalGap(defaultPadding),
-                InkWell(
-                  onTap: () {
-                    makePdf(model);
-                    SnackBarService.instance
-                        .showSnackBarSuccess('Guarantee Card downloaded');
-                  },
-                  child: const Icon(LineAwesomeIcons.address_card,
-                      color: Colors.blue),
-                )
               ],
             )
           ],
@@ -263,7 +317,7 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
               widget.switchTabs(1);
             },
             child: Text(
-              'Get your warranty',
+              'Get your guarantee',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                   ),

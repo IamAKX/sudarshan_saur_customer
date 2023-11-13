@@ -20,7 +20,7 @@ String getDetailedMessageByStatus(String status) {
     case 'PENDING':
       return 'Your request is under validation, you will be notified in 24 hours';
     case 'APPROVED':
-      return 'Your warranty card is generated. You get download or get it on email or whatsapp.';
+      return 'Your guarantee card is generated.';
     case 'DECLINED':
       return 'Your request is rejected by admin';
     default:
@@ -56,7 +56,6 @@ bool isValidZipcode(String number) {
   return true;
 }
 
-
 bool isValidSerialNumber(String number) {
   if (number.length != 6) return false;
   try {
@@ -66,4 +65,3 @@ bool isValidSerialNumber(String number) {
   }
   return true;
 }
-
