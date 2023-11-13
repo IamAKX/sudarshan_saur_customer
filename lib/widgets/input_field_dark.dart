@@ -8,6 +8,7 @@ class InputFieldDark extends StatelessWidget {
       required this.keyboardType,
       required this.obscure,
       required this.icon,
+      this.maxChar,
       this.enabled})
       : super(key: key);
 
@@ -16,7 +17,7 @@ class InputFieldDark extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obscure;
   final IconData icon;
-
+  final int? maxChar;
   final bool? enabled;
 
   @override
@@ -26,6 +27,7 @@ class InputFieldDark extends StatelessWidget {
       keyboardType: keyboardType,
       autocorrect: true,
       obscureText: obscure,
+      maxLength: maxChar,
       controller: controller,
       cursorColor: Colors.white,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(

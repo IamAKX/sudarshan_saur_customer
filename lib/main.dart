@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
+import 'package:saur_customer/screens/raise_warranty_request/conclusion_screen.dart';
+import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
 import 'package:saur_customer/services/api_service.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
@@ -21,10 +25,12 @@ UserModel? userModel;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
-  if (prefs.getInt(SharedpreferenceKey.userId) != null) {
-    userModel = await ApiProvider()
-        .getCustomerById(prefs.getInt(SharedpreferenceKey.userId) ?? 0);
+  if (prefs.getString(SharedpreferenceKey.userPhone) != null) {
+    log('User found in cache, fething user details');
+    userModel = await ApiProvider().getUserByPhoneSilent(
+        prefs.getString(SharedpreferenceKey.userPhone) ?? "");
     if (userModel != null) {
+      log('User fetch, updating last login');
       await ApiProvider().updateUser(
           {'lastLogin': DateTimeFormatter.now()}, userModel?.customerId ?? 0);
     }
@@ -65,8 +71,13 @@ class MyApp extends StatelessWidget {
       return const AppIntroScreen();
     } else if (userModel == null || userModel?.customerId == null) {
       return const LoginScreen();
-    } else if ((userModel?.status ?? UserStatus.SUSPENDED.name) !=
-        UserStatus.ACTIVE.name) {
+    } else if ((userModel!.status) == UserStatus.CREATED.name &&
+        prefs.containsKey(SharedpreferenceKey.ongoingRequest)) {
+      return const InstallationAddressScreen();
+    } else if ((userModel!.status) == UserStatus.PENDING.name ||
+        (userModel!.status) == UserStatus.CREATED.name) {
+      return const ConclusionScreen();
+    } else if ((userModel!.status) == UserStatus.SUSPENDED.name) {
       return const BlockedUserScreen();
     }
     return const HomeContainer();

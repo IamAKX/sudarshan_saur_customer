@@ -1,25 +1,26 @@
-import 'dart:convert';
-import 'dart:math';
+import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:saur_customer/screens/user_onboarding/address_screen.dart';
-import 'package:saur_customer/screens/user_onboarding/otp_verification.dart';
-import 'package:saur_customer/screens/user_onboarding/user_detail.dart';
+import 'package:saur_customer/main.dart';
+import 'package:saur_customer/models/user_model.dart';
+import 'package:saur_customer/models/warranty_model.dart';
+import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
+import 'package:saur_customer/utils/enum.dart';
+import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
 import 'package:saur_customer/widgets/gaps.dart';
-import 'package:saur_customer/widgets/primary_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:string_validator/string_validator.dart';
 
-import '../../models/address_model.dart';
-import '../../models/user_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
-import 'package:string_validator/string_validator.dart';
-
-import '../../utils/date_time_formatter.dart';
-import '../../utils/enum.dart';
-import 'login_screen.dart';
+import '../../utils/preference_key.dart';
+import '../../widgets/input_field_dark.dart';
+import '../../widgets/primary_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,21 +32,35 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _passwordCtrl = TextEditingController();
-  final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _phoneCtrl = TextEditingController();
+  final TextEditingController _serialNumberCtrl = TextEditingController();
   final TextEditingController _otpCodeCtrl = TextEditingController();
-  final TextEditingController addressLine1Ctrl = TextEditingController();
-  final TextEditingController addressLine2Ctrl = TextEditingController();
-  final TextEditingController cityCtrl = TextEditingController();
-  final TextEditingController stateCtrl = TextEditingController();
-  final TextEditingController zipCodeCtrl = TextEditingController();
-  int step = 1;
 
   late ApiProvider _api;
 
   String code = '';
+
+  Timer? _timer;
+  static const int otpResendThreshold = 10;
+  int _secondsRemaining = otpResendThreshold;
+  bool _timerActive = false;
+
+  void startTimer() {
+    _secondsRemaining = otpResendThreshold;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_secondsRemaining > 0) {
+          _secondsRemaining--;
+          _timerActive = true;
+        } else {
+          _timer?.cancel();
+          _timerActive = false;
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
@@ -87,216 +102,143 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             verticalGap(defaultPadding),
-            Row(
-              children: [
-                Text(
-                  'New\nAccount 🙋🏼‍♂️',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const Spacer(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '$step',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          '/3',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: Colors.white,
-                              ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      'STEPS',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-              ],
+            Text(
+              'New\nAccount',
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             verticalGap(defaultPadding * 1.5),
-            Expanded(child: getWidgetByStep()),
-            verticalGap(defaultPadding * 1.5),
-            Row(
-              children: [
-                Visibility(
-                  visible: step == 2 || step == 3,
-                  child: InkWell(
-                    onTap: _api.status == ApiStatus.loading
-                        ? null
-                        : () {
-                            setState(() {
-                              step--;
-                            });
-                          },
-                    child: const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: primaryColor,
+            Expanded(
+              child: ListView(
+                children: [
+                  InputFieldDark(
+                    hint: 'Full Name',
+                    controller: _nameCtrl,
+                    keyboardType: TextInputType.name,
+                    obscure: false,
+                    icon: LineAwesomeIcons.user,
+                  ),
+                  verticalGap(defaultPadding * 1.5),
+                  InputFieldDark(
+                    hint: 'Mobile Number',
+                    controller: _phoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    obscure: false,
+                    icon: LineAwesomeIcons.phone,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _timerActive
+                          ? null
+                          : () {
+                              if (_phoneCtrl.text.length != 10 ||
+                                  !isNumeric(_phoneCtrl.text)) {
+                                SnackBarService.instance.showSnackBarError(
+                                    'Enter valid 10 digit mobile number');
+                                return;
+                              }
+                              code = getOTPCode();
+                              log('OTP = $code');
+                              startTimer();
+                              _api.sendOtp(_phoneCtrl.text, code);
+                            },
+                      child: Text(
+                        _timerActive
+                            ? 'Resend in $_secondsRemaining seconds'
+                            : 'Send OTP',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge
+                            ?.copyWith(color: Colors.white),
                       ),
                     ),
                   ),
-                ),
-                const Spacer(),
-                Visibility(
-                  visible: step == 1 || step == 2,
-                  child: InkWell(
-                    onTap: () {
-                      if (!validateInput()) {
+                  verticalGap(defaultPadding),
+                  InputFieldDark(
+                    hint: 'OTP',
+                    controller: _otpCodeCtrl,
+                    keyboardType: TextInputType.number,
+                    obscure: false,
+                    icon: LineAwesomeIcons.lock,
+                  ),
+                  verticalGap(defaultPadding * 1.5),
+                  InputFieldDark(
+                    hint: 'System Serial Number',
+                    controller: _serialNumberCtrl,
+                    keyboardType: TextInputType.number,
+                    obscure: false,
+                    icon: LineAwesomeIcons.plug,
+                    maxChar: 6,
+                  ),
+                  verticalGap(defaultPadding * 2),
+                  PrimaryButton(
+                    onPressed: () async {
+                      if (_nameCtrl.text.isEmpty ||
+                          _phoneCtrl.text.isEmpty ||
+                          _otpCodeCtrl.text.isEmpty ||
+                          _serialNumberCtrl.text.isEmpty) {
+                        SnackBarService.instance
+                            .showSnackBarError('All fields are mandatory');
                         return;
                       }
-                      setState(() {
-                        step++;
+
+                      if (!isValidPhoneNumber(_phoneCtrl.text)) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid phone number');
+                        return;
+                      }
+
+                      if (!isValidSerialNumber(_serialNumberCtrl.text)) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid Serial number');
+                        return;
+                      }
+
+                      if (_otpCodeCtrl.text != code) {
+                        SnackBarService.instance
+                            .showSnackBarError('Incorrect OTP');
+                        return;
+                      }
+                      WarrantyModel? warrantyModel = await _api
+                          .getDeviceBySerialNo(_serialNumberCtrl.text);
+                      if (warrantyModel == null) {
+                        SnackBarService.instance
+                            .showSnackBarError('Invalid serial number');
+                        return;
+                      }
+                      UserModel userModel = UserModel(
+                          customerName: _nameCtrl.text,
+                          mobileNo: _phoneCtrl.text,
+                          status: UserStatus.CREATED.name);
+                      _api.createUser(userModel).then((value) async {
+                        if (value) {
+                          UserModel? newUser =
+                              await _api.getUserByPhone(_phoneCtrl.text);
+                          prefs.setString(SharedpreferenceKey.serialNumber,
+                              _serialNumberCtrl.text);
+                          prefs.setString(
+                              SharedpreferenceKey.userPhone, _phoneCtrl.text);
+                          prefs.setInt(SharedpreferenceKey.userId,
+                              newUser?.customerId ?? -1);
+                          Navigator.pushNamed(
+                              context, InstallationAddressScreen.routePath);
+                        }
                       });
                     },
-                    child: const CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.arrow_forward,
-                        color: primaryColor,
-                      ),
-                    ),
+                    label: 'Register',
+                    isDisabled: _api.status == ApiStatus.loading,
+                    isLoading: _api.status == ApiStatus.loading,
                   ),
-                ),
-                Visibility(
-                  visible: step == 3,
-                  child: SizedBox(
-                    width: 250,
-                    child: PrimaryButton(
-                        onPressed: () {
-                          if (code != '' && _otpCodeCtrl.text == code) {
-                            step = 1;
-                            UserModel user = UserModel(
-                              address: AddressModel(
-                                addressLine1: addressLine1Ctrl.text,
-                                addressLine2: addressLine2Ctrl.text,
-                                city: cityCtrl.text,
-                                country: 'India',
-                                state: stateCtrl.text,
-                                zipCode: zipCodeCtrl.text,
-                              ),
-                              customerName: _nameCtrl.text,
-                              email: _emailCtrl.text,
-                              password:
-                                  base64.encode(_passwordCtrl.text.codeUnits),
-                              lastLogin: DateTimeFormatter.now(),
-                              mobileNo: _phoneCtrl.text,
-                              status: UserStatus.CREATED.name,
-                            );
-
-                            _api.createUser(user).then((value) {
-                              if (value) {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    LoginScreen.routePath, (route) => false);
-                              }
-                            });
-                          } else {
-                            SnackBarService.instance
-                                .showSnackBarError('Invalid OTP');
-                          }
-                        },
-                        label: 'Register',
-                        isDisabled: _api.status == ApiStatus.loading,
-                        isLoading: _api.status == ApiStatus.loading),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             verticalGap(defaultPadding),
           ],
         ),
       ),
     );
-  }
-
-  getWidgetByStep() {
-    switch (step) {
-      case 1:
-        return UserDetail(
-            emailCtrl: _emailCtrl,
-            passwordCtrl: _passwordCtrl,
-            phoneCtrl: _phoneCtrl,
-            nameCtrl: _nameCtrl);
-      case 3:
-        code = (Random().nextInt(9000) + 1000).toString();
-        ApiProvider().sendOtp(_phoneCtrl.text, code.toString());
-        return OtpVerification(
-          phoneCtrl: _phoneCtrl,
-          otpCode: code.toString(),
-          otpCodeCtrl: _otpCodeCtrl,
-        );
-
-      case 2:
-        return AddressScreen(
-          addressLine1Ctrl: addressLine1Ctrl,
-          addressLine2Ctrl: addressLine2Ctrl,
-          cityCtrl: cityCtrl,
-          stateCtrl: stateCtrl,
-          zipCodeCtrl: zipCodeCtrl,
-        );
-    }
-  }
-
-  bool validateInput() {
-    if (step == 1) {
-      if (_nameCtrl.text.isEmpty ||
-          _emailCtrl.text.isEmpty ||
-          _passwordCtrl.text.isEmpty ||
-          _phoneCtrl.text.isEmpty) {
-        SnackBarService.instance.showSnackBarError('All fields are mandatory');
-        return false;
-      }
-      if (!isEmail(_emailCtrl.text)) {
-        SnackBarService.instance.showSnackBarError('Enter valid email address');
-        return false;
-      }
-      if (_phoneCtrl.text.length != 10 || !isNumeric(_phoneCtrl.text)) {
-        SnackBarService.instance.showSnackBarError('Enter valid phone number');
-        return false;
-      }
-      if (_passwordCtrl.text.length < 8) {
-        SnackBarService.instance
-            .showSnackBarError('Password must be of atleast 8 charaters');
-        return false;
-      }
-      if (!RegisterScreen.agreementStatus) {
-        SnackBarService.instance
-            .showSnackBarError('Check the agreement checkbox');
-        return false;
-      }
-    }
-    if (step == 2) {
-      if (addressLine1Ctrl.text.isEmpty ||
-          cityCtrl.text.isEmpty ||
-          stateCtrl.text.isEmpty ||
-          zipCodeCtrl.text.isEmpty) {
-        SnackBarService.instance.showSnackBarError('All fields are mandatory');
-        return false;
-      }
-    }
-
-    return true;
   }
 }

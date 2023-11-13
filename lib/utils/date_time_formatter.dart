@@ -19,6 +19,15 @@ class DateTimeFormatter {
     }
   }
 
+  static String guaranteeCardDate(String rawDate) {
+    try {
+      DateTime date = DateFormat(databaseFormat).parse(rawDate);
+      return DateFormat('dd/MM/yyyy').format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
   static String onlyDateShort(String rawDate) {
     try {
       DateTime date = DateFormat(databaseFormat).parse(rawDate);
@@ -44,5 +53,27 @@ class DateTimeFormatter {
     } catch (e) {
       return '';
     }
+  }
+
+  static String formatDatePicker(DateTime rawDate) {
+    try {
+      return DateFormat('dd/MM/yyyy').format(rawDate);
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static DateTime toDateTime(String date) {
+    try {
+      return DateFormat('dd/MM/yyyy').parse(date);
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  static bool isValidInstallationDate(String date1, String date2) {
+    DateTime d1 = toDateTime(date1);
+    DateTime d2 = toDateTime(date2);
+    return d1.isBefore(d2);
   }
 }

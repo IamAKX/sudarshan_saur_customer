@@ -85,13 +85,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 profileImageWidget(),
                 verticalGap(defaultPadding),
                 Text(
-                  '${user?.customerName}',
+                  '${user?.customerName ?? ''}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Text(
-                  '${user?.email}',
+                  '${user?.mobileNo ?? ''}',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(),
                 ),
               ],
@@ -122,23 +122,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 endIndent: defaultPadding,
                 indent: defaultPadding * 3,
               ),
-              ListTile(
-                tileColor: Colors.white,
-                leading: const Icon(
-                  LineAwesomeIcons.user_lock,
-                ),
-                title: const Text('Change Password'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.pushNamed(context, ChangePassword.routePath);
-                },
-              ),
-              const Divider(
-                height: 0,
-                color: dividerColor,
-                endIndent: defaultPadding,
-                indent: defaultPadding * 3,
-              ),
+              // ListTile(
+              //   tileColor: Colors.white,
+              //   leading: const Icon(
+              //     LineAwesomeIcons.user_lock,
+              //   ),
+              //   title: const Text('Change Password'),
+              //   trailing: const Icon(Icons.chevron_right),
+              //   onTap: () {
+              //     Navigator.pushNamed(context, ChangePassword.routePath);
+              //   },
+              // ),
+              // const Divider(
+              //   height: 0,
+              //   color: dividerColor,
+              //   endIndent: defaultPadding,
+              //   indent: defaultPadding * 3,
+              // ),
               ListTile(
                 tileColor: Colors.white,
                 leading: const Icon(
@@ -147,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: const Text('Contact Us'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
-                  launchUrl(Uri.parse('tel://18008800'));
+                  launchUrl(Uri.parse('tel://9225309153'));
                 },
               ),
               const Divider(
@@ -231,53 +231,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
           ),
         ),
-        Positioned(
-          bottom: 1,
-          right: 1,
-          child: InkWell(
-            onTap: isImageUploading
-                ? null
-                : () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      File imageFile = File(image.path);
-                      setState(() {
-                        isImageUploading = true;
-                      });
-                      StorageService.uploadProfileImage(
-                              imageFile,
-                              '${user?.email}.${image.name.split('.')[1]}',
-                              'customer/profileImage')
-                          .then((value) async {
-                        _api.updateUser({'image': value},
-                            user?.customerId ?? -1).then((value) {
-                          isImageUploading = false;
-                          reloadScreen();
+        if (Platform.isAndroid)
+          Positioned(
+            bottom: 1,
+            right: 1,
+            child: InkWell(
+              onTap: isImageUploading
+                  ? null
+                  : () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        File imageFile = File(image.path);
+                        setState(() {
+                          isImageUploading = true;
                         });
-                      });
-                    }
-                  },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: primaryColor,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 3,
+                        StorageService.uploadProfileImage(
+                                imageFile, user!.customerId!.toString())
+                            .then((value) async {
+                          _api.updateUser({'image': value},
+                              user?.customerId ?? -1).then((value) {
+                            isImageUploading = false;
+                            reloadScreen();
+                          });
+                        });
+                      }
+                    },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 3,
+                  ),
                 ),
-              ),
-              child: const Icon(
-                Icons.edit,
-                color: Colors.white,
-                size: 15,
+                child: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                  size: 15,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

@@ -1,9 +1,5 @@
 import 'dart:convert';
 
-import 'package:saur_customer/models/user_model.dart';
-
-import 'stockist_model.dart';
-
 class WarrantyModel {
   String? warrantySerialNo;
   String? crmCustomerName;
@@ -23,8 +19,8 @@ class WarrantyModel {
   String? crmStockistEmail;
   String? state;
   String? description;
-  StockistModel? stockists;
-  UserModel? customer;
+  String? stockists;
+  String? customer;
   String? allocationStatus;
   String? createdOn;
   String? updatedOn;
@@ -81,8 +77,8 @@ class WarrantyModel {
     String? crmStockistEmail,
     String? state,
     String? description,
-    StockistModel? stockists,
-    UserModel? customer,
+    String? stockists,
+    String? customer,
     String? allocationStatus,
     String? createdOn,
     String? updatedOn,
@@ -142,8 +138,8 @@ class WarrantyModel {
       'crmStockistEmail': crmStockistEmail,
       'state': state,
       'description': description,
-      'stockists': stockists?.toMap(),
-      'customer': customer?.toMap(),
+      'stockists': stockists,
+      'customer': customer,
       'allocationStatus': allocationStatus,
       'createdOn': createdOn,
       'updatedOn': updatedOn,
@@ -174,11 +170,8 @@ class WarrantyModel {
       crmStockistEmail: map['crmStockistEmail'],
       state: map['state'],
       description: map['description'],
-      stockists: map['stockists'] != null
-          ? StockistModel.fromMap(map['stockists'])
-          : null,
-      customer:
-          map['customer'] != null ? UserModel.fromMap(map['customer']) : null,
+      stockists: map['stockists'],
+      customer: map['customer'],
       allocationStatus: map['allocationStatus'],
       createdOn: map['createdOn'],
       updatedOn: map['updatedOn'],

@@ -23,7 +23,7 @@ class _HomeContainerState extends State<HomeContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return Scaffold(
       body: getBody(),
       bottomNavigationBar: FlashyTabBar(
         selectedIndex: _selectedIndex,
@@ -34,7 +34,7 @@ class _HomeContainerState extends State<HomeContainer> {
             icon: const Icon(
               Icons.shield_outlined,
             ),
-            title: const Text('Warranty'),
+            title: const Text('Guarantee'),
           ),
           FlashyTabBarItem(
             icon: const Icon(Icons.history),

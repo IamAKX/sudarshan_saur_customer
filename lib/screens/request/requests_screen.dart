@@ -1,18 +1,25 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/list_models/warranty_request_list.dart';
+import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
 import 'package:saur_customer/screens/request/new_request.dart';
 import 'package:saur_customer/screens/request/request_detail_screen.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/preference_key.dart';
+import 'package:saur_customer/widgets/input_field_light.dart';
+import '../../main.dart';
+import '../../models/warranty_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
+import '../../widgets/input_field_dark.dart';
 
 class RequestScreen extends StatefulWidget {
   const RequestScreen({super.key, required this.switchTabs});
@@ -51,7 +58,7 @@ class _RequestScreenState extends State<RequestScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Warranty Request',
+          'Guarantee Request',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
@@ -62,8 +69,7 @@ class _RequestScreenState extends State<RequestScreen> {
           : getBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, NewRequestScreen.routePath)
-              .then((value) => reloadScreen());
+          showSerialNumber(context);
         },
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
@@ -98,7 +104,7 @@ class _RequestScreenState extends State<RequestScreen> {
                           ),
                     ),
                     Text(
-                      '${list?.data?.elementAt(index).warrantySerialNo}',
+                      '${list?.data?.elementAt(index).warrantyDetails?.warrantySerialNo}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: textColorDark,
                           ),
@@ -124,11 +130,10 @@ class _RequestScreenState extends State<RequestScreen> {
                     ),
                     Text(
                       getShortMessageByStatus(
-                          list?.data?.elementAt(index).allocationStatus ?? ''),
+                          list?.data?.elementAt(index).status ?? ''),
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                             color: getColorByStatus(
-                                list?.data?.elementAt(index).allocationStatus ??
-                                    ''),
+                                list?.data?.elementAt(index).status ?? ''),
                           ),
                     ),
                   ],
@@ -137,7 +142,7 @@ class _RequestScreenState extends State<RequestScreen> {
                   Container(
                     width: double.maxFinite,
                     color: getColorByStatus(
-                        list?.data?.elementAt(index).allocationStatus ?? ''),
+                        list?.data?.elementAt(index).status ?? ''),
                     child: Container(
                       margin: const EdgeInsets.only(left: defaultPadding / 2),
                       color: Colors.white,
@@ -147,10 +152,8 @@ class _RequestScreenState extends State<RequestScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                getDetailedMessageByStatus(list?.data
-                                        ?.elementAt(index)
-                                        .allocationStatus ??
-                                    ''),
+                                getDetailedMessageByStatus(
+                                    list?.data?.elementAt(index).status ?? ''),
                               ),
                             ),
                             IconButton(
@@ -188,7 +191,7 @@ class _RequestScreenState extends State<RequestScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
               child: Text(
-                'Not requested for warranty card yet?\nHit the "+" button to raise new request.',
+                'Not requested for guarantee card yet?\nHit the "+" button to raise new request.',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: hintColor,
                     ),
@@ -197,6 +200,55 @@ class _RequestScreenState extends State<RequestScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void showSerialNumber(BuildContext mainContext) {
+    TextEditingController _serialNumberCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Serial Number'),
+          content: InputFieldLight(
+            hint: 'System Serial Number',
+            controller: _serialNumberCtrl,
+            keyboardType: TextInputType.number,
+            obscure: false,
+            icon: LineAwesomeIcons.plug,
+            maxChar: 6,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(mainContext);
+                SnackBarService.instance.showSnackBarInfo(
+                    'Validating serial number. Please wait...');
+                WarrantyModel? warrantyModel =
+                    await _api.getDeviceBySerialNo(_serialNumberCtrl.text);
+                if (warrantyModel == null) {
+                } else {
+                  log('Serial no validated : ${warrantyModel.toString()}');
+
+                  await prefs.setString(
+                      SharedpreferenceKey.serialNumber, _serialNumberCtrl.text);
+
+                  Navigator.pushNamed(
+                          mainContext, InstallationAddressScreen.routePath)
+                      .then((value) => reloadScreen());
+                }
+              },
+              child: Text('Okay'),
+            )
+          ],
+        );
+      },
     );
   }
 }

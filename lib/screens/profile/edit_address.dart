@@ -47,9 +47,9 @@ class _EditAddressState extends State<EditAddress> {
         .then((value) {
       setState(() {
         user = value;
-        addressLine1Ctrl.text = user?.address?.addressLine1 ?? '';
-        addressLine2Ctrl.text = user?.address?.addressLine2 ?? '';
-        cityCtrl.text = user?.address?.city ?? '';
+        addressLine1Ctrl.text = user?.address?.street1 ?? '';
+        addressLine2Ctrl.text = user?.address?.street2 ?? '';
+        cityCtrl.text = user?.address?.town ?? '';
         stateCtrl.text = user?.address?.state ?? '';
         zipCodeCtrl.text = user?.address?.zipCode ?? '';
       });
