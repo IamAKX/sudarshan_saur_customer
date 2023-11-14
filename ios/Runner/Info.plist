@@ -51,5 +51,11 @@
 		<false/>
 		<key>UIFileSharingEnabled</key>
         <true/>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Program requires GPS to track location where Guarantee Card is generated</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Program requires GPS to track location where Guarantee Card is generated</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Program requires Photo permission to allow user to choose and upload profile picture</string>
 	</dict>
 </plist>

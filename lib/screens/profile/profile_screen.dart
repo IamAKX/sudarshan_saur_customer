@@ -231,7 +231,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
           ),
         ),
-        if (Platform.isAndroid)
+        // if (Platform.isAndroid)
           Positioned(
             bottom: 1,
             right: 1,
