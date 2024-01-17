@@ -74,6 +74,6 @@ class DateTimeFormatter {
   static bool isValidInstallationDate(String date1, String date2) {
     DateTime d1 = toDateTime(date1);
     DateTime d2 = toDateTime(date2);
-    return d1.isBefore(d2);
+    return d1.isBefore(d2) || d1.isAtSameMomentAs(d2);
   }
 }

@@ -38,7 +38,8 @@ class PhotoUploadScreen extends StatefulWidget {
 class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   late ApiProvider _api;
   bool uploadingImage = false;
-  File? systemImage, serialNumberImage, aadhaarImage;
+  // File? systemImage, serialNumberImage, aadhaarImage;
+  File? systemImage, serialNumberImage;
   bool agreement = false;
   @override
   void initState() {
@@ -95,11 +96,11 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                       }
 
                       Position? position = await determinePosition();
-                      if (systemImage == null ||
-                          serialNumberImage == null ||
-                          aadhaarImage == null) {
+                      if (systemImage == null || serialNumberImage == null
+                          // ||aadhaarImage == null
+                          ) {
                         SnackBarService.instance
-                            .showSnackBarError('Please select all 3 images');
+                            .showSnackBarError('Please select all images');
                         return;
                       }
                       if (agreement) {
@@ -112,7 +113,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                             await StorageService.uploadReqDocuments(
                                 systemImage!,
                                 serialNumberImage!,
-                                aadhaarImage!,
+                                // aadhaarImage!,
                                 widget.warrantyRequestModel.customers
                                         ?.customerId
                                         .toString() ??
@@ -120,12 +121,12 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                         setState(() {
                           uploadingImage = false;
                         });
-                        widget.warrantyRequestModel.status =
-                            AllocationStatus.PENDING.name;
-                        widget.warrantyRequestModel.initUserType = 'CUSTOMER';
-                        widget.warrantyRequestModel.initiatedBy = widget
-                            .warrantyRequestModel.customers?.customerId
-                            .toString();
+                        // widget.warrantyRequestModel.status =
+                        //     AllocationStatus.PENDING.name;
+                        // widget.warrantyRequestModel.initUserType = 'CUSTOMER';
+                        // widget.warrantyRequestModel.initiatedBy = widget
+                        //     .warrantyRequestModel.customers?.customerId
+                        //     .toString();
 
                         String? lat = position.latitude.toString();
                         lat = lat.substring(0, min(lat.length, 10));
@@ -148,17 +149,28 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                         widget.warrantyRequestModel.lat = lat;
 
                         widget.warrantyRequestModel.lon = lon;
+                        Map<String, dynamic> warrantyReq = {
+                          "images": {
+                            "imgLiveSystem": widget.warrantyRequestModel.images
+                                    ?.imgLiveSystem ??
+                                '',
+                            "imgSystemSerialNo": widget.warrantyRequestModel
+                                    .images?.imgSystemSerialNo ??
+                                '',
+                            "imgAadhar": ""
+                          },
+                          "lat": lat,
+                          "lon": lon,
+                        };
+
                         _api
-                            .createNewWarrantyRequest(
-                                widget.warrantyRequestModel)
+                            .updateWarrantyRequest(warrantyReq,
+                                widget.warrantyRequestModel.requestId!)
                             .then((value) {
                           if (value) {
-                            prefs.remove(SharedpreferenceKey.serialNumber);
-                            prefs.remove(SharedpreferenceKey.ongoingRequest);
-
-                            Navigator.pushNamed(
-                                context, ConclusionScreen.routePath,
-                                arguments: widget.warrantyRequestModel);
+                            SnackBarService.instance
+                                .showSnackBarSuccess('Image uploaded');
+                            Navigator.pop(context);
                           }
                         });
                       } else {
@@ -167,7 +179,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                         return;
                       }
                     },
-                    child: const Text('Next'),
+                    child: const Text('Update'),
                   ),
           ],
         ),
@@ -259,47 +271,47 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   ),
                 ),
         ),
-        verticalGap(defaultPadding),
-        Text(
-          'Aadhaar Card',
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
-        verticalGap(defaultPadding / 2),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: hintColor.withOpacity(0.5),
-            ),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          alignment: Alignment.center,
-          height: 200,
-          width: double.infinity,
-          child: aadhaarImage != null
-              ? Image.file(
-                  aadhaarImage!,
-                  height: 200,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                )
-              : InkWell(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      setState(() {
-                        aadhaarImage = File(image.path);
-                      });
-                    }
-                  },
-                  child: const Icon(
-                    LineAwesomeIcons.camera,
-                    size: 60,
-                    color: Colors.grey,
-                  ),
-                ),
-        ),
+        // verticalGap(defaultPadding),
+        // Text(
+        //   'Aadhaar Card',
+        //   style: Theme.of(context).textTheme.labelLarge,
+        // ),
+        // verticalGap(defaultPadding / 2),
+        // Container(
+        //   decoration: BoxDecoration(
+        //     border: Border.all(
+        //       color: hintColor.withOpacity(0.5),
+        //     ),
+        //     borderRadius: BorderRadius.circular(4),
+        //   ),
+        //   alignment: Alignment.center,
+        //   height: 200,
+        //   width: double.infinity,
+        //   child: aadhaarImage != null
+        //       ? Image.file(
+        //           aadhaarImage!,
+        //           height: 200,
+        //           width: double.infinity,
+        //           fit: BoxFit.fitWidth,
+        //         )
+        //       : InkWell(
+        //           onTap: () async {
+        //             final ImagePicker picker = ImagePicker();
+        //             final XFile? image =
+        //                 await picker.pickImage(source: ImageSource.camera);
+        //             if (image != null) {
+        //               setState(() {
+        //                 aadhaarImage = File(image.path);
+        //               });
+        //             }
+        //           },
+        //           child: const Icon(
+        //             LineAwesomeIcons.camera,
+        //             size: 60,
+        //             color: Colors.grey,
+        //           ),
+        //         ),
+        // ),
         verticalGap(defaultPadding * 1.5),
         TextButton(
           onPressed: () {

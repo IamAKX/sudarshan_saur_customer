@@ -188,6 +188,43 @@ class ApiProvider extends ChangeNotifier {
     return false;
   }
 
+  Future<bool> updateWarrantyRequest(
+      Map<String, dynamic> warrantyReq, int id) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    log(json.encode(warrantyReq));
+    log('id : $id');
+    try {
+      Response response = await _dio.put(
+        '${Api.requestWarranty}$id',
+        data: json.encode(warrantyReq),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        notifyListeners();
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
+  }
+
   Future<UserModel?> getCustomerById(int id) async {
     status = ApiStatus.loading;
     notifyListeners();

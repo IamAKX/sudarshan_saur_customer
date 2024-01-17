@@ -14,8 +14,12 @@ class StorageService {
     return downloadLink;
   }
 
-  static Future<ImagesModel> uploadReqDocuments(File systemImage,
-      File serialNumberImage, File aadhaarImage, String userId) async {
+  static Future<ImagesModel> uploadReqDocuments(
+    File systemImage,
+    File serialNumberImage,
+    // File aadhaarImage,
+    String userId,
+  ) async {
     ImagesModel model = ImagesModel();
 
     // upload serial number
@@ -28,13 +32,13 @@ class StorageService {
     model.imgSystemSerialNo = downloadLink;
 
     // upload aadhaar
-    String aadhaarImagePath =
-        '$userId/${aadhaarImage.path.split(Platform.pathSeparator).last}';
-    ref = FirebaseStorage.instance.ref().child(aadhaarImagePath);
-    uploadTask = ref.putFile(aadhaarImage);
-    snapshot = await uploadTask.whenComplete(() {});
-    downloadLink = await snapshot.ref.getDownloadURL();
-    model.imgAadhar = downloadLink;
+    // String aadhaarImagePath =
+    //     '$userId/${aadhaarImage.path.split(Platform.pathSeparator).last}';
+    // ref = FirebaseStorage.instance.ref().child(aadhaarImagePath);
+    // uploadTask = ref.putFile(aadhaarImage);
+    // snapshot = await uploadTask.whenComplete(() {});
+    // downloadLink = await snapshot.ref.getDownloadURL();
+    model.imgAadhar = '';
 
     // upload systemImage
     String systemImagePath =

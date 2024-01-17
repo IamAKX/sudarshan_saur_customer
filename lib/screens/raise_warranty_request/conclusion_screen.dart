@@ -66,13 +66,9 @@ class _ConclusionScreenState extends State<ConclusionScreen> {
         verticalGap(defaultPadding),
         ElevatedButton(
           onPressed: () {
-            if (prefs.containsKey(SharedpreferenceKey.loggedIn)) {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, HomeContainer.routePath, (route) => false);
-            } else {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, LoginScreen.routePath, (route) => false);
-            }
+            prefs.clear();
+            Navigator.pushNamedAndRemoveUntil(
+                context, LoginScreen.routePath, (route) => false);
           },
           child: const Text('OK'),
         )

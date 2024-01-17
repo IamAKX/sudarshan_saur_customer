@@ -14,9 +14,11 @@ import 'package:saur_customer/utils/preference_key.dart';
 import '../../models/warranty_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/enum.dart';
 import '../../utils/theme.dart';
 import '../../widgets/gaps.dart';
 import '../../widgets/input_field_light.dart';
+import 'conclusion_screen.dart';
 
 class SystemDetailScreen extends StatefulWidget {
   const SystemDetailScreen({
@@ -114,38 +116,64 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                if (!isValidInputs()) {
-                  return;
-                }
+            (_api.status == ApiStatus.loading)
+                ? Container(
+                    margin: const EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(),
+                  )
+                : TextButton(
+                    onPressed: () {
+                      if (!isValidInputs()) {
+                        return;
+                      }
 
-                widget.warrantyRequestModel.warrantyDetails = warrantyModel;
-                widget.warrantyRequestModel.invoiceNumber =
-                    _dealerInvoiceNoCtrl.text;
-                widget.warrantyRequestModel.invoiceDate =
-                    _dealerInvoiceDateCtrl.text;
-                widget.warrantyRequestModel.installationDate =
-                    _installationDateCtrl.text;
-                widget.warrantyRequestModel.dealerInfo = DealerModel(
-                    mobile: _dealerPhoneCtrl.text,
-                    name: _dealerNameCtrl.text,
-                    place: _dealerPlaceCtrl.text);
-                widget.warrantyRequestModel.technicianInfo = TechnicianModel(
-                    mobile: _technicianPhoneCtrl.text,
-                    name: _technicianNameCtrl.text,
-                    place: _technicianPlaceCtrl.text);
-                widget.warrantyRequestModel.plumberInfo = PlumberModel(
-                    mobile: _plumberPhoneCtrl.text,
-                    name: _plumberNameCtrl.text,
-                    place: _plumberPlaceCtrl.text);
-                prefs.setString(SharedpreferenceKey.ongoingRequest,
-                    widget.warrantyRequestModel.toJson());
-                Navigator.pushNamed(context, OtherInformationScreen.routePath,
-                    arguments: widget.warrantyRequestModel);
-              },
-              child: const Text('Next'),
-            ),
+                      widget.warrantyRequestModel.warrantyDetails =
+                          warrantyModel;
+                      widget.warrantyRequestModel.invoiceNumber =
+                          _dealerInvoiceNoCtrl.text;
+                      widget.warrantyRequestModel.invoiceDate =
+                          _dealerInvoiceDateCtrl.text;
+                      widget.warrantyRequestModel.installationDate =
+                          _installationDateCtrl.text;
+                      widget.warrantyRequestModel.dealerInfo = DealerModel(
+                          mobile: _dealerPhoneCtrl.text,
+                          name: _dealerNameCtrl.text,
+                          place: _dealerPlaceCtrl.text);
+                      widget.warrantyRequestModel.technicianInfo =
+                          TechnicianModel(
+                              mobile: _technicianPhoneCtrl.text,
+                              name: _technicianNameCtrl.text,
+                              place: _technicianPlaceCtrl.text);
+                      widget.warrantyRequestModel.plumberInfo = PlumberModel(
+                          mobile: _plumberPhoneCtrl.text,
+                          name: _plumberNameCtrl.text,
+                          place: _plumberPlaceCtrl.text);
+                      prefs.setString(SharedpreferenceKey.ongoingRequest,
+                          widget.warrantyRequestModel.toJson());
+                      // Navigator.pushNamed(context, OtherInformationScreen.routePath,
+                      //     arguments: widget.warrantyRequestModel);
+                      widget.warrantyRequestModel.answers = [];
+                      widget.warrantyRequestModel.status =
+                          AllocationStatus.PENDING.name;
+                      widget.warrantyRequestModel.initUserType = 'CUSTOMER';
+                      widget.warrantyRequestModel.initiatedBy = widget
+                          .warrantyRequestModel.customers?.customerId
+                          .toString();
+                      _api
+                          .createNewWarrantyRequest(widget.warrantyRequestModel)
+                          .then((value) {
+                        if (value) {
+                          // prefs.remove(SharedpreferenceKey.serialNumber);
+                          // prefs.remove(SharedpreferenceKey.ongoingRequest);
+                          prefs.clear();
+                          Navigator.pushNamedAndRemoveUntil(context,
+                              ConclusionScreen.routePath, (route) => false);
+                        }
+                      });
+                    },
+                    child: const Text('Submit'),
+                  ),
           ],
         ),
         body: getBody(context));
@@ -225,79 +253,79 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
           'Dealer Detail',
         ),
         verticalGap(defaultPadding),
-        InputFieldLight(
-            hint: 'Dealer Name',
-            controller: _dealerNameCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Dealer Mobile Number',
-            controller: _dealerPhoneCtrl,
-            keyboardType: TextInputType.phone,
-            maxChar: 10,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Dealer Name',
+        //     controller: _dealerNameCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Dealer Mobile Number',
+        //     controller: _dealerPhoneCtrl,
+        //     keyboardType: TextInputType.phone,
+        //     maxChar: 10,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
         InputFieldLight(
             hint: 'Dealer Place',
             controller: _dealerPlaceCtrl,
             keyboardType: TextInputType.name,
             obscure: false,
             icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding),
-        const Text(
-          'Technician Detail',
-        ),
-        verticalGap(defaultPadding),
-        InputFieldLight(
-            hint: 'Technician Name',
-            controller: _technicianNameCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Technician Mobile Number',
-            controller: _technicianPhoneCtrl,
-            keyboardType: TextInputType.phone,
-            maxChar: 10,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Technician Place',
-            controller: _technicianPlaceCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding),
-        const Text(
-          'Plumber Detail',
-        ),
-        verticalGap(defaultPadding),
-        InputFieldLight(
-            hint: 'Plumber Name',
-            controller: _plumberNameCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Plumber Mobile Number',
-            controller: _plumberPhoneCtrl,
-            maxChar: 10,
-            keyboardType: TextInputType.phone,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
-        verticalGap(defaultPadding / 2),
-        InputFieldLight(
-            hint: 'Plumber Place',
-            controller: _plumberPlaceCtrl,
-            keyboardType: TextInputType.name,
-            obscure: false,
-            icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding),
+        // const Text(
+        //   'Technician Detail',
+        // ),
+        // verticalGap(defaultPadding),
+        // InputFieldLight(
+        //     hint: 'Technician Name',
+        //     controller: _technicianNameCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Technician Mobile Number',
+        //     controller: _technicianPhoneCtrl,
+        //     keyboardType: TextInputType.phone,
+        //     maxChar: 10,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Technician Place',
+        //     controller: _technicianPlaceCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding),
+        // const Text(
+        //   'Plumber Detail',
+        // ),
+        // verticalGap(defaultPadding),
+        // InputFieldLight(
+        //     hint: 'Plumber Name',
+        //     controller: _plumberNameCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Plumber Mobile Number',
+        //     controller: _plumberPhoneCtrl,
+        //     maxChar: 10,
+        //     keyboardType: TextInputType.phone,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
+        // verticalGap(defaultPadding / 2),
+        // InputFieldLight(
+        //     hint: 'Plumber Place',
+        //     controller: _plumberPlaceCtrl,
+        //     keyboardType: TextInputType.name,
+        //     obscure: false,
+        //     icon: LineAwesomeIcons.plug),
       ],
     );
   }
@@ -314,14 +342,14 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
       SnackBarService.instance.showSnackBarError('Invalid serial number');
       return false;
     }
-    if (_dealerInvoiceNoCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Enter dealer invoice number');
-      return false;
-    }
-    if (_dealerInvoiceDateCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Select dealer invoice date');
-      return false;
-    }
+    // if (_dealerInvoiceNoCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Enter dealer invoice number');
+    //   return false;
+    // }
+    // if (_dealerInvoiceDateCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Select dealer invoice date');
+    //   return false;
+    // }
     if (_installationDateCtrl.text.isEmpty) {
       SnackBarService.instance.showSnackBarError('Select installation date');
       return false;
@@ -332,39 +360,39 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
           'Installation date should be after dealer invoice date');
       return false;
     }
-    if (_dealerNameCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Enter dealer name');
-      return false;
-    }
-    if (!isValidPhoneNumber(_dealerPhoneCtrl.text)) {
-      SnackBarService.instance.showSnackBarError('Invalid dealer phone number');
-      return false;
-    }
-    if (_dealerPlaceCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Enter dealer place');
-      return false;
-    }
+    // if (_dealerNameCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Enter dealer name');
+    //   return false;
+    // }
+    // if (!isValidPhoneNumber(_dealerPhoneCtrl.text)) {
+    //   SnackBarService.instance.showSnackBarError('Invalid dealer phone number');
+    //   return false;
+    // }
+    // if (_dealerPlaceCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Enter dealer place');
+    //   return false;
+    // }
 
-    if (_dealerPhoneCtrl.text == _plumberPhoneCtrl.text ||
-        _dealerPhoneCtrl.text == _technicianPhoneCtrl.text) {
-      SnackBarService.instance.showSnackBarError(
-          'Dealer mobile number cannot be same as technician or plumber mobile number');
-      return false;
-    }
+    // if (_dealerPhoneCtrl.text == _plumberPhoneCtrl.text ||
+    //     _dealerPhoneCtrl.text == _technicianPhoneCtrl.text) {
+    //   SnackBarService.instance.showSnackBarError(
+    //       'Dealer mobile number cannot be same as technician or plumber mobile number');
+    //   return false;
+    // }
 
-    if (_technicianPhoneCtrl.text.isNotEmpty) {
-      if (!isValidPhoneNumber(_technicianPhoneCtrl.text)) {
-        SnackBarService.instance.showSnackBarError('Invalid technician number');
-        return false;
-      }
-    }
+    // if (_technicianPhoneCtrl.text.isNotEmpty) {
+    //   if (!isValidPhoneNumber(_technicianPhoneCtrl.text)) {
+    //     SnackBarService.instance.showSnackBarError('Invalid technician number');
+    //     return false;
+    //   }
+    // }
 
-    if (_plumberPhoneCtrl.text.isNotEmpty) {
-      if (!isValidPhoneNumber(_plumberPhoneCtrl.text)) {
-        SnackBarService.instance.showSnackBarError('Invalid plumber number');
-        return false;
-      }
-    }
+    // if (_plumberPhoneCtrl.text.isNotEmpty) {
+    //   if (!isValidPhoneNumber(_plumberPhoneCtrl.text)) {
+    //     SnackBarService.instance.showSnackBarError('Invalid plumber number');
+    //     return false;
+    //   }
+    // }
 
     return true;
   }

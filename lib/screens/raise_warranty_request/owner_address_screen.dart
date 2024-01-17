@@ -96,17 +96,17 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
                   return;
                 }
                 AddressModel ownerAddress = AddressModel(
-                    houseNo: _houseNumberCtrl.text,
-                    area: _colonyCtrl.text,
-                    street1: _street1Ctrl.text,
-                    street2: _street2Ctrl.text,
-                    landmark: _landmarkCtrl.text,
-                    state: selectedState,
-                    district: selectedDistrict,
+                    houseNo: _houseNumberCtrl.text ?? '',
+                    area: _colonyCtrl.text ?? '',
+                    street1: _street1Ctrl.text ?? '',
+                    street2: _street2Ctrl.text ?? '',
+                    landmark: _landmarkCtrl.text ?? '',
+                    state: selectedState ?? '',
+                    district: selectedDistrict ?? '',
                     country: 'India',
-                    taluk: _talukaCtrl.text,
-                    town: _placeCtrl.text,
-                    zipCode: _zipCodeCtrl.text);
+                    taluk: _talukaCtrl.text ?? '',
+                    town: _placeCtrl.text ?? '',
+                    zipCode: _zipCodeCtrl.text ?? '');
 
                 widget.warrantyRequestModel.ownerAddress = ownerAddress;
                 prefs.setString(SharedpreferenceKey.ongoingRequest,
@@ -274,45 +274,45 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
   }
 
   bool isValidInputs() {
-    if (_houseNumberCtrl.text.isEmpty) {
-      SnackBarService.instance
-          .showSnackBarError('House Number cannot be empty');
-      return false;
-    }
-    if (_colonyCtrl.text.isEmpty) {
-      SnackBarService.instance
-          .showSnackBarError('Colony / Area cannot be empty');
-      return false;
-    }
-    if (_street1Ctrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Street 1 cannot be empty');
-      return false;
-    }
-    if (_landmarkCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
-      return false;
-    }
-    if (selectedState?.trim().isEmpty ?? true) {
-      SnackBarService.instance.showSnackBarError('State cannot be empty');
-      return false;
-    }
-    if (selectedDistrict?.trim().isEmpty ?? true) {
-      SnackBarService.instance.showSnackBarError('District cannot be empty');
-      return false;
-    }
-    if (_talukaCtrl.text.isEmpty) {
-      SnackBarService.instance.showSnackBarError('Taluka cannot be empty');
-      return false;
-    }
-    if (_placeCtrl.text.isEmpty) {
-      SnackBarService.instance
-          .showSnackBarError('Place / Town cannot be empty');
-      return false;
-    }
-    if (!isValidZipcode(_zipCodeCtrl.text)) {
-      SnackBarService.instance.showSnackBarError('Invalid pincode');
-      return false;
-    }
+    // if (_houseNumberCtrl.text.isEmpty) {
+    //   SnackBarService.instance
+    //       .showSnackBarError('House Number cannot be empty');
+    //   return false;
+    // }
+    // if (_colonyCtrl.text.isEmpty) {
+    //   SnackBarService.instance
+    //       .showSnackBarError('Colony / Area cannot be empty');
+    //   return false;
+    // }
+    // if (_street1Ctrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Street 1 cannot be empty');
+    //   return false;
+    // }
+    // if (_landmarkCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Landmark cannot be empty');
+    //   return false;
+    // }
+    // if (selectedState?.trim().isEmpty ?? true) {
+    //   SnackBarService.instance.showSnackBarError('State cannot be empty');
+    //   return false;
+    // }
+    // if (selectedDistrict?.trim().isEmpty ?? true) {
+    //   SnackBarService.instance.showSnackBarError('District cannot be empty');
+    //   return false;
+    // }
+    // if (_talukaCtrl.text.isEmpty) {
+    //   SnackBarService.instance.showSnackBarError('Taluka cannot be empty');
+    //   return false;
+    // }
+    // if (_placeCtrl.text.isEmpty) {
+    //   SnackBarService.instance
+    //       .showSnackBarError('Place / Town cannot be empty');
+    //   return false;
+    // }
+    // if (!isValidZipcode(_zipCodeCtrl.text)) {
+    //   SnackBarService.instance.showSnackBarError('Invalid pincode');
+    //   return false;
+    // }
     return true;
   }
 }

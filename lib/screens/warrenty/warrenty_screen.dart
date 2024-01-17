@@ -6,6 +6,7 @@ import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:open_file_plus/open_file_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
 import 'package:saur_customer/screens/warrenty/certificate_pdf.dart';
@@ -45,6 +46,9 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
   }
 
   reloadScreen() async {
+    Permission.location.request().then((value) {
+      log('location permission : $value');
+    });
     await _api
         .getWarrantyRequestListByCustomerId(SharedpreferenceKey.getUserId())
         .then((value) {

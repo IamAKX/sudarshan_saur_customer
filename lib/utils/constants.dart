@@ -894,18 +894,25 @@ class Constants {
   static List<String> option7 = ['Full', 'Part'];
   static List<String> option8 = ['Yes', 'No', 'Partly'];
 
-  static String conclusionMessage = '''Dear Customer
-Congratulations on your new Solar water heating system,
+  static String conclusionMessage =
+      '''Dear Customer(Auto generated customer name),
 
-On behalf of Sudarshan Saur Shakti Pvt.Ltd., we would like to extend our heartfelt gratitude for choosing our solar water heating system. Your decision to trust our brand and invest in sustainable energy solutions means a lot to us.
+Congratulations on your new Solar water hetaing system.
+
+On behalf of Sudarshan Saur, we would like to extend our heartfelt gratitude for choosing our solar water heating system. Your decision to trust our brand and invest in sustainable energy solutions means a lot to us.
 
 By purchasing our solar water heater, you have not only taken a significant step towards reducing your carbon footprint but have also contributed to the UNFCCC's carbon credit program. Your support in this initiative is commendable, as it directly aids in mitigating global warming and promoting a cleaner environment for future generations.
 
-At Sudarshan Saur Shakti Pvt.Ltd., we are dedicated to environmental stewardship, sustainable development goals and your purchase plays a vital role in supporting our commitment to the carbon credit program. The carbon credits earned through this program allow us to reinvest in research and development, enabling us to provide even better and more innovative products in the future.
+At Sudarshan Saur, we are dedicated to environmental stewardship, sustainable development goals and your purchase plays a vital role in supporting our commitment to the carbon credit program. 
 
-Once again, we thank you for your environmentally conscious decision and for being part of our efforts to create a sustainable future. If you have any questions or need assistance with your solar water heater, please don't hesitate to contact our customer support team.
+Our association with United Nations have supported us in delivering excellent cost effective products to customers like you.
 
-Thank you for being an eco-conscious customer and supporting our mission!
+We thank you for entering your data in our mobile application.
+It will help us provide support at your fingertips throughtout the lifetime of your Solar Water Heater.
+Once again, we thank you for your environmentally conscious decision and for being part of our efforts to create a sustainable future. 
+
+We want to congratulate you and welcome you to the Sudarshan family.
+
 Best regards
 ''';
 

@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/models/list_models/warranty_request_list.dart';
 import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
+import 'package:saur_customer/screens/raise_warranty_request/photo_upload_screen.dart';
 import 'package:saur_customer/screens/request/new_request.dart';
 import 'package:saur_customer/screens/request/request_detail_screen.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
@@ -48,6 +50,9 @@ class _RequestScreenState extends State<RequestScreen> {
       setState(() {
         list = value;
       });
+    });
+    await Permission.location.request().then((value) {
+      log('location permission : $value');
     });
   }
 
@@ -93,7 +98,9 @@ class _RequestScreenState extends State<RequestScreen> {
                   ExpansionTile(
                 textColor: textColorDark,
                 collapsedBackgroundColor: Colors.white,
-                backgroundColor: pendingColor.withOpacity(0.1),
+                backgroundColor: list?.data?.elementAt(index).images == null
+                    ? rejectedColor.withOpacity(0.1)
+                    : pendingColor.withOpacity(0.1),
                 title: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -128,44 +135,84 @@ class _RequestScreenState extends State<RequestScreen> {
                       height: defaultPadding * 0.75,
                       color: dividerColor,
                     ),
-                    Text(
-                      getShortMessageByStatus(
-                          list?.data?.elementAt(index).status ?? ''),
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: getColorByStatus(
+                    list?.data?.elementAt(index).images == null
+                        ? Expanded(
+                            child: Text(
+                              'Urgent action pending',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color: Colors.red,
+                                  ),
+                            ),
+                          )
+                        : Text(
+                            getShortMessageByStatus(
                                 list?.data?.elementAt(index).status ?? ''),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color: getColorByStatus(
+                                      list?.data?.elementAt(index).status ??
+                                          ''),
+                                ),
                           ),
-                    ),
                   ],
                 ),
                 children: [
                   Container(
                     width: double.maxFinite,
-                    color: getColorByStatus(
-                        list?.data?.elementAt(index).status ?? ''),
+                    color: list?.data?.elementAt(index).images == null
+                        ? Colors.red
+                        : getColorByStatus(
+                            list?.data?.elementAt(index).status ?? ''),
                     child: Container(
                       margin: const EdgeInsets.only(left: defaultPadding / 2),
                       color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(defaultPadding / 2),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                getDetailedMessageByStatus(
-                                    list?.data?.elementAt(index).status ?? ''),
+                        child: list?.data?.elementAt(index).images == null
+                            ? Row(
+                                children: [
+                                  const Expanded(
+                                    child: Text(
+                                        'Upload device image to process the guarantee request.'),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context,
+                                              PhotoUploadScreen.routePath,
+                                              arguments:
+                                                  list?.data?.elementAt(index))
+                                          .then((value) => reloadScreen());
+                                    },
+                                    icon: const Icon(LineAwesomeIcons.camera),
+                                  )
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      getDetailedMessageByStatus(
+                                          list?.data?.elementAt(index).status ??
+                                              ''),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, RequestDetalScreen.routePath,
+                                          arguments:
+                                              list?.data?.elementAt(index));
+                                    },
+                                    icon: const Icon(
+                                        LineAwesomeIcons.info_circle),
+                                  )
+                                ],
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, RequestDetalScreen.routePath,
-                                    arguments: list?.data?.elementAt(index));
-                              },
-                              icon: const Icon(LineAwesomeIcons.info_circle),
-                            )
-                          ],
-                        ),
                       ),
                     ),
                   )
