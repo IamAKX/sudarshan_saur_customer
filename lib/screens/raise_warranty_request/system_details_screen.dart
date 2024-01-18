@@ -11,6 +11,8 @@ import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/preference_key.dart';
 
+import '../../models/list_models/question_answer_model.dart';
+import '../../models/list_models/question_model.dart';
 import '../../models/warranty_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
@@ -160,6 +162,7 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
                       widget.warrantyRequestModel.initiatedBy = widget
                           .warrantyRequestModel.customers?.customerId
                           .toString();
+                      widget.warrantyRequestModel.answers = buildQnAList();
                       _api
                           .createNewWarrantyRequest(widget.warrantyRequestModel)
                           .then((value) {
@@ -435,5 +438,36 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
       _installationDateCtrl.text =
           DateTimeFormatter.formatDatePicker(selectedDate);
     }
+  }
+
+  List<QuestionAnswerModel> buildQnAList() {
+    return [
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 1)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 2)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 3)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 4)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 5)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 6)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 7)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 8)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 9)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 10)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 11)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 12)),
+      QuestionAnswerModel(
+          answerText: '', questions: QuestionModel(questionId: 13)),
+    ];
   }
 }
