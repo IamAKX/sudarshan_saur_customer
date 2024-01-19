@@ -13,6 +13,7 @@ import 'package:saur_customer/screens/raise_warranty_request/photo_upload_screen
 import 'package:saur_customer/screens/raise_warranty_request/system_details_screen.dart';
 import 'package:saur_customer/screens/request/new_request.dart';
 import 'package:saur_customer/screens/request/request_detail_screen.dart';
+import 'package:saur_customer/screens/ticket/create_ticket.dart';
 import 'package:saur_customer/screens/user_onboarding/agreement_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/screens/user_onboarding/change_phone_number.dart';
@@ -91,6 +92,10 @@ class NavRoute {
           builder: (_) => PdfDummy(
             warrantyRequestModel: settings.arguments as WarrantyRequestModel,
           ),
+        );
+      case CreateTicket.routePath:
+        return MaterialPageRoute(
+          builder: (_) => const CreateTicket(),
         );
       default:
         return errorRoute();

@@ -528,4 +528,39 @@ class ApiProvider extends ChangeNotifier {
     notifyListeners();
     return device;
   }
+
+  Future<bool> createTicket(Map<String, dynamic> map) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var formData = FormData.fromMap({
+        'pass': 'admin',
+        'url': 'https://icrmondemand.com/sudarshan',
+        'module': 'Cases',
+        'jsonParam': map
+      });
+
+      Response response = await _dio.post(
+        'https://icrmondemand.com/sudarshan/index.php?entryPoint=CreateTicketAPI',
+        data: formData,
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+
+      notifyListeners();
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
+  }
 }

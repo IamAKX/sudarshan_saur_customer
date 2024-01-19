@@ -61,7 +61,7 @@ class _EditNameState extends State<EditName> {
         ),
         verticalGap(defaultPadding),
         InputFieldLight(
-            hint: 'Phone Number',
+            hint: 'Full Name',
             controller: _nameCtrl,
             keyboardType: TextInputType.name,
             obscure: false,

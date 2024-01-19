@@ -6,6 +6,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:saur_customer/screens/profile/change_password.dart';
 import 'package:saur_customer/screens/profile/edit_profile.dart';
+import 'package:saur_customer/screens/ticket/create_ticket.dart';
 import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/utils/colors.dart';
 import 'package:saur_customer/utils/theme.dart';
@@ -156,6 +157,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 endIndent: defaultPadding,
                 indent: defaultPadding * 3,
               ),
+              ListTile(
+                tileColor: Colors.white,
+                leading: const Icon(
+                  LineAwesomeIcons.headset,
+                ),
+                title: const Text('Raise Ticket'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.pushNamed(context, CreateTicket.routePath);
+                },
+              ),
+              const Divider(
+                height: 0,
+                color: dividerColor,
+                endIndent: defaultPadding,
+                indent: defaultPadding * 3,
+              ),
               // ListTile(
               //   tileColor: Colors.white,
               //   leading: const Icon(
@@ -232,51 +250,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         // if (Platform.isAndroid)
-          Positioned(
-            bottom: 1,
-            right: 1,
-            child: InkWell(
-              onTap: isImageUploading
-                  ? null
-                  : () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        File imageFile = File(image.path);
-                        setState(() {
-                          isImageUploading = true;
+        Positioned(
+          bottom: 1,
+          right: 1,
+          child: InkWell(
+            onTap: isImageUploading
+                ? null
+                : () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      File imageFile = File(image.path);
+                      setState(() {
+                        isImageUploading = true;
+                      });
+                      StorageService.uploadProfileImage(
+                              imageFile, user!.customerId!.toString())
+                          .then((value) async {
+                        _api.updateUser({'image': value},
+                            user?.customerId ?? -1).then((value) {
+                          isImageUploading = false;
+                          reloadScreen();
                         });
-                        StorageService.uploadProfileImage(
-                                imageFile, user!.customerId!.toString())
-                            .then((value) async {
-                          _api.updateUser({'image': value},
-                              user?.customerId ?? -1).then((value) {
-                            isImageUploading = false;
-                            reloadScreen();
-                          });
-                        });
-                      }
-                    },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 3,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.edit,
+                      });
+                    }
+                  },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+                border: Border.all(
                   color: Colors.white,
-                  size: 15,
+                  width: 3,
                 ),
+              ),
+              child: const Icon(
+                Icons.edit,
+                color: Colors.white,
+                size: 15,
               ),
             ),
           ),
+        ),
       ],
     );
   }
