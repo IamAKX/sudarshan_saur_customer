@@ -916,6 +916,29 @@ We want to congratulate you and welcome you to the Sudarshan family.
 Best regards
 ''';
 
+  static getConclusionMessage(String name) {
+    return '''Dear $name,
+
+Congratulations on your new Solar water hetaing system.
+
+On behalf of Sudarshan Saur, we would like to extend our heartfelt gratitude for choosing our solar water heating system. Your decision to trust our brand and invest in sustainable energy solutions means a lot to us.
+
+By purchasing our solar water heater, you have not only taken a significant step towards reducing your carbon footprint but have also contributed to the UNFCCC's carbon credit program. Your support in this initiative is commendable, as it directly aids in mitigating global warming and promoting a cleaner environment for future generations.
+
+At Sudarshan Saur, we are dedicated to environmental stewardship, sustainable development goals and your purchase plays a vital role in supporting our commitment to the carbon credit program. 
+
+Our association with United Nations have supported us in delivering excellent cost effective products to customers like you.
+
+We thank you for entering your data in our mobile application.
+It will help us provide support at your fingertips throughtout the lifetime of your Solar Water Heater.
+Once again, we thank you for your environmentally conscious decision and for being part of our efforts to create a sustainable future. 
+
+We want to congratulate you and welcome you to the Sudarshan family.
+
+Best regards
+''';
+  }
+
   static String termsAndConditions = '''
  In part consideration for the Solar Water Heater(s), I, the customer agree to irrevocably and unconditionally transfer to M/s. Sudarshan Saur Shakti Pvt. Ltd., full legal and beneficial title to all & any rights relating to the reduction of Green House Gas emissions & environmental benefits arising from the installation & use of solar water heating system(s) including Voluntary Emission Reductions (VERs) under the Kyoto Protocol & Paris Agreement. I agree to provide M/s. Sudarshan Saur Shakti Pvt. Ltd., any necessary assistance to bring such rights into existence''';
 

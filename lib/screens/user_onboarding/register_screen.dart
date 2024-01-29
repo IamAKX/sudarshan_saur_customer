@@ -212,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       UserModel userModel = UserModel(
                           customerName: _nameCtrl.text,
                           mobileNo: _phoneCtrl.text,
-                          status: UserStatus.CREATED.name);
+                          status: UserStatus.ACTIVE.name);
                       _api.createUser(userModel).then((value) async {
                         if (value) {
                           UserModel? newUser =

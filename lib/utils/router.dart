@@ -78,7 +78,7 @@ class NavRoute {
         );
       case ConclusionScreen.routePath:
         return MaterialPageRoute(
-          builder: (_) => const ConclusionScreen(),
+          builder: (_) => ConclusionScreen(name: settings.arguments as String),
         );
 
       case RequestDetalScreen.routePath:

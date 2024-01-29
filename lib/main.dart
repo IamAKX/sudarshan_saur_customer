@@ -76,7 +76,9 @@ class MyApp extends StatelessWidget {
       return const InstallationAddressScreen();
     } else if ((userModel!.status) == UserStatus.PENDING.name ||
         (userModel!.status) == UserStatus.CREATED.name) {
-      return const ConclusionScreen();
+      return ConclusionScreen(
+        name: userModel?.customerName ?? 'User',
+      );
     } else if ((userModel!.status) == UserStatus.SUSPENDED.name) {
       return const BlockedUserScreen();
     }

@@ -13,7 +13,7 @@ class HomeContainer extends StatefulWidget {
 }
 
 class _HomeContainerState extends State<HomeContainer> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   switchTabs(int index) {
     setState(() {
@@ -23,7 +23,7 @@ class _HomeContainerState extends State<HomeContainer> {
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       body: getBody(),
       bottomNavigationBar: FlashyTabBar(
         selectedIndex: _selectedIndex,

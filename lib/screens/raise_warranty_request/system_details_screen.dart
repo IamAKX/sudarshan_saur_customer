@@ -163,15 +163,28 @@ class _SystemDetailScreenState extends State<SystemDetailScreen> {
                           .warrantyRequestModel.customers?.customerId
                           .toString();
                       widget.warrantyRequestModel.answers = buildQnAList();
+                      debugPrint(
+                          'mobile : ${widget.warrantyRequestModel.customers?.mobileNo}');
+                      debugPrint(
+                          'customerId : ${widget.warrantyRequestModel.customers?.customerId}');
                       _api
                           .createNewWarrantyRequest(widget.warrantyRequestModel)
                           .then((value) {
                         if (value) {
                           // prefs.remove(SharedpreferenceKey.serialNumber);
                           // prefs.remove(SharedpreferenceKey.ongoingRequest);
-                          prefs.clear();
+                          // prefs.clear();
+                          prefs.setString(
+                              SharedpreferenceKey.userPhone,
+                              widget.warrantyRequestModel.customers?.mobileNo ??
+                                  '');
+                          prefs.setInt(
+                              SharedpreferenceKey.userId,
+                              widget.warrantyRequestModel.customers
+                                      ?.customerId ??
+                                  -1);
                           Navigator.pushNamedAndRemoveUntil(context,
-                              ConclusionScreen.routePath, (route) => false);
+                              ConclusionScreen.routePath, (route) => false, arguments: widget.warrantyRequestModel.customers?.customerName??'User');
                         }
                       });
                     },

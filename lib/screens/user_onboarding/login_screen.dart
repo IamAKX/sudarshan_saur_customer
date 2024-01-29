@@ -184,11 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         } else if (value.status == UserStatus.PENDING.name ||
                             value.status == UserStatus.CREATED.name) {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            ConclusionScreen.routePath,
-                            (route) => false,
-                          );
+                          Navigator.pushNamedAndRemoveUntil(context,
+                              ConclusionScreen.routePath, (route) => false,
+                              arguments: value.customerName ?? 'User');
                         } else if (value.status == UserStatus.SUSPENDED.name) {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
@@ -211,7 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await prefs.clear();
                         Navigator.pushNamed(context, RegisterScreen.routePath);
                       },
                       child: Text(
