@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/theme.dart';
@@ -24,7 +25,7 @@ class _AppIntroScreenState extends State<AppIntroScreen> {
   }
 
   void _onIntroEnd(BuildContext context) {
-    Navigator.of(context).pushNamed(LoginScreen.routePath);
+    Navigator.of(context).pushNamed(RegisterScreen.routePath);
   }
 
   Widget _buildImage(String assetName) {

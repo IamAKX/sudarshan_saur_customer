@@ -7,6 +7,7 @@ import 'package:saur_customer/screens/app_intro/app_intro_screen.dart';
 import 'package:saur_customer/screens/home_container/home_container.dart';
 import 'package:saur_customer/screens/raise_warranty_request/conclusion_screen.dart';
 import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
+import 'package:saur_customer/screens/user_onboarding/register_screen.dart';
 import 'package:saur_customer/services/api_service.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
       prefs.setBool(SharedpreferenceKey.firstTimeAppOpen, false);
       return const AppIntroScreen();
     } else if (userModel == null || userModel?.customerId == null) {
-      return const LoginScreen();
+      return const RegisterScreen();
     } else if ((userModel!.status) == UserStatus.CREATED.name &&
         prefs.containsKey(SharedpreferenceKey.ongoingRequest)) {
       return const InstallationAddressScreen();

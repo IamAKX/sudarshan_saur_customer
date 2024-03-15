@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import 'package:saur_customer/main.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/screens/raise_warranty_request/installation_address_screen.dart';
+import 'package:saur_customer/screens/user_onboarding/login_screen.dart';
 import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/theme.dart';
@@ -21,6 +23,8 @@ import '../../utils/colors.dart';
 import '../../utils/preference_key.dart';
 import '../../widgets/input_field_dark.dart';
 import '../../widgets/primary_button.dart';
+import 'agreement_screen.dart';
+import 'change_phone_number.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -36,6 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _serialNumberCtrl = TextEditingController();
   final TextEditingController _otpCodeCtrl = TextEditingController();
+  final TextEditingController _installerMobileCtrl = TextEditingController();
 
   late ApiProvider _api;
 
@@ -93,7 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            verticalGap(defaultPadding * 1.5),
+            verticalGap(defaultPadding),
             InkWell(
               onTap: () => Navigator.of(context).pop(),
               child: const Icon(
@@ -109,7 +114,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            verticalGap(defaultPadding * 1.5),
             Expanded(
               child: ListView(
                 children: [
@@ -156,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  verticalGap(defaultPadding),
+                  // verticalGap(defaultPadding),
                   InputFieldDark(
                     hint: 'OTP',
                     controller: _otpCodeCtrl,
@@ -173,6 +177,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     icon: LineAwesomeIcons.plug,
                     maxChar: 6,
                   ),
+                  InputFieldDark(
+                    hint: 'Installer Mobile Number',
+                    controller: _installerMobileCtrl,
+                    keyboardType: TextInputType.phone,
+                    obscure: false,
+                    icon: LineAwesomeIcons.phone,
+                  ),
+                  verticalGap(defaultPadding / 2),
+                  Row(
+                    children: [
+                      Theme(
+                        data: ThemeData(
+                          checkboxTheme: CheckboxThemeData(
+                            side:
+                                const BorderSide(color: Colors.white, width: 2),
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                          ),
+                        ),
+                        child: Checkbox(
+                          activeColor: Colors.white,
+                          checkColor: primaryColor,
+                          value: RegisterScreen.agreementStatus,
+                          onChanged: (value) {
+                            setState(() {
+                              RegisterScreen.agreementStatus =
+                                  !RegisterScreen.agreementStatus;
+                            });
+                          },
+                        ),
+                      ),
+                      horizontalGap(8),
+                      Flexible(
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'I agree to the ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                ),
+                            children: [
+                              TextSpan(
+                                  text: 'terms and conditions',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge
+                                      ?.copyWith(
+                                        color: Colors.cyanAccent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.pushNamed(
+                                          context, AgreementScreen.routePath);
+                                    }),
+                              const TextSpan(
+                                  text: ' as set out by the user agreement.'),
+                            ],
+                          ),
+                          softWrap: true,
+                        ),
+                      )
+                    ],
+                  ),
+
                   verticalGap(defaultPadding * 2),
                   PrimaryButton(
                     onPressed: () async {
@@ -202,6 +275,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             .showSnackBarError('Incorrect OTP');
                         return;
                       }
+                      if (!RegisterScreen.agreementStatus) {
+                        SnackBarService.instance.showSnackBarError(
+                            'Read and accept terms and condition');
+                        return;
+                      }
                       WarrantyModel? warrantyModel = await _api
                           .getDeviceBySerialNo(_serialNumberCtrl.text);
                       if (warrantyModel == null) {
@@ -212,6 +290,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       UserModel userModel = UserModel(
                           customerName: _nameCtrl.text,
                           mobileNo: _phoneCtrl.text,
+                          installerMobile: _installerMobileCtrl.text,
                           status: UserStatus.ACTIVE.name);
                       _api.createUser(userModel).then((value) async {
                         if (value) {
@@ -232,10 +311,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     isDisabled: _api.status == ApiStatus.loading,
                     isLoading: _api.status == ApiStatus.loading,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, LoginScreen.routePath, (route) => false);
+                        },
+                        child: Text(
+                          'Login',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: defaultPadding / 2),
+                        color: Colors.white,
+                        width: 2,
+                        height: 15,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, ChangePhoneNumber.routePath);
+                        },
+                        child: Text(
+                          'Change Mobile Number',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
-            verticalGap(defaultPadding),
           ],
         ),
       ),
