@@ -7,6 +7,7 @@ class SharedpreferenceKey {
   static const String userPhone = 'userPhone';
   static const String loggedIn = 'loggedIn';
   static const String ongoingRequest = 'ongoingRequest';
+  static const String otpMessageId = 'otpMessageId';
 
   static int getUserId() {
     return prefs.getInt(userId) ?? -1;

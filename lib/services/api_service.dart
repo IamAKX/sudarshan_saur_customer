@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:saur_customer/models/list_models/customer_list_model.dart';
 import 'package:saur_customer/models/list_models/dealer_last_model.dart';
 import 'package:saur_customer/models/list_models/warranty_request_list.dart';
+import 'package:saur_customer/models/otp_response.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/utils/api.dart';
@@ -463,6 +464,9 @@ class ApiProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         SnackBarService.instance.showSnackBarInfo('OTP sent');
+        OTPResponse optresponse = OTPResponse.fromJson(response.data);
+        prefs.setString(SharedpreferenceKey.otpMessageId,
+            optresponse.data?.messageid ?? 'MTMyNzQ1MzY=');
         status = ApiStatus.success;
         notifyListeners();
         return true;

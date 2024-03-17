@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 verticalGap(defaultPadding * 1.5),
                 InputFieldDark(
-                  hint: 'Mobile Number',
+                  hint: 'Customer Mobile Number',
                   controller: _phoneCtrl,
                   keyboardType: TextInputType.phone,
                   obscure: false,

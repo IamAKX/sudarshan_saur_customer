@@ -118,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: ListView(
                 children: [
                   InputFieldDark(
-                    hint: 'Full Name',
+                    hint: 'Customer Full Name',
                     controller: _nameCtrl,
                     keyboardType: TextInputType.name,
                     obscure: false,
@@ -126,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   verticalGap(defaultPadding * 1.5),
                   InputFieldDark(
-                    hint: 'Mobile Number',
+                    hint: 'Customer Mobile Number',
                     controller: _phoneCtrl,
                     keyboardType: TextInputType.phone,
                     obscure: false,

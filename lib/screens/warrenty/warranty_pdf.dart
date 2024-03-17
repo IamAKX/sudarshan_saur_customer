@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:saur_customer/main.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/models/warranty_request_model.dart';
@@ -167,6 +168,9 @@ Container warrantyContext(MemoryImage imageLogo,
         divider(),
         rowItem('Guarantee* Years:',
             warrantyRequestModel.warrantyDetails?.guaranteePeriod ?? ''),
+        divider(),
+        rowItem('OTP Session ID:',
+            prefs.getString(SharedpreferenceKey.otpMessageId) ?? '-'),
         divider(),
         Text(
           '*Conditions apply.',

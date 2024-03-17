@@ -40,7 +40,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   bool uploadingImage = false;
   // File? systemImage, serialNumberImage, aadhaarImage;
   File? systemImage, serialNumberImage;
-  bool agreement = false;
+
   @override
   void initState() {
     super.initState();
@@ -103,7 +103,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                             .showSnackBarError('Please select all images');
                         return;
                       }
-                      if (agreement) {
+                     
                         setState(() {
                           uploadingImage = true;
                         });
@@ -173,11 +173,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                             Navigator.pop(context);
                           }
                         });
-                      } else {
-                        SnackBarService.instance.showSnackBarError(
-                            'Please read and agree tems and conditions');
-                        return;
-                      }
+                     
                     },
                     child: const Text('Update'),
                   ),
@@ -313,12 +309,12 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
         //         ),
         // ),
         verticalGap(defaultPadding * 1.5),
-        TextButton(
-          onPressed: () {
-            showPrivacyDialogbox(context);
-          },
-          child: Text('Read Terms and Conditions'),
-        ),
+        // TextButton(
+        //   onPressed: () {
+        //     showPrivacyDialogbox(context);
+        //   },
+        //   child: Text('Read Terms and Conditions'),
+        // ),
       ],
     );
   }
@@ -333,51 +329,51 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     );
 
     // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text("Terms and Conditions"),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Text(Constants.termsAndConditions),
-                    verticalGap(defaultPadding),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: agreement,
-                          onChanged: (value) {
-                            setState(() {
-                              agreement = value ?? false;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: Text(
-                            'I/we read and agreed and accepted the above terms and conditions',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              actions: [
-                okButton,
-              ],
-            );
-          },
-        );
-      },
-    );
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           return AlertDialog(
+  //             title: const Text("Terms and Conditions"),
+  //             content: SizedBox(
+  //               width: double.maxFinite,
+  //               child: ListView(
+  //                 shrinkWrap: true,
+  //                 children: [
+  //                   Text(Constants.termsAndConditions),
+  //                   verticalGap(defaultPadding),
+  //                   Row(
+  //                     children: [
+  //                       Checkbox(
+  //                         value: agreement,
+  //                         onChanged: (value) {
+  //                           setState(() {
+  //                             agreement = value ?? false;
+  //                           });
+  //                         },
+  //                       ),
+  //                       Expanded(
+  //                         child: Text(
+  //                           'I/we read and agreed and accepted the above terms and conditions',
+  //                           style: Theme.of(context)
+  //                               .textTheme
+  //                               .labelSmall
+  //                               ?.copyWith(fontWeight: FontWeight.bold),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   )
+  //                 ],
+  //               ),
+  //             ),
+  //             actions: [
+  //               okButton,
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
   }
 }

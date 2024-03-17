@@ -29,7 +29,7 @@ class _UserDetailState extends State<UserDetail> {
     return ListView(
       children: [
         InputFieldDark(
-          hint: 'Full Name',
+          hint: 'Customer Full Name',
           controller: widget.nameCtrl,
           keyboardType: TextInputType.name,
           obscure: false,
@@ -51,7 +51,7 @@ class _UserDetailState extends State<UserDetail> {
             icon: LineAwesomeIcons.user_lock),
         verticalGap(defaultPadding * 1.5),
         InputFieldDark(
-          hint: 'Phone',
+          hint: 'Customer Phone',
           controller: widget.phoneCtrl,
           keyboardType: TextInputType.phone,
           obscure: false,
