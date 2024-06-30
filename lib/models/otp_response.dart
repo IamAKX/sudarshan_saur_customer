@@ -1,47 +1,35 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:saur_customer/models/otp_data.dart';
 
 class OTPResponse {
-  String? status;
-  String? code;
-  String? description;
-  OtpData? data;
+  Map<String, dynamic>? Response;
+  String? Status;
   OTPResponse({
-    this.status,
-    this.code,
-    this.description,
-    this.data,
+    this.Response,
+    this.Status,
   });
 
   OTPResponse copyWith({
-    String? status,
-    String? code,
-    String? description,
-    OtpData? data,
+    Map<String, dynamic>? Response,
+    String? Status,
   }) {
     return OTPResponse(
-      status: status ?? this.status,
-      code: code ?? this.code,
-      description: description ?? this.description,
-      data: data ?? this.data,
+      Response: Response ?? this.Response,
+      Status: Status ?? this.Status,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
-    if (status != null) {
-      result.addAll({'status': status});
+    if (Response != null) {
+      result.addAll({'Response': Response});
     }
-    if (code != null) {
-      result.addAll({'code': code});
-    }
-    if (description != null) {
-      result.addAll({'description': description});
-    }
-    if (data != null) {
-      result.addAll({'data': data!.toMap()});
+    if (Status != null) {
+      result.addAll({'Status': Status});
     }
 
     return result;
@@ -49,10 +37,8 @@ class OTPResponse {
 
   factory OTPResponse.fromMap(Map<String, dynamic> map) {
     return OTPResponse(
-      status: map['status'],
-      code: map['code'],
-      description: map['description'],
-      data: map['data'] != null ? OtpData.fromMap(map['data']) : null,
+      Response: Map<String, dynamic>.from(map['Response']),
+      Status: map['Status'],
     );
   }
 
@@ -62,26 +48,17 @@ class OTPResponse {
       OTPResponse.fromMap(json.decode(source));
 
   @override
-  String toString() {
-    return 'OTPResponse(status: $status, code: $code, description: $description, data: $data)';
-  }
+  String toString() => 'OTPResponse(Response: $Response, Status: $Status)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is OTPResponse &&
-        other.status == status &&
-        other.code == code &&
-        other.description == description &&
-        other.data == data;
+        mapEquals(other.Response, Response) &&
+        other.Status == Status;
   }
 
   @override
-  int get hashCode {
-    return status.hashCode ^
-        code.hashCode ^
-        description.hashCode ^
-        data.hashCode;
-  }
+  int get hashCode => Response.hashCode ^ Status.hashCode;
 }

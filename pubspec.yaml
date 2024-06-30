@@ -17,7 +17,7 @@ dependencies:
   easy_autocomplete: ^1.6.0
   firebase_core: ^2.15.0
   firebase_storage: ^11.2.5
-  flashy_tab_bar2: ^0.0.6
+  flashy_tab_bar2: ^0.0.10
   flutter:
     sdk: flutter
   flutter_file_downloader: ^1.1.4

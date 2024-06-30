@@ -33,7 +33,7 @@ class _RequestDetalScreenState extends State<RequestDetalScreen> {
           deviceDetailCard(context),
           customerDetailCard(context),
           dealerDetailCard(context),
-          stockistDetailCard(context),
+          // stockistDetailCard(context),
           technicianDetailCard(context),
           plumberDetailCard(context),
           otherDetailCard(context),

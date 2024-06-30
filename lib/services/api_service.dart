@@ -465,9 +465,11 @@ class ApiProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         SnackBarService.instance.showSnackBarInfo('OTP sent');
-        OTPResponse optresponse = OTPResponse.fromJson(response.data);
-        prefs.setString(SharedpreferenceKey.otpMessageId,
-            optresponse.data?.messageid ?? 'MTMyNzQ1MzY=');
+        OTPResponse optresponse = OTPResponse.fromMap(response.data);
+        prefs.setString(
+            SharedpreferenceKey.otpMessageId,
+            optresponse.Response?['Message']?.toString().split(':')[1].trim() ??
+                '46981333');
         prefs.setString(SharedpreferenceKey.otpMessageTime,
             DateTimeFormatter.nowForGuarnteeCard());
         status = ApiStatus.success;

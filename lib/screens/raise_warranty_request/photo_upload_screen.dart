@@ -72,30 +72,30 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   )
                 : TextButton(
                     onPressed: () async {
-                      if (await Permission
-                          .location.status.isPermanentlyDenied) {
-                        // ignore: use_build_context_synchronously
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.warning,
-                          animType: AnimType.bottomSlide,
-                          title: 'Location access needed',
-                          desc:
-                              'You have denied location request multiple times, you have to grant access from app settings',
-                          onDismissCallback: (type) {},
-                          autoDismiss: false,
-                          btnOkOnPress: () async {
-                            await openAppSettings();
-                            navigatorKey.currentState?.pop();
-                          },
-                          btnOkText: 'Open settings',
-                          btnOkColor: primaryColor,
-                        ).show();
+                      // if (await Permission
+                      //     .location.status.isPermanentlyDenied) {
+                      //   // ignore: use_build_context_synchronously
+                      //   AwesomeDialog(
+                      //     context: context,
+                      //     dialogType: DialogType.warning,
+                      //     animType: AnimType.bottomSlide,
+                      //     title: 'Location access needed',
+                      //     desc:
+                      //         'You have denied location request multiple times, you have to grant access from app settings',
+                      //     onDismissCallback: (type) {},
+                      //     autoDismiss: false,
+                      //     btnOkOnPress: () async {
+                      //       await openAppSettings();
+                      //       navigatorKey.currentState?.pop();
+                      //     },
+                      //     btnOkText: 'Open settings',
+                      //     btnOkColor: primaryColor,
+                      //   ).show();
 
-                        return;
-                      }
+                      //   return;
+                      // }
 
-                      Position? position = await determinePosition();
+                      // Position? position = await determinePosition();
                       if (systemImage == null || serialNumberImage == null
                           // ||aadhaarImage == null
                           ) {
@@ -103,77 +103,76 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                             .showSnackBarError('Please select all images');
                         return;
                       }
-                     
-                        setState(() {
-                          uploadingImage = true;
-                        });
-                        SnackBarService.instance.showSnackBarInfo(
-                            'Uploading images, please wait it will take some time...');
-                        widget.warrantyRequestModel.images =
-                            await StorageService.uploadReqDocuments(
-                                systemImage!,
-                                serialNumberImage!,
-                                // aadhaarImage!,
-                                widget.warrantyRequestModel.customers
-                                        ?.customerId
-                                        .toString() ??
-                                    '');
-                        setState(() {
-                          uploadingImage = false;
-                        });
-                        // widget.warrantyRequestModel.status =
-                        //     AllocationStatus.PENDING.name;
-                        // widget.warrantyRequestModel.initUserType = 'CUSTOMER';
-                        // widget.warrantyRequestModel.initiatedBy = widget
-                        //     .warrantyRequestModel.customers?.customerId
-                        //     .toString();
 
-                        String? lat = position.latitude.toString();
-                        lat = lat.substring(0, min(lat.length, 10));
-                        String? lon = position.longitude.toString();
-                        lon = lon.substring(0, min(lon.length, 10));
+                      setState(() {
+                        uploadingImage = true;
+                      });
+                      SnackBarService.instance.showSnackBarInfo(
+                          'Uploading images, please wait it will take some time...');
+                      widget.warrantyRequestModel.images =
+                          await StorageService.uploadReqDocuments(
+                              systemImage!,
+                              serialNumberImage!,
+                              // aadhaarImage!,
+                              widget.warrantyRequestModel.customers?.customerId
+                                      .toString() ??
+                                  '');
+                      setState(() {
+                        uploadingImage = false;
+                      });
+                      // widget.warrantyRequestModel.status =
+                      //     AllocationStatus.PENDING.name;
+                      // widget.warrantyRequestModel.initUserType = 'CUSTOMER';
+                      // widget.warrantyRequestModel.initiatedBy = widget
+                      //     .warrantyRequestModel.customers?.customerId
+                      //     .toString();
 
-                        if (lat.isEmpty || lon.isEmpty) {
+                      String? lat = '0.0'; //position.latitude.toString();
+                      lat = lat.substring(0, min(lat.length, 10));
+                      String? lon = '0.0';
+                      // position.longitude.toString();
+                      lon = lon.substring(0, min(lon.length, 10));
+
+                      // if (lat.isEmpty || lon.isEmpty) {
+                      //   SnackBarService.instance
+                      //       .showSnackBarError('Please give location access');
+
+                      //   if (await Permission.locationWhenInUse
+                      //       .request()
+                      //       .isGranted) {
+                      //     // Either the permission was already granted before or the user just granted it.
+                      //   }
+
+                      //   return;
+                      // }
+
+                      widget.warrantyRequestModel.lat = lat;
+
+                      widget.warrantyRequestModel.lon = lon;
+                      Map<String, dynamic> warrantyReq = {
+                        "images": {
+                          "imgLiveSystem": widget
+                                  .warrantyRequestModel.images?.imgLiveSystem ??
+                              '',
+                          "imgSystemSerialNo": widget.warrantyRequestModel
+                                  .images?.imgSystemSerialNo ??
+                              '',
+                          "imgAadhar": ""
+                        },
+                        "lat": lat,
+                        "lon": lon,
+                      };
+
+                      _api
+                          .updateWarrantyRequest(warrantyReq,
+                              widget.warrantyRequestModel.requestId!)
+                          .then((value) {
+                        if (value) {
                           SnackBarService.instance
-                              .showSnackBarError('Please give location access');
-
-                          if (await Permission.locationWhenInUse
-                              .request()
-                              .isGranted) {
-                            // Either the permission was already granted before or the user just granted it.
-                          }
-
-                          return;
+                              .showSnackBarSuccess('Image uploaded');
+                          Navigator.pop(context);
                         }
-
-                        widget.warrantyRequestModel.lat = lat;
-
-                        widget.warrantyRequestModel.lon = lon;
-                        Map<String, dynamic> warrantyReq = {
-                          "images": {
-                            "imgLiveSystem": widget.warrantyRequestModel.images
-                                    ?.imgLiveSystem ??
-                                '',
-                            "imgSystemSerialNo": widget.warrantyRequestModel
-                                    .images?.imgSystemSerialNo ??
-                                '',
-                            "imgAadhar": ""
-                          },
-                          "lat": lat,
-                          "lon": lon,
-                        };
-
-                        _api
-                            .updateWarrantyRequest(warrantyReq,
-                                widget.warrantyRequestModel.requestId!)
-                            .then((value) {
-                          if (value) {
-                            SnackBarService.instance
-                                .showSnackBarSuccess('Image uploaded');
-                            Navigator.pop(context);
-                          }
-                        });
-                     
+                      });
                     },
                     child: const Text('Update'),
                   ),
@@ -329,51 +328,51 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     );
 
     // show the dialog
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           return AlertDialog(
-  //             title: const Text("Terms and Conditions"),
-  //             content: SizedBox(
-  //               width: double.maxFinite,
-  //               child: ListView(
-  //                 shrinkWrap: true,
-  //                 children: [
-  //                   Text(Constants.termsAndConditions),
-  //                   verticalGap(defaultPadding),
-  //                   Row(
-  //                     children: [
-  //                       Checkbox(
-  //                         value: agreement,
-  //                         onChanged: (value) {
-  //                           setState(() {
-  //                             agreement = value ?? false;
-  //                           });
-  //                         },
-  //                       ),
-  //                       Expanded(
-  //                         child: Text(
-  //                           'I/we read and agreed and accepted the above terms and conditions',
-  //                           style: Theme.of(context)
-  //                               .textTheme
-  //                               .labelSmall
-  //                               ?.copyWith(fontWeight: FontWeight.bold),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   )
-  //                 ],
-  //               ),
-  //             ),
-  //             actions: [
-  //               okButton,
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return StatefulBuilder(
+    //         builder: (context, setState) {
+    //           return AlertDialog(
+    //             title: const Text("Terms and Conditions"),
+    //             content: SizedBox(
+    //               width: double.maxFinite,
+    //               child: ListView(
+    //                 shrinkWrap: true,
+    //                 children: [
+    //                   Text(Constants.termsAndConditions),
+    //                   verticalGap(defaultPadding),
+    //                   Row(
+    //                     children: [
+    //                       Checkbox(
+    //                         value: agreement,
+    //                         onChanged: (value) {
+    //                           setState(() {
+    //                             agreement = value ?? false;
+    //                           });
+    //                         },
+    //                       ),
+    //                       Expanded(
+    //                         child: Text(
+    //                           'I/we read and agreed and accepted the above terms and conditions',
+    //                           style: Theme.of(context)
+    //                               .textTheme
+    //                               .labelSmall
+    //                               ?.copyWith(fontWeight: FontWeight.bold),
+    //                         ),
+    //                       ),
+    //                     ],
+    //                   )
+    //                 ],
+    //               ),
+    //             ),
+    //             actions: [
+    //               okButton,
+    //             ],
+    //           );
+    //         },
+    //       );
+    //     },
+    //   );
   }
 }

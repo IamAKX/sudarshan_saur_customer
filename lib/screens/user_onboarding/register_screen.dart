@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String code = '';
 
   Timer? _timer;
-  static const int otpResendThreshold = 10;
+  static const int otpResendThreshold = 30;
   int _secondsRemaining = otpResendThreshold;
   bool _timerActive = false;
 
