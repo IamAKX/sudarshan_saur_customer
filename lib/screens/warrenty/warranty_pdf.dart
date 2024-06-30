@@ -172,6 +172,9 @@ Container warrantyContext(MemoryImage imageLogo,
         rowItem('OTP Session ID:',
             prefs.getString(SharedpreferenceKey.otpMessageId) ?? '-'),
         divider(),
+        rowItem('OTP Time:',
+            prefs.getString(SharedpreferenceKey.otpMessageTime) ?? '-'),
+        divider(),
         Text(
           '*Conditions apply.',
           style: TextStyle(

@@ -10,6 +10,11 @@ class DateTimeFormatter {
     return DateFormat(databaseFormat).format(dateTime);
   }
 
+  static String nowForGuarnteeCard() {
+    DateTime dateTime = DateTime.now();
+    return DateFormat('dd-MM-yyyy hh:mm a').format(dateTime);
+  }
+
   static String timesAgo(String rawDate) {
     try {
       DateTime date = DateFormat(databaseFormat).parse(rawDate);

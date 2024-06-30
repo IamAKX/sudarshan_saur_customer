@@ -12,6 +12,7 @@ import 'package:saur_customer/models/otp_response.dart';
 import 'package:saur_customer/models/user_model.dart';
 import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/utils/api.dart';
+import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
 import 'package:saur_customer/utils/preference_key.dart';
 
@@ -467,6 +468,8 @@ class ApiProvider extends ChangeNotifier {
         OTPResponse optresponse = OTPResponse.fromJson(response.data);
         prefs.setString(SharedpreferenceKey.otpMessageId,
             optresponse.data?.messageid ?? 'MTMyNzQ1MzY=');
+        prefs.setString(SharedpreferenceKey.otpMessageTime,
+            DateTimeFormatter.nowForGuarnteeCard());
         status = ApiStatus.success;
         notifyListeners();
         return true;
