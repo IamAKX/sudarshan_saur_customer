@@ -59,6 +59,8 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
     super.initState();
     stateDistrictList =
         StateDistrictListModel.fromMap(Constants.stateDistrictRaw);
+    selectedState = stateDistrictList?.states?.first.state;
+    selectedDistrict = stateDistrictList?.states?.first.districts?.first;
     // selectedDistrict = stateDistrictList!.states!
     //     .firstWhere((element) => element.state == selectedState)
     //     .districts!
@@ -82,9 +84,10 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
           warrantyRequestModel?.installationAddress?.street2 ?? '';
       _landmarkCtrl.text =
           warrantyRequestModel?.installationAddress?.landmark ?? '';
-      selectedState = warrantyRequestModel?.installationAddress?.state ;
-      selectedDistrict =
-          warrantyRequestModel?.installationAddress?.district;
+      selectedState = warrantyRequestModel?.installationAddress?.state ??
+          stateDistrictList?.states?.first.state;
+      selectedDistrict = warrantyRequestModel?.installationAddress?.district ??
+          stateDistrictList?.states?.first.districts?.first;
       _talukaCtrl.text = warrantyRequestModel?.installationAddress?.taluk ?? '';
       _placeCtrl.text = warrantyRequestModel?.installationAddress?.town ?? '';
       _zipCodeCtrl.text =
@@ -105,6 +108,11 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
+    selectedState = stateDistrictList?.states?.first.state;
+    selectedDistrict = stateDistrictList?.states?.first.districts?.first;
+    log('selected state : $selectedState');
+    log('selected district : $selectedDistrict');
+    log('states : ${stateDistrictList?.states?.length}');
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -118,18 +126,18 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
                   return;
                 }
                 AddressModel installationAddress = AddressModel(
-                    houseNo: _houseNumberCtrl.text??'',
-                    area: _colonyCtrl.text??'',
-                    street1: _street1Ctrl.text??'',
-                    street2: _street2Ctrl.text??'',
-                    landmark: _landmarkCtrl.text??'',
-                    state: selectedState??'',
-                    district: selectedDistrict??'',
+                    houseNo: _houseNumberCtrl.text ?? '',
+                    area: _colonyCtrl.text ?? '',
+                    street1: _street1Ctrl.text ?? '',
+                    street2: _street2Ctrl.text ?? '',
+                    landmark: _landmarkCtrl.text ?? '',
+                    state: selectedState ?? '',
+                    district: selectedDistrict ?? '',
                     country: 'India',
-                    taluk: _talukaCtrl.text??'',
-                    town: _placeCtrl.text??'',
-                    zipCode: _zipCodeCtrl.text??'');
-                warrantyRequestModel?.mobile2 = _whatsappNumberCtrl.text??'';
+                    taluk: _talukaCtrl.text ?? '',
+                    town: _placeCtrl.text ?? '',
+                    zipCode: _zipCodeCtrl.text ?? '');
+                warrantyRequestModel?.mobile2 = _whatsappNumberCtrl.text ?? '';
                 warrantyRequestModel?.installationAddress = installationAddress;
                 if (isOwnerAddressSame) {
                   warrantyRequestModel?.ownerAddress = installationAddress;
@@ -253,6 +261,7 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
                 setState(() {
                   selectedState = value;
                   selectedDistrict = null;
+
                   log('selectedState : $selectedState');
                   // selectedDistrict = stateDistrictList!.states!
                   //     .firstWhere((element) => element.state == selectedState)
@@ -285,9 +294,11 @@ class _InstallationAddressScreenState extends State<InstallationAddressScreen> {
                   color: Theme.of(context).hintColor,
                 ),
               ),
-              items: selectedState == null
-                  ? []
-                  : stateDistrictList?.states
+              items:
+                  // selectedState == null
+                  //     ? []
+                  //     :
+                  stateDistrictList?.states
                           ?.firstWhere(
                               (element) => element.state == selectedState)
                           .districts

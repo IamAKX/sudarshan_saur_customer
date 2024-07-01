@@ -455,6 +455,7 @@ class ApiProvider extends ChangeNotifier {
   Future<bool> sendOtp(String phone, String otp) async {
     status = ApiStatus.loading;
     notifyListeners();
+    log('otp : $otp');
     try {
       Response response = await _dio.get(
         Api.buildOtpUrl(phone, otp),
@@ -463,8 +464,11 @@ class ApiProvider extends ChangeNotifier {
           responseType: ResponseType.json,
         ),
       );
+      log('Resp : ${response.data}');
+      SnackBarService.instance.showSnackBarInfo('OTP sent');
+      status = ApiStatus.success;
+      notifyListeners();
       if (response.statusCode == 200) {
-        SnackBarService.instance.showSnackBarInfo('OTP sent');
         OTPResponse optresponse = OTPResponse.fromMap(response.data);
         prefs.setString(
             SharedpreferenceKey.otpMessageId,
@@ -472,8 +476,7 @@ class ApiProvider extends ChangeNotifier {
                 '46981333');
         prefs.setString(SharedpreferenceKey.otpMessageTime,
             DateTimeFormatter.nowForGuarnteeCard());
-        status = ApiStatus.success;
-        notifyListeners();
+
         return true;
       }
     } on DioException catch (e) {

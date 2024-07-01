@@ -51,9 +51,9 @@ class _RequestScreenState extends State<RequestScreen> {
         list = value;
       });
     });
-    await Permission.location.request().then((value) {
-      log('location permission : $value');
-    });
+    // await Permission.location.request().then((value) {
+    //   log('location permission : $value');
+    // });
   }
 
   @override

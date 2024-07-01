@@ -46,9 +46,9 @@ class _WarrentyScreenState extends State<WarrentyScreen> {
   }
 
   reloadScreen() async {
-    Permission.location.request().then((value) {
-      log('location permission : $value');
-    });
+    // Permission.location.request().then((value) {
+    //   log('location permission : $value');
+    // });
     await _api
         .getWarrantyRequestListByCustomerId(SharedpreferenceKey.getUserId())
         .then((value) {
