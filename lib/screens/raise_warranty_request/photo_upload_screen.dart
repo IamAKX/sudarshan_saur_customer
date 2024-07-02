@@ -207,22 +207,46 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                 )
-              : InkWell(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      setState(() {
-                        systemImage = File(image.path);
-                      });
-                    }
-                  },
-                  child: const Icon(
-                    LineAwesomeIcons.camera,
-                    size: 60,
-                    color: Colors.grey,
-                  ),
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image;
+                        image =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (image != null) {
+                          setState(() {
+                            systemImage = File(image!.path);
+                          });
+                        }
+                      },
+                      child: const Icon(
+                        LineAwesomeIcons.camera,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image;
+                        image =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          setState(() {
+                            systemImage = File(image!.path);
+                          });
+                        }
+                      },
+                      child: const Icon(
+                        LineAwesomeIcons.image,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
         ),
         verticalGap(defaultPadding),
@@ -248,22 +272,44 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
                 )
-              : InkWell(
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      setState(() {
-                        serialNumberImage = File(image.path);
-                      });
-                    }
-                  },
-                  child: const Icon(
-                    LineAwesomeIcons.camera,
-                    size: 60,
-                    color: Colors.grey,
-                  ),
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (image != null) {
+                          setState(() {
+                            serialNumberImage = File(image.path);
+                          });
+                        }
+                      },
+                      child: const Icon(
+                        LineAwesomeIcons.camera,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          setState(() {
+                            serialNumberImage = File(image.path);
+                          });
+                        }
+                      },
+                      child: const Icon(
+                        LineAwesomeIcons.image,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
         ),
         // verticalGap(defaultPadding),

@@ -122,9 +122,6 @@ class _OwnerAddressScreenState extends State<OwnerAddressScreen> {
   }
 
   getBody(BuildContext context) {
-    selectedState = stateDistrictList?.states?.first.state;
-    selectedDistrict = stateDistrictList?.states?.first.districts?.first;
-
     return ListView(
       padding: const EdgeInsets.all(defaultPadding),
       children: [
