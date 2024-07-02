@@ -14,6 +14,7 @@ import 'package:saur_customer/models/warranty_model.dart';
 import 'package:saur_customer/utils/api.dart';
 import 'package:saur_customer/utils/date_time_formatter.dart';
 import 'package:saur_customer/utils/enum.dart';
+import 'package:saur_customer/utils/helper_method.dart';
 import 'package:saur_customer/utils/preference_key.dart';
 
 import '../main.dart';
@@ -453,27 +454,26 @@ class ApiProvider extends ChangeNotifier {
   }
 
   Future<bool> sendOtp(String phone, String otp) async {
-    status = ApiStatus.loading;
-    notifyListeners();
+    // status = ApiStatus.loading;
+    // notifyListeners();
     log('otp : $otp');
+    log(Api.buildOtpUrl(phone, otp));
     try {
       Response response = await _dio.get(
         Api.buildOtpUrl(phone, otp),
-        options: Options(
-          contentType: 'application/json',
-          responseType: ResponseType.json,
-        ),
+        // options: Options(
+        //   contentType: 'application/json',
+        //   // responseType: ResponseType.json,
+        // ),
       );
       log('Resp : ${response.data}');
       SnackBarService.instance.showSnackBarInfo('OTP sent');
       status = ApiStatus.success;
       notifyListeners();
       if (response.statusCode == 200) {
-        OTPResponse optresponse = OTPResponse.fromMap(response.data);
-        prefs.setString(
-            SharedpreferenceKey.otpMessageId,
-            optresponse.Response?['Message']?.toString().split(':')[1].trim() ??
-                '46981333');
+        String messageId = getOtpMessageId(response.data.toString());
+        log('messageId : $messageId');
+        prefs.setString(SharedpreferenceKey.otpMessageId, messageId);
         prefs.setString(SharedpreferenceKey.otpMessageTime,
             DateTimeFormatter.nowForGuarnteeCard());
 

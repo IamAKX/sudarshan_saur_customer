@@ -65,3 +65,16 @@ bool isValidSerialNumber(String number) {
   }
   return true;
 }
+
+String getOtpMessageId(String response) {
+  String pattern = r'Message ID : (\d+)';
+  RegExp regExp = RegExp(pattern);
+  Match? match = regExp.firstMatch(response);
+
+  if (match != null) {
+    String messageId = match.group(1)!;
+    return messageId;
+  } else {
+    return '';
+  }
+}

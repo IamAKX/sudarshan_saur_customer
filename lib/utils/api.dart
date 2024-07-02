@@ -17,7 +17,7 @@ class Api {
   static const String exernalWarranty = '$baseUrl/saur/warrantyDetails/crm/';
 
   static String buildOtpUrl(String phone, String otp) {
-    return 'http://nimbusit.biz/api/SmsApi/SendSingleApi?UserID=Sudarshanbiz&Password=zdqx9664ZD&SenderID=SSSPLM&Phno=$phone&Msg=Sudarshan%20Saur%20Gurantee%20Registartion%20OTP-$otp&EntityID=1701160630405660648&TemplateID=1707171168816531737';
+    return 'http://14.97.212.62/api/SmsApi/SendSingleApi?UserID=Sudarshanbiz&Password=zdqx9664ZD&SenderID=SSSPLM&Phno=$phone&Msg=Sudarshan%20Saur%20Gurantee%20Registartion%20OTP-$otp&EntityID=1701160630405660648&TemplateID=1707171168816531737';
   }
 }
 
