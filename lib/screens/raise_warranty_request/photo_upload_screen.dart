@@ -222,10 +222,25 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                           });
                         }
                       },
-                      child: const Icon(
-                        LineAwesomeIcons.camera,
-                        size: 60,
-                        color: Colors.grey,
+                      child: Container(
+                        padding: EdgeInsets.all(30),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              LineAwesomeIcons.camera,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              'Camera',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: dividerColor),
+                        ),
                       ),
                     ),
                     InkWell(
@@ -240,10 +255,25 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                           });
                         }
                       },
-                      child: const Icon(
-                        LineAwesomeIcons.image,
-                        size: 60,
-                        color: Colors.grey,
+                      child: Container(
+                        padding: EdgeInsets.all(30),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              LineAwesomeIcons.image,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              'Gallery',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: dividerColor),
+                        ),
                       ),
                     ),
                   ],
@@ -286,10 +316,25 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                           });
                         }
                       },
-                      child: const Icon(
-                        LineAwesomeIcons.camera,
-                        size: 60,
-                        color: Colors.grey,
+                      child: Container(
+                        padding: EdgeInsets.all(30),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              LineAwesomeIcons.camera,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              'Camera',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: dividerColor),
+                        ),
                       ),
                     ),
                     InkWell(
@@ -303,10 +348,25 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                           });
                         }
                       },
-                      child: const Icon(
-                        LineAwesomeIcons.image,
-                        size: 60,
-                        color: Colors.grey,
+                      child: Container(
+                        padding: EdgeInsets.all(30),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              LineAwesomeIcons.image,
+                              size: 60,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              'Gallery',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: dividerColor),
+                        ),
                       ),
                     ),
                   ],

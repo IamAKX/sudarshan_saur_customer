@@ -25,25 +25,24 @@ class _HomeContainerState extends State<HomeContainer> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: getBody(),
-      bottomNavigationBar: FlashyTabBar(
-        selectedIndex: _selectedIndex,
-        showElevation: true,
-        onItemSelected: (index) => switchTabs(index),
-        items: [
-          FlashyTabBarItem(
-            icon: const Icon(
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        elevation: 10,
+        onTap: (index) => switchTabs(index),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.shield_outlined,
             ),
-            title: const Text('Guarantee'),
+            label: ('Guarantee'),
           ),
-          FlashyTabBarItem(
-            icon: const Icon(Icons.history),
-            title: const Text('Request'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: ('Request'),
           ),
-          FlashyTabBarItem(
-            icon: const Icon(Icons.person_outline_outlined),
-            title: const Text('Profile'),
-          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_outlined),
+              label: 'Profile'),
         ],
       ),
     );

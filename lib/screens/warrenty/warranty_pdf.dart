@@ -23,6 +23,10 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
       (await rootBundle.load('assets/images/guarantee_logo.png'))
           .buffer
           .asUint8List());
+  final agreementCheckbox = MemoryImage(
+      (await rootBundle.load('assets/images/checkbox_agreement.png'))
+          .buffer
+          .asUint8List());
 
   final tnc1Img = MemoryImage(
       (await rootBundle.load('assets/images/Pictureall.png'))
@@ -41,7 +45,8 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
       orientation: PageOrientation.portrait,
       margin: const EdgeInsets.all(defaultPadding),
       build: (Context context) {
-        return warrantyContext(imageLogo, warranty!, userModel); // Center
+        return warrantyContext(
+            imageLogo, warranty!, userModel, agreementCheckbox); // Center
       },
     ),
   ); // Page
@@ -104,8 +109,11 @@ Future<String> makePdf(WarrantyRequestModel? warranty) async {
       pdf.save(), warranty?.warrantyDetails?.warrantySerialNo ?? '');
 }
 
-Container warrantyContext(MemoryImage imageLogo,
-    WarrantyRequestModel warrantyRequestModel, UserModel? userModel) {
+Container warrantyContext(
+    MemoryImage imageLogo,
+    WarrantyRequestModel warrantyRequestModel,
+    UserModel? userModel,
+    MemoryImage agreementCheckbox) {
   return Container(
     width: double.infinity,
     decoration: BoxDecoration(
@@ -204,17 +212,17 @@ Container warrantyContext(MemoryImage imageLogo,
             ),
           ),
         ),
-        divider(),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            Constants.guaranteeCardMsg,
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 8,
-            ),
-          ),
-        ),
+        // divider(),
+        // Align(
+        //   alignment: Alignment.centerLeft,
+        //   child: Text(
+        //     Constants.guaranteeCardMsg,
+        //     textAlign: TextAlign.left,
+        //     style: const TextStyle(
+        //       fontSize: 8,
+        //     ),
+        //   ),
+        // ),
         divider(),
         Row(
           children: [
@@ -222,11 +230,9 @@ Container warrantyContext(MemoryImage imageLogo,
               child: Column(
                 children: [
                   Container(height: 40),
-                  Text(
-                    'Customer Sign',
-                    style: const TextStyle(
-                      fontSize: 10,
-                    ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 2),
+                    child: Image(agreementCheckbox),
                   ),
                 ],
               ),
@@ -255,9 +261,7 @@ Container warrantyContext(MemoryImage imageLogo,
           child: Text(
             'This is electronically generated Guarantee card and does not require any signature and stamp.',
             textAlign: TextAlign.left,
-            style: const TextStyle(
-              fontSize: 10,
-            ),
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
         ),
       ],
