@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"
 
-version: 1.0.0+31
+version: 1.0.0+32
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -15,8 +15,8 @@ dependencies:
   dio: ^5.2.1+1
   dropdown_button2: ^2.3.9
   easy_autocomplete: ^1.6.0
-  firebase_core: ^2.15.0
-  firebase_storage: ^11.2.5
+  firebase_core: ^2.27.0
+  firebase_storage: ^11.6.9
   flashy_tab_bar2: ^0.0.10
   flutter:
     sdk: flutter

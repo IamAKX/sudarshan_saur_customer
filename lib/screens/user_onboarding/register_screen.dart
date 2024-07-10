@@ -327,26 +327,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ?.copyWith(color: Colors.white),
                         ),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: defaultPadding / 2),
-                        color: Colors.white,
-                        width: 2,
-                        height: 15,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                              context, ChangePhoneNumber.routePath);
-                        },
-                        child: Text(
-                          'Change Mobile Number',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                        ),
-                      )
+                      // Container(
+                      //   margin: const EdgeInsets.symmetric(
+                      //       horizontal: defaultPadding / 2),
+                      //   color: Colors.white,
+                      //   width: 2,
+                      //   height: 15,
+                      // ),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     Navigator.pushNamed(
+                      //         context, ChangePhoneNumber.routePath);
+                      //   },
+                      //   child: Text(
+                      //     'Change Mobile Number',
+                      //     style:
+                      //         Theme.of(context).textTheme.titleMedium?.copyWith(
+                      //               color: Colors.white,
+                      //             ),
+                      //   ),
+                      // )
                     ],
                   )
                 ],
